@@ -5,11 +5,11 @@ import { IDLE_SPRITE, BLINK_SPRITE, WAG_SPRITE, LOOKING_LEFT_SPRITE, PICKED_UP_S
 
 const CatSVG = ({ sprite }) => {
   return (
-    <svg 
-      width="56" 
-      height="84" 
-      viewBox="0 0 28 42" 
-      xmlns="http://www.w3.org/2000/svg" 
+    <svg
+      width="56"
+      height="84"
+      viewBox="0 0 28 42"
+      xmlns="http://www.w3.org/2000/svg"
       className="drop-shadow-[2px_2px_0_var(--accent)]"
       style={{ imageRendering: 'pixelated' }}
     >
@@ -26,13 +26,13 @@ const CatSVG = ({ sprite }) => {
 export default function PixelCat() {
   const { contextData, activeReaction } = useCat();
   const [showChat, setShowChat] = useState(false);
-  
+
   // Cat State
   const [catState, setCatState] = useState('IDLE');
   const [sprite, setSprite] = useState(IDLE_SPRITE);
   const [xPos, setXPos] = useState(0);
   const [facingLeft, setFacingLeft] = useState(true);
-  
+
   const idleTimer = useRef(null);
   const actionTimer = useRef(null);
   const lastMouseTime = useRef(Date.now());
@@ -55,7 +55,7 @@ export default function PixelCat() {
   // Handle reactions injected by pages
   useEffect(() => {
     if (!activeReaction) return;
-    
+
     // Clear ambient timeouts
     clearTimeout(idleTimer.current);
     clearTimeout(actionTimer.current);
@@ -72,10 +72,10 @@ export default function PixelCat() {
     }
 
     actionTimer.current = setTimeout(() => {
-        setCatState('IDLE');
-        setSprite(IDLE_SPRITE);
-        setBubbleText(BUBBLE_TEXTS[Math.floor(Math.random() * BUBBLE_TEXTS.length)]);
-      }, 2000);
+      setCatState('IDLE');
+      setSprite(IDLE_SPRITE);
+      setBubbleText(BUBBLE_TEXTS[Math.floor(Math.random() * BUBBLE_TEXTS.length)]);
+    }, 2000);
 
   }, [activeReaction]);
 
@@ -93,7 +93,7 @@ export default function PixelCat() {
       }
 
       const rand = Math.random();
-      
+
       if (rand < 0.30) {
         setCatState('BLINK');
         setSprite(BLINK_SPRITE);
@@ -113,14 +113,14 @@ export default function PixelCat() {
       } else if (rand < 0.70) {
         setCatState('WALKING');
         setSprite(IDLE_SPRITE);
-        
+
         // Use functional state update to avoid depending on xPos
         setXPos(prevX => {
           const newTarget = Math.floor(Math.random() * 150);
           setFacingLeft(newTarget > prevX);
           return newTarget;
         });
-        
+
         actionTimer.current = setTimeout(() => {
           setCatState('IDLE');
           setBubbleText(BUBBLE_TEXTS[Math.floor(Math.random() * BUBBLE_TEXTS.length)]);
@@ -145,11 +145,11 @@ export default function PixelCat() {
 
     const handleMouseMove = (e) => {
       if (throttleTimeout) return;
-      
+
       throttleTimeout = setTimeout(() => {
         mousePos.current = { x: e.clientX, y: e.clientY };
         lastMouseTime.current = Date.now();
-        
+
         // Wake up if sleeping
         if (catState === 'SLEEPING') {
           setCatState('IDLE');
@@ -176,32 +176,32 @@ export default function PixelCat() {
       x: e.clientX - position.x,
       y: e.clientY - position.y
     };
-    
+
     const handlePointerMove = (ev) => {
       hasMoved.current = true;
       setIsDragging(true);
       setCatState('PICKED_UP');
       setSprite(PICKED_UP_SPRITE);
-      
+
       let newX = ev.clientX - dragOffset.current.x;
       let newY = ev.clientY - dragOffset.current.y;
-      
+
       // Basic bounds
       newX = Math.max(0, Math.min(window.innerWidth - 60, newX));
       newY = Math.max(0, Math.min(window.innerHeight - 90, newY));
-      
+
       setPosition({ x: newX, y: newY });
     };
-    
+
     const handlePointerUp = () => {
       window.removeEventListener('mousemove', handlePointerMove);
       window.removeEventListener('mouseup', handlePointerUp);
-      
+
       if (hasMoved.current) {
         setIsDragging(false);
         setCatState('DROPPED');
         setSprite(DROPPED_SPRITE);
-        
+
         clearTimeout(actionTimer.current);
         actionTimer.current = setTimeout(() => {
           setCatState('IDLE');
@@ -228,23 +228,23 @@ export default function PixelCat() {
 
   return (
     <>
-      <div 
+      <div
         onMouseDown={handlePointerDown}
         onClick={handleClick}
         className={`fixed z-50 select-none transition-all ease-in-out ${isDragging ? 'cursor-grabbing duration-0' : 'cursor-pointer duration-500 hover:-translate-y-2'} ${catState === 'WALKING' && !isDragging ? 'animate-bounce-short' : ''}`}
         title="CrewYard Assistant"
-        style={{ 
+        style={{
           left: 0,
           top: 0,
           transform: `translate(${position.x - xPos}px, ${position.y}px)`,
         }}
       >
-        <div 
+        <div
           className="relative transition-transform duration-300"
           style={{ transform: facingLeft ? 'scaleX(1)' : 'scaleX(-1)' }}
         >
           <CatSVG sprite={sprite} />
-          
+
           {/* Status bubbles (flip back so text isn't backward) */}
           <div style={{ transform: facingLeft ? 'scaleX(1)' : 'scaleX(-1)' }}>
             {catState === 'SLEEPING' && !showChat && (
@@ -267,8 +267,9 @@ export default function PixelCat() {
       </div>
 
       {showChat && <CatAssistant onClose={() => setShowChat(false)} catPosition={{ x: position.x - xPos, y: position.y }} />}
-      
-      <style dangerouslySetInnerHTML={{__html: `
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @keyframes bounce-short {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
