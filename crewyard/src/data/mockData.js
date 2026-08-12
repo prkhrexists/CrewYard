@@ -4,19 +4,19 @@
 export const mockUsers = [
   {
     id: "u1",
-    username: "arjun_dev",
-    name: "Arjun Sharma",
-    college: "NIT Trichy",
-    year: 3,
+    username: "prkhr_exists",
+    name: "Prakhar Jaiswal",
+    college: "NMIMS MPSTME Shirpur",
+    year: 2,
     major: "Computer Science",
     githubVerified: true,
     reputation: 1420,
     commitsThisWeek: 34,
     commitsChangePercent: 12,
-    topLanguage: "TypeScript",
+    topLanguage: "Python",
     topLanguagePercent: 64,
     joinedDate: "2024-08-15",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=arjun_dev",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=prkhr_exists",
   },
   {
     id: "u2",
@@ -32,7 +32,7 @@ export const mockUsers = [
     topLanguage: "Python",
     topLanguagePercent: 72,
     joinedDate: "2024-06-01",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=priya_builds",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=priya_builds",
   },
   {
     id: "u3",
@@ -48,7 +48,7 @@ export const mockUsers = [
     topLanguage: "Python",
     topLanguagePercent: 89,
     joinedDate: "2025-01-10",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=rohan_ml",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=rohan_ml",
   },
   {
     id: "u4",
@@ -64,7 +64,7 @@ export const mockUsers = [
     topLanguage: "JavaScript",
     topLanguagePercent: 58,
     joinedDate: "2024-09-20",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=divya_fs",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=divya_fs",
   },
   {
     id: "u5",
@@ -80,7 +80,7 @@ export const mockUsers = [
     topLanguage: "Go",
     topLanguagePercent: 47,
     joinedDate: "2024-03-05",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=karan_hacks",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=karan_hacks",
   },
   {
     id: "u6",
@@ -96,7 +96,23 @@ export const mockUsers = [
     topLanguage: "Java",
     topLanguagePercent: 70,
     joinedDate: "2025-03-18",
-    avatarUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=sneha_404",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=sneha_404",
+  },
+  {
+    id: "u7",
+    username: "arjun_dev",
+    name: "Arjun Sharma",
+    college: "NIT Trichy",
+    year: 3,
+    major: "Computer Science",
+    githubVerified: true,
+    reputation: 1420,
+    commitsThisWeek: 34,
+    commitsChangePercent: 12,
+    topLanguage: "TypeScript",
+    topLanguagePercent: 64,
+    joinedDate: "2024-08-15",
+    avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=arjun_dev",
   },
 ];
 
@@ -123,7 +139,7 @@ const isValid = validateWebhookSignature(body, signature, process.env.RAZORPAY_W
 The secret is correct (copy-pasted from dashboard). Tried with both \`req.text()\`
 and \`req.json()\` — same result. Any idea what's going wrong?`,
     tags: ["next.js", "razorpay", "payments", "webhook", "app-router"],
-    authorId: "u1",
+    authorId: "u7",
     createdAt: "2025-08-10T09:14:00Z",
     commitsThisMonth: 47,
     commentCount: 6,
@@ -200,7 +216,7 @@ Things I tried:
 
 Still broken. Is this a Vercel region thing? My PlanetScale DB is in AWS ap-south-1.`,
     tags: ["prisma", "planetscale", "vercel", "mysql", "deployment"],
-    authorId: "u1",
+    authorId: "u7",
     createdAt: "2025-08-08T11:00:00Z",
     commitsThisMonth: 29,
     commentCount: 9,
@@ -328,6 +344,71 @@ Not monetizing — sharing freely with teacher communities. DM if you want the l
     likeCount: 143,
     saved: false,
   },
+  {
+    id: "a10",
+    type: "build_log",
+    title: "Built FORGE — Autonomous Career Intelligence Platform (Multi-Agent AI)",
+    details: `I developed FORGE, a multi-agent AI system for resume analysis and career recommendations.
+
+**Key Features:**
+- Automated ATS optimization using GitHub verification and job-description matching.
+- Built using Python, LLMs, GitHub REST API, and Streamlit.
+- Uses a RAG architecture with LangChain for deep insights.
+
+The system significantly reduces the time taken to optimize resumes for specific job descriptions while verifying skills directly from GitHub commits. Open to feedback on the multi-agent orchestration!`,
+    tags: ["python", "llms", "streamlit", "multi-agent", "build-log"],
+    authorId: "u1",
+    createdAt: "2025-08-10T09:14:00Z",
+    commitsThisMonth: 47,
+    commentCount: 6,
+    likeCount: 23,
+    saved: false,
+  },
+  {
+    id: "a11",
+    type: "teammate",
+    title: "Looking for 1 Embedded Systems dev for Autonomous Drone Infrastructure Inspection System",
+    details: `Our team is finalizing an autonomous drone pipeline for real-time infrastructure defect detection, and we need someone with strong embedded systems experience.
+
+**Stack:**
+- ROS 2 & Docker for the drone software stack
+- YOLOv8s for real-time defect detection
+- FastAPI for the backend services
+- Next.js for the live mission dashboard
+
+**Your Role:**
+Help us optimize the hardware-software integration on the drone side. Experience with Pixhawk, ArduPilot, or similar flight controllers is highly preferred. 
+
+DM if you have experience with ROS 2 and hardware!`,
+    tags: ["ros2", "yolov8", "fastapi", "next.js", "docker", "teammate"],
+    authorId: "u1",
+    createdAt: "2025-08-08T11:00:00Z",
+    commitsThisMonth: 29,
+    commentCount: 9,
+    likeCount: 18,
+    saved: false,
+  },
+  {
+    id: "a12",
+    type: "help",
+    title: "YOLOv8 latency spikes on edge device — RESQ LIVE OPS (Real-Time AI Perception System)",
+    details: `I'm integrating Gemini AI and YOLOv8 for real-time incident summaries and operational decision support on an edge device (Jetson Nano).
+
+**Tech Stack:**
+- YOLOv8 for object detection
+- Python & OpenCV for video stream processing
+- Streamlit for the operational interface
+- Gemini AI for real-time context and incident summaries
+
+I've managed to optimize the YOLOv8 inference, reducing latency by 40%, but I'm still seeing occasional latency spikes that disrupt the real-time feed. Has anyone successfully deployed YOLOv8 on a Jetson Nano without these hiccups? Would love some advice on TensorRT optimization.`,
+    tags: ["yolov8", "python", "opencv", "gemini-ai", "streamlit", "help"],
+    authorId: "u1",
+    createdAt: "2025-08-04T08:30:00Z",
+    commitsThisMonth: 7,
+    commentCount: 11,
+    likeCount: 34,
+    saved: false,
+  }
 ];
 
 // ─────────────────────────────────────────────────────────────

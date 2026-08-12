@@ -9,7 +9,7 @@ import {
   ArrowRight,
   ChevronLeft,
 } from "lucide-react";
-import { getUserByUsername, getAsks } from "../data/mockDb";
+import { getUserByUsername, getAsks } from "../data/db";
 import { formatRelativeTime, formatMonthYear } from "../utils/time";
 
 function GithubIcon({ size = 13, className = "" }) {

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getAsks, getStats } from "../data/mockDb";
+import { getAsks } from "../data/db";
 import AskCard from "../components/AskCard";
+import { isCollegeEmail } from "../context/AuthContext";
 
 // ─────────────────────────────────────────────────────────────
 //  Arrow icon (inline SVG)
@@ -27,242 +28,230 @@ function ArrowRight({ size = 16 }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Stat block — used in the stats strip
-// ─────────────────────────────────────────────────────────────
-function StatBlock({ value, label, cellClass = "" }) {
-  return (
-    <div className={`flex flex-col items-center gap-1 px-6 py-5 ${cellClass}`}>
-      {/* Big orange number — display/serif face at large size */}
-      <span
-        className="font-display font-black tabular-nums leading-none"
-        style={{ color: "#E8542A", fontSize: "clamp(2rem, 4vw, 3rem)" }}
-      >
-        {value.toLocaleString("en-IN")}
-      </span>
-      {/* Monospace uppercase label */}
-      <span className="font-mono text-[10px] tracking-[0.12em] uppercase text-cy-ink mt-1">
-        {label}
-      </span>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────
-//  Home page
+//  Home page (Strict 100vh Split Layout)
 // ─────────────────────────────────────────────────────────────
 export default function Home() {
-  const { login } = useAuth();
+  const { signInWithEmail, signInAsGuest, isLoggedIn } = useAuth();
   const navigate = useNavigate();
+
+  // Once logged in (via guest or email), send to /board
+  useEffect(() => {
+    if (isLoggedIn) navigate("/board", { replace: true });
+  }, [isLoggedIn, navigate]);
 
   const [previewAsks, setPreviewAsks] = useState([]);
   const [asksLoading, setAsksLoading] = useState(true);
-  const [stats, setStats] = useState(null);
-  const [statsLoading, setStatsLoading] = useState(true);
+
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   // Fetch board preview (first 3 asks)
   useEffect(() => {
     let cancelled = false;
     setAsksLoading(true);
     getAsks().then((all) => {
-      if (!cancelled) { setPreviewAsks(all.slice(0, 3)); setAsksLoading(false); }
+      if (!cancelled) {
+        setPreviewAsks(all.slice(0, 3));
+        setAsksLoading(false);
+      }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  // Fetch platform stats
-  useEffect(() => {
-    let cancelled = false;
-    setStatsLoading(true);
-    getStats().then((s) => {
-      if (!cancelled) { setStats(s); setStatsLoading(false); }
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  function handleSignIn() {
-    login();
-    navigate("/board");
+  async function handleSendMagicLink(e) {
+    e.preventDefault();
+    setEmailError("");
+    if (!isCollegeEmail(email)) {
+      setEmailError("Must be an allowed college email (.ac.in, .edu, etc).");
+      return;
+    }
+    try {
+      await signInWithEmail(email);
+      setEmailSent(true);
+    } catch (err) {
+      setEmailError(err.message || "Failed to send link.");
+    }
   }
 
   return (
-    <div className="bg-cy-bg min-h-screen flex flex-col">
+    <div
+      className="bg-cy-bg w-full overflow-hidden flex flex-col md:flex-row"
+      style={{ height: "calc(100vh - 65px)" }}
+    >
 
       {/* ══════════════════════════════════════════════════════════
-          1. HERO SECTION
-          Two-column on desktop: left=copy, right=board preview
+          LEFT COLUMN: 55% Desktop, 100% Mobile (Centered)
           ══════════════════════════════════════════════════════════ */}
       <section
-        className="max-w-6xl mx-auto w-full px-6 pt-16 pb-12
-                   grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-12 items-start"
+        className="w-full md:w-[55%] h-full flex flex-col justify-center px-8 md:px-12 lg:px-20 overflow-y-auto"
         aria-labelledby="hero-heading"
       >
+        <div className="flex flex-col gap-7 w-full max-w-xl mx-auto md:mx-0 py-12 md:py-0">
 
-        {/* ── LEFT: Hero copy ─────────────────────────────────── */}
-        <div className="flex flex-col gap-7">
-
-          {/* Eyebrow badge */}
+          {/* Eyebrow badge - Brutalist shadow */}
           <span
             className="font-mono text-xs tracking-[0.14em] uppercase
-                       border border-cy-ink px-3 py-1.5 w-fit text-cy-ink"
+                       border-2 border-cy-ink bg-cy-bg px-3 py-1.5 w-fit text-cy-ink
+                       shadow-[4px_4px_0px_0px_rgba(17,17,17,1)]"
           >
             For Indian College Student Builders
           </span>
 
-          {/* H1 — display serif, very large, tight leading */}
+          {/* H1 — display serif */}
           <h1
             id="hero-heading"
             className="font-display font-black text-cy-ink leading-[1.02] tracking-tight"
-            style={{ fontSize: "clamp(2.8rem, 6vw, 5.25rem)" }}
+            style={{ fontSize: "clamp(2.8rem, 5vw, 4.5rem)" }}
           >
             Post what you're actually
             <br />
             {/* "stuck" gets the orange underline accent */}
-            <span className="relative inline-block">
+            <span className="relative inline-block mt-1">
               <span className="relative z-10">stuck</span>
               {/* Orange underline — absolutely positioned thick rule */}
               <span
                 aria-hidden="true"
-                className="absolute left-0 right-0 bottom-0"
-                style={{
-                  height: "4px",
-                  backgroundColor: "#E8542A",
-                  bottom: "4px",
-                }}
+                className="absolute left-0 right-0 bottom-1 h-3 bg-cy-orange"
               />
             </span>
             {" on."}
           </h1>
 
-          {/* Subheadline — monospace, large */}
+          {/* Subheadline — monospace */}
           <p className="font-mono text-xl text-cy-ink leading-snug">
             Someone will actually answer.
           </p>
 
-          {/* Body description — sans, muted, narrow measure */}
-          <p
-            className="font-sans text-base text-cy-muted leading-relaxed"
-            style={{ maxWidth: "42ch" }}
-          >
+          {/* Body description */}
+          <p className="font-sans text-base text-cy-muted leading-relaxed">
             CrewYard helps student builders get real help and find real teammates —
             verified by GitHub activity, not follower counts. Ask a technical
             question, post a teammate request, or ship a build log.
           </p>
 
-          {/* CTA button */}
-          <button
-            id="hero-sign-in-btn"
-            onClick={handleSignIn}
-            className="btn-primary flex items-center gap-3 w-fit
-                       text-sm tracking-[0.08em] uppercase
-                       hover:-translate-y-px active:translate-y-0 transition-transform"
-          >
-            Sign in
-            <ArrowRight size={15} />
-          </button>
-        </div>
-
-        {/* ── RIGHT: Live board preview cards ─────────────────── */}
-        <aside aria-label="Live board preview" className="flex flex-col gap-3">
-          {asksLoading ? (
-            <p className="font-mono text-xs text-cy-muted">Loading board…</p>
-          ) : (
-            /* Cards cascade: top card is most-right, last is flush-left */
-            <ul className="flex flex-col gap-3">
-              {previewAsks.map((ask, i) => (
-                <li
-                  key={ask.id}
-                  style={{ marginLeft: i === 0 ? "2.5rem" : i === 1 ? "1.25rem" : "0" }}
+          {/* CTA button / Inline Form */}
+          <div className="relative mt-2">
+            {!showSignIn ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                <button
+                  id="hero-sign-in-btn"
+                  onClick={() => setShowSignIn(true)}
+                  className="btn-primary flex items-center gap-3 w-fit
+                             text-sm tracking-[0.08em] uppercase
+                             border-2 border-cy-ink bg-cy-ink text-white px-5 py-3
+                             shadow-[6px_6px_0px_0px_rgba(17,17,17,1)]
+                             hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_0px_rgba(17,17,17,1)]
+                             active:translate-x-1.5 active:translate-y-1.5 active:shadow-none transition-all"
                 >
-                  <AskCard ask={ask} asArticle />
-                </li>
-              ))}
-            </ul>
-          )}
-        </aside>
+                  Sign in
+                  <ArrowRight size={15} />
+                </button>
+
+                <button
+                  onClick={() => signInAsGuest()}
+                  className="font-mono text-xs text-cy-ink tracking-[0.06em] uppercase
+                             border-b-2 border-cy-orange pb-px hover:text-cy-orange transition-colors mt-2 sm:mt-0"
+                >
+                  → Try as Guest
+                </button>
+              </div>
+            ) : emailSent ? (
+              <div className="font-mono text-xs text-cy-ink tracking-[0.06em] uppercase border-2 border-cy-ink px-4 py-3 bg-cy-bg w-fit shadow-[6px_6px_0px_0px_rgba(17,17,17,1)]">
+                Check your email for the magic link.
+              </div>
+            ) : (
+              <form onSubmit={handleSendMagicLink} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div className="relative w-full sm:w-64">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailError) setEmailError("");
+                    }}
+                    placeholder="College email..."
+                    className="bg-cy-bg font-mono text-sm text-cy-ink px-4 py-3 w-full border-2 border-cy-ink focus:outline-none focus:border-cy-orange shadow-[4px_4px_0px_0px_rgba(17,17,17,1)] transition-colors"
+                    autoFocus
+                  />
+                  {emailError && (
+                    <p className="absolute top-full left-0 mt-3 font-mono text-[10px] text-cy-orange whitespace-nowrap bg-cy-bg z-10 p-1.5 border-2 border-cy-orange shadow-[2px_2px_0px_0px_rgba(232,84,42,1)]">
+                      {emailError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="submit"
+                    className="btn-primary flex items-center gap-2
+                               font-mono text-xs font-bold tracking-[0.08em] uppercase px-4 py-3 shrink-0
+                               border-2 border-cy-ink bg-cy-ink text-white
+                               shadow-[4px_4px_0px_0px_rgba(17,17,17,1)]
+                               hover:translate-x-px hover:translate-y-px hover:shadow-[3px_3px_0px_0px_rgba(17,17,17,1)]
+                               active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+                  >
+                    Send
+                    <ArrowRight size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSignIn(false)}
+                    className="font-mono text-xs uppercase text-cy-muted hover:text-cy-ink px-2 py-3"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          2. STATS STRIP
-          Full-width, thick top+bottom borders, orange numbers
+          RIGHT COLUMN: 45% Desktop, hidden on Mobile
+          Cascading, overlapping layout for AskCards
           ══════════════════════════════════════════════════════════ */}
-      <section
-        aria-labelledby="stats-heading"
-        className="border-t-2 border-b-2 border-cy-ink bg-cy-bg mt-auto"
+      <aside
+        aria-label="Live board preview"
+        className="hidden md:flex w-[45%] h-full relative items-center justify-center bg-cy-bg border-l-2 border-cy-ink overflow-hidden p-8"
       >
-        <h2 id="stats-heading" className="sr-only">Platform Stats</h2>
+        {/* Dot pattern background for extra texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: 'radial-gradient(#111 1.5px, transparent 1.5px)',
+            backgroundSize: '32px 32px'
+          }}
+        />
 
-        {statsLoading || !stats ? (
-          <p className="font-mono text-xs text-cy-muted text-center py-6">
-            Loading stats…
-          </p>
+        {asksLoading ? (
+          <p className="font-mono text-xs text-cy-muted">Loading board…</p>
         ) : (
-          /*
-           * Responsive grid:
-           *   Mobile  → 2-col × 2-row  (2×2)
-           *   Desktop → 4-col + GitHub (4+1 cells)
-           * Borders are per-cell so they work in both grid and flex contexts.
-           */
-          <div className="grid grid-cols-2 md:flex md:flex-wrap">
+          <ul className="relative w-full max-w-3xl h-[700px] flex items-center justify-center">
+            {previewAsks.map((ask, i) => {
+              // Asymmetric, overlapping cascade positioning
+              const transforms = [
+                "absolute top-[8%] left-[10%] -rotate-6 z-10 w-[300px] lg:w-[360px]",
+                "absolute top-[35%] right-[10%] rotate-3 z-20 w-[300px] lg:w-[360px]",
+                "absolute bottom-[10%] left-[25%] -rotate-2 z-30 w-[300px] lg:w-[360px]"
+              ];
 
-            {/* Cell 1 — right + bottom borders on mobile; right only on md */}
-            <StatBlock
-              value={stats.activeBuilders}
-              label="Active Builders"
-              cellClass="border-r-2 border-b-2 md:border-b-0 border-cy-ink"
-            />
-
-            {/* Cell 2 — bottom border on mobile; right on md */}
-            <StatBlock
-              value={stats.questionsAnswered}
-              label="Questions Answered"
-              cellClass="border-b-2 md:border-r-2 md:border-b-0 border-cy-ink"
-            />
-
-            {/* Cell 3 — right border only (last row on mobile) */}
-            <StatBlock
-              value={stats.teamsFormed}
-              label="Teams Formed"
-              cellClass="border-r-2 md:border-r-2 border-cy-ink"
-            />
-
-            {/* Cell 4 — no bottom border (last row on mobile); right on md */}
-            <StatBlock
-              value={stats.collegesCount}
-              label="Colleges"
-              cellClass="md:border-r-2 border-cy-ink"
-            />
-
-            {/* Cell 5 — GitHub Verified: full-width on mobile, auto on md */}
-            <div
-              className="col-span-2 md:col-span-1 md:flex-1
-                         flex flex-col items-center justify-center gap-1.5
-                         px-6 py-5 border-t-2 md:border-t-0 border-cy-ink"
-            >
-              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor"
-                width="22" height="22" className="text-cy-ink">
-                <path fillRule="evenodd" clipRule="evenodd"
-                  d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839
-                     9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608
-                     1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088
-                     2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951
-                     0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65
-                     0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110
-                     4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027
-                     2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595
-                     1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678
-                     1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019
-                     10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" />
-              </svg>
-              <span className="font-mono text-xs font-bold tracking-[0.1em] uppercase text-cy-ink">
-                GitHub Verified
-              </span>
-              <span className="font-mono text-[10px] text-cy-muted">
-                All activity is real
-              </span>
-            </div>
-          </div>
+              return (
+                <li
+                  key={ask.id}
+                  className={`transition-all duration-300 hover:z-40 hover:scale-105 shadow-[12px_12px_0px_0px_rgba(17,17,17,1)] ${transforms[i] || "hidden"}`}
+                >
+                  <AskCard ask={ask} asArticle />
+                </li>
+              );
+            })}
+          </ul>
         )}
-      </section>
+      </aside>
 
     </div>
   );

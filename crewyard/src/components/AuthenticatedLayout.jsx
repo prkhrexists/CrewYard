@@ -7,38 +7,50 @@ import AppSidebar from "./AppSidebar";
 /**
  * AuthenticatedLayout — protects all logged-in routes.
  *
- * Holds the mobileNavOpen boolean that coordinates the hamburger
- * in AppNav with the slide-out drawer in AppSidebar.
+ * Layout (CSS):
+ *   div.h-screen.flex-col          ← fills viewport, no scroll
+ *     AppNav (shrink-0)            ← fixed height, never pushes out
+ *     div.flex.flex-1.overflow-hidden  ← remaining height, clips sidebar+main
+ *       AppSidebar (h-full)        ← fills its column, scrolls internally
+ *       main (flex-1, overflow-y-auto) ← only this scrolls
  *
- * Layout:
- *   ┌─────────────────────────────────────┐
- *   │  AppNav  (sticky, full-width)       │
- *   ├────────┬────────────────────────────┤
- *   │Sidebar │  <Outlet /> (page content) │
- *   └────────┴────────────────────────────┘
- *   On mobile the sidebar collapses; hamburger in AppNav opens the drawer.
+ * This is the correct pattern: do NOT use sticky on sidebar, do NOT use
+ * overflow-hidden on the parent div if sidebar needs sticky — instead just
+ * fix the total height so there's nothing to scroll past.
  */
 export default function AuthenticatedLayout() {
-  const { isLoggedIn }          = useAuth();
+  const { user, loading, needsProfileSetup } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  if (!isLoggedIn) return <Navigate to="/" replace />;
+  if (loading) {
+    return (
+      <div className="h-screen bg-cy-bg flex items-center justify-center">
+        <p className="font-mono text-xs text-cy-muted">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/" replace />;
+  if (needsProfileSetup) return <Navigate to="/complete-profile" replace />;
 
   return (
-    <div className="min-h-screen flex flex-col bg-cy-bg">
-      {/* Sticky top nav — receives menu-open callback */}
+    // h-screen + flex-col: total height is exactly the viewport. Nothing overflows here.
+    <div className="h-screen flex flex-col bg-cy-bg overflow-hidden">
+      {/* Sticky top nav — shrink-0 so it never grows/shrinks */}
       <AppNav onMenuClick={() => setMobileNavOpen(true)} />
 
-      {/* Body row: sidebar (static on desktop / drawer on mobile) + page */}
+      {/* Body row: flex-1 takes remaining height, overflow-hidden clips children */}
       <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar: h-full keeps it pinned, overflow-y-auto lets IT scroll internally */}
         <AppSidebar
           mobileOpen={mobileNavOpen}
           onClose={() => setMobileNavOpen(false)}
         />
 
+        {/* Main content: flex-1 + overflow-y-auto = only this column scrolls */}
         <main
           id="main-content"
-          className="flex-1 overflow-y-auto p-6 md:p-8 bg-cy-bg"
+          className="flex-1 overflow-y-auto p-6 md:p-8 bg-cy-bg h-full"
         >
           <Outlet />
         </main>
@@ -46,3 +58,4 @@ export default function AuthenticatedLayout() {
     </div>
   );
 }
+

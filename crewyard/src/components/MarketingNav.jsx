@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, isCollegeEmail } from "../context/AuthContext";
 
 /* ── Inline SVG: magnifying glass ─────────────────────────────── */
 function SearchIcon() {
@@ -31,13 +31,32 @@ const NAV_LINKS = [
 ];
 
 export default function MarketingNav() {
-  const { login } = useAuth();
+  const { signInWithEmail, signInAsGuest, isDemoMode, isLoggedIn } = useAuth();
   const navigate  = useNavigate();
   const [query, setQuery] = useState("");
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
-  function handleSignIn() {
-    login();
-    navigate("/board");
+  // Navigate to /board once auth state is committed (after guest or magic-link login)
+  useEffect(() => {
+    if (isLoggedIn) navigate("/board", { replace: true });
+  }, [isLoggedIn, navigate]);
+
+  async function handleSendMagicLink(e) {
+    e.preventDefault();
+    setEmailError("");
+    if (!isCollegeEmail(email)) {
+      setEmailError("Must be an allowed college email (.ac.in, .edu, etc).");
+      return;
+    }
+    try {
+      await signInWithEmail(email);
+      setEmailSent(true);
+    } catch (err) {
+      setEmailError(err.message || "Failed to send link.");
+    }
   }
 
   return (
@@ -91,7 +110,7 @@ export default function MarketingNav() {
         <div className="flex-1" />
 
         {/* ── Search ────────────────────────────────────────────── */}
-        <div className="hidden sm:flex items-center border border-cy-ink bg-cy-bg px-3 h-9 gap-2 w-56">
+        <div className="hidden sm:flex items-center border border-cy-ink bg-cy-bg px-3 h-9 gap-2 w-56 lg:min-w-[280px]">
           <SearchIcon />
           <label className="sr-only" htmlFor="marketing-search">Search</label>
           <input
@@ -108,14 +127,70 @@ export default function MarketingNav() {
         </div>
 
         {/* ── Sign In ───────────────────────────────────────────── */}
-        <button
-          id="marketing-sign-in-btn"
-          onClick={handleSignIn}
-          className="btn-primary font-mono text-xs font-bold tracking-[0.1em] uppercase
-                     px-5 py-2.5 shrink-0"
-        >
-          SIGN IN
-        </button>
+        <div className="relative flex items-center shrink-0">
+          {!showSignIn ? (
+            <div className="flex items-center gap-3">
+              {isDemoMode && (
+                <button
+                  onClick={() => signInAsGuest()}
+                  className="font-mono text-[10px] font-bold text-cy-orange tracking-[0.06em] uppercase
+                             border-b border-cy-orange hover:opacity-70 transition-opacity"
+                >
+                  → Guest Mode
+                </button>
+              )}
+              <button
+                id="marketing-sign-in-btn"
+                onClick={() => setShowSignIn(true)}
+                className="btn-primary font-mono text-xs font-bold tracking-[0.1em] uppercase
+                           px-5 py-2.5 shrink-0"
+              >
+                SIGN IN
+              </button>
+            </div>
+          ) : emailSent ? (
+            <div className="font-mono text-[10px] text-cy-ink tracking-[0.06em] uppercase border border-cy-ink px-4 py-2 bg-cy-bg">
+              Check your email for the magic link.
+            </div>
+          ) : (
+            <form onSubmit={handleSendMagicLink} className="flex items-center gap-2 relative">
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailError) setEmailError("");
+                  }}
+                  placeholder="College email..."
+                  className="bg-cy-bg font-mono text-xs text-cy-ink px-3 py-2 w-48"
+                  style={{ border: "1.5px solid #111111", borderRadius: 0, outline: "none" }}
+                  onFocus={(e) => { e.target.style.borderColor = emailError ? "#E8542A" : "#111111"; }}
+                  onBlur={(e) => { e.target.style.borderColor = emailError ? "#E8542A" : "#111111"; }}
+                  autoFocus
+                />
+                {emailError && (
+                  <p className="absolute top-full left-0 mt-1 font-mono text-[9px] text-cy-orange whitespace-nowrap bg-cy-bg z-10 p-1 border border-cy-orange">
+                    {emailError}
+                  </p>
+                )}
+              </div>
+              <button
+                type="submit"
+                className="btn-primary font-mono text-xs font-bold tracking-[0.05em] uppercase px-3 py-2 shrink-0"
+              >
+                Send Link
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowSignIn(false)}
+                className="font-mono text-xs uppercase text-cy-muted hover:text-cy-ink ml-1 px-2 py-2"
+              >
+                Cancel
+              </button>
+            </form>
+          )}
+        </div>
       </nav>
     </header>
   );

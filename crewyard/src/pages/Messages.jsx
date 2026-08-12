@@ -80,7 +80,7 @@ function Avatar({ seed, name, size = "sm" }) {
                     bg-cy-ink flex items-center justify-center shrink-0`}
          aria-hidden="true">
       <img
-        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`}
+        src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`}
         alt={name}
         className="w-full h-full object-cover"
         onError={(e) => { e.target.style.display = "none"; }}

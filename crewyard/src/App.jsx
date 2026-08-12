@@ -9,6 +9,7 @@ import Search from "./pages/Search";
 import Groups from "./pages/Groups";
 import BuildLogs from "./pages/BuildLogs";
 import Messages from "./pages/Messages";
+import CompleteProfile from "./pages/CompleteProfile";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
         </Route>
+
+        <Route path="/complete-profile" element={<CompleteProfile />} />
 
         {/* ── Protected routes (AppNav + AppSidebar) ────────── */}
         <Route element={<AuthenticatedLayout />}>

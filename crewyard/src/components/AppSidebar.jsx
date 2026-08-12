@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { X, LayoutGrid, Search, Hash, MessageCircle, FileText,
+import { X, LayoutGrid, Hash, MessageCircle, FileText,
          Plus, Bookmark, Info, HelpCircle } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 // ─────────────────────────────────────────────────────────────
 //  Link group configs
 // ─────────────────────────────────────────────────────────────
 const MAIN_LINKS = [
   { label: "BOARD",      to: "/board",      Icon: LayoutGrid    },
-  { label: "SEARCH",     to: "/search",     Icon: Search        },
   { label: "GROUPS",     to: "/groups",     Icon: Hash          },
   { label: "MESSAGES",   to: "/messages",   Icon: MessageCircle },
   { label: "BUILD_LOGS", to: "/build-logs", Icon: FileText      },
@@ -37,22 +37,22 @@ function SidebarLink({ to, label, Icon, primary = false, onClose }) {
       <Link
         to={to}
         aria-current={isActive ? "page" : undefined}
-        onClick={onClose}          // close mobile drawer on nav
+        onClick={onClose}
         className={[
-          "flex items-center gap-3 px-3 py-2 transition-colors duration-150 group",
+          "flex items-center gap-3 px-4 py-2.5 transition-colors duration-150 group",
           isActive && !primary ? "bg-cy-ink/5" : "",
           !isOrange ? "hover:bg-cy-ink/5" : "",
         ].join(" ")}
       >
         <Icon
-          size={14}
+          size={16}
           strokeWidth={isOrange ? 2.5 : 1.75}
           className={isOrange
             ? "text-cy-orange"
             : "text-cy-ink opacity-50 group-hover:opacity-100 transition-opacity duration-150"}
         />
         <span className={[
-          "font-mono text-[11px] tracking-[0.08em] transition-colors duration-150",
+          "font-mono text-[13px] tracking-[0.06em] transition-colors duration-150",
           isOrange
             ? "text-cy-orange font-bold"
             : "text-cy-ink opacity-70 group-hover:opacity-100",
@@ -66,7 +66,7 @@ function SidebarLink({ to, label, Icon, primary = false, onClose }) {
 
 function SectionLabel({ id, children }) {
   return (
-    <p id={id} className="px-3 mb-1 font-mono text-[9px] tracking-[0.18em] uppercase text-cy-muted">
+    <p id={id} className="px-4 mb-1.5 font-mono text-[10px] tracking-[0.18em] uppercase text-cy-muted">
       {children}
     </p>
   );
@@ -75,7 +75,13 @@ function SectionLabel({ id, children }) {
 // ─────────────────────────────────────────────────────────────
 //  Inner content — shared between desktop static + mobile drawer
 // ─────────────────────────────────────────────────────────────
+function getInitials(name = "") {
+  return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+}
+
 function SidebarContent({ onClose, showCloseButton = false }) {
+  const { profile, signOut } = useAuth();
+
   return (
     <div className="flex flex-col flex-1 py-5 overflow-y-auto">
 
@@ -120,18 +126,60 @@ function SidebarContent({ onClose, showCloseButton = false }) {
         </ul>
       </nav>
 
+      {/* User summary card */}
+      {profile && (
+        <div className="mx-3 mt-auto">
+          <div className="mx-0 mb-3 border-t border-cy-ink"
+               style={{ borderTopWidth: "1px", opacity: 0.15 }} role="separator" />
+          <div className="border-2 border-cy-ink p-3 flex items-center gap-3 shadow-[3px_3px_0px_0px_rgba(17,17,17,1)]">
+            {/* Avatar */}
+            <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border-2 border-cy-ink flex items-center justify-center bg-cy-ink">
+              {profile.avatarUrl ? (
+                <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-mono text-[10px] font-bold text-white">
+                  {getInitials(profile.name ?? "?")}
+                </span>
+              )}
+            </div>
+            {/* Info */}
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[11px] font-bold text-cy-ink truncate">
+                {profile.name ?? profile.username ?? "Builder"}
+              </p>
+              {profile.college && (
+                <p className="font-mono text-[9px] text-cy-muted truncate">{profile.college}</p>
+              )}
+              <p className="font-mono text-[9px] tracking-[0.04em] mt-0.5" style={{ color: "#E8542A" }}>
+                {(profile.reputation ?? 0).toLocaleString("en-IN")} rep
+              </p>
+            </div>
+          </div>
+          {/* Sign out */}
+          <button
+            onClick={signOut}
+            className="w-full mt-2 font-mono text-[9px] tracking-[0.1em] uppercase text-cy-muted
+                       hover:text-cy-orange transition-colors duration-150 text-left px-1 py-1"
+          >
+            → Sign out
+          </button>
+        </div>
+      )}
+
       {/* Bottom utility links */}
-      <div className="mt-auto pt-4">
-        <div className="mx-3 mb-3 border-t border-cy-ink"
-             style={{ borderTopWidth: "1px", opacity: 0.15 }} role="separator" />
-        <nav aria-label="Utility links">
-          <ul className="flex flex-col gap-0.5" role="list">
-            {BOTTOM_LINKS.map((link) => (
-              <SidebarLink key={link.to} {...link} onClose={onClose} />
-            ))}
-          </ul>
-        </nav>
-      </div>
+      {!profile && (
+        <div className="mt-auto pt-4">
+          <div className="mx-3 mb-3 border-t border-cy-ink"
+               style={{ borderTopWidth: "1px", opacity: 0.15 }} role="separator" />
+          <nav aria-label="Utility links">
+            <ul className="flex flex-col gap-0.5" role="list">
+              {BOTTOM_LINKS.map((link) => (
+                <SidebarLink key={link.to} {...link} onClose={onClose} />
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )}
     </div>
   );
 }
@@ -147,8 +195,8 @@ export default function AppSidebar({ mobileOpen = false, onClose = () => {} }) {
     <>
       {/* ── Desktop: static sidebar (md+) ───────────────── */}
       <aside
-        className="hidden md:flex flex-col w-56 border-r border-cy-ink bg-cy-bg"
-        style={{ borderRightWidth: "1.5px", minHeight: "calc(100vh - 3.5rem)" }}
+        className="hidden md:flex flex-col w-72 border-r border-cy-ink bg-cy-bg h-full overflow-y-auto shrink-0"
+        style={{ borderRightWidth: "1.5px" }}
         aria-label="Sidebar navigation"
       >
         <SidebarContent />

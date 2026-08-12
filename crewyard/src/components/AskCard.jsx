@@ -1,5 +1,6 @@
-import { mockUsers } from "../data/mockData";
+import { mockUsers } from "../data/mockData"; // fallback for PostAsk live preview only
 import { formatRelativeTime } from "../utils/time";
+import { stripMarkdownForPreview } from "../utils/text";
 
 // ─────────────────────────────────────────────────────────────
 //  Design-system constants
@@ -79,12 +80,14 @@ function GitHubIcon({ size = 12 }) {
  * and the PostAsk live preview.
  *
  * Props:
- *   ask        — the ask object from mockData / mockDb
+ *   ask        — the ask object from db.js (Supabase) or the PostAsk preview
  *   onClick    — optional; makes the card keyboard-focusable + clickable
  *   asArticle  — render root as <article> instead of <li> (default: false)
  */
 export default function AskCard({ ask, onClick, asArticle = false }) {
-  const author     = getUserById(ask.authorId);
+  // Prefer embedded author from Supabase join; fall back to mockUsers for
+  // the PostAsk live preview which doesn't go through a Supabase query.
+  const author     = ask.author ?? getUserById(ask.authorId);
   const typeLabel  = TYPE_LABELS[ask.type]  ?? ask.type?.toUpperCase();
   const typeColor  = TYPE_COLORS[ask.type]  ?? DEFAULT_COLOR;
   const timeAgo    = ask.createdAt ? formatRelativeTime(ask.createdAt) : "";
@@ -149,15 +152,9 @@ export default function AskCard({ ask, onClick, asArticle = false }) {
 
       {/* ── Description: 2-line clamp ──────────────────────── */}
       <p
-        className="font-sans text-sm text-cy-muted leading-relaxed px-4 pb-3"
-        style={{
-          display: "-webkit-box",
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
+        className="font-sans text-sm text-cy-muted leading-relaxed px-4 pb-3 line-clamp-2 overflow-hidden"
       >
-        {ask.details || <span className="italic">Details will appear here…</span>}
+        {ask.details ? stripMarkdownForPreview(ask.details) : <span className="italic">Details will appear here…</span>}
       </p>
 
       {/* ── Tags row ──────────────────────────────────────── */}

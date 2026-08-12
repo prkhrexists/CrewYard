@@ -8,7 +8,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { createAsk } from "../data/mockDb";
+import { createAsk } from "../data/db";
 import AskCard from "../components/AskCard";
 
 // ─────────────────────────────────────────────────────────────
@@ -315,10 +315,6 @@ export default function PostAsk() {
             <ul aria-label="Live ask preview">
               <AskCard ask={previewAsk} />
             </ul>
-
-            <p className="font-mono text-[10px] text-cy-muted mt-2 tracking-[0.06em]">
-              JUST NOW
-            </p>
           </section>
 
           {/* ── Tips section ─────────────────────────────────── */}

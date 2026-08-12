@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { getAsks } from "../data/mockDb";
+import { getAsks } from "../data/db";
 import AskCard from "../components/AskCard";
 
 export default function Search() {
