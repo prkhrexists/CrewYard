@@ -23,13 +23,6 @@ function SearchIcon() {
   );
 }
 
-const NAV_LINKS = [
-  { label: "BOARD",   to: "/board"   },
-  { label: "GROUPS",  to: "/groups"  },
-  { label: "EXPLORE", to: "/search"  },
-  { label: "ABOUT",   to: "/about"   },
-];
-
 export default function MarketingNav() {
   const { signInWithEmail, signInAsGuest, isDemoMode, isLoggedIn } = useAuth();
   const navigate  = useNavigate();
@@ -60,57 +53,35 @@ export default function MarketingNav() {
   }
 
   return (
-    /* 2px solid cy-ink bottom border — the heavy nav divider from the screenshot */
     <header className="bg-cy-bg border-b-2 border-cy-ink sticky top-0 z-50">
       <nav
-        className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-8"
+        className="w-full px-6 md:px-12 h-20 flex items-center gap-6"
         aria-label="Marketing navigation"
       >
 
-        {/* ── Wordmark ──────────────────────────────────────────── */}
+        {/* ── Wordmark — leftmost ────────────────────────────────── */}
         <Link
           to="/"
           aria-label="CrewYard home"
           className="flex items-baseline gap-0 shrink-0"
         >
-          {/* "CrewYard" in display/serif */}
-          <span className="font-display font-bold text-2xl text-cy-ink leading-none tracking-tight">
+          <span className="font-display font-bold text-3xl md:text-4xl text-cy-ink leading-none tracking-tight">
             CrewYard
           </span>
-          {/* Orange period — the logo mark */}
           <span
-            className="font-display font-bold text-2xl leading-none"
-            style={{ color: "#E8542A" }}
+            className="font-display font-bold text-3xl md:text-4xl leading-none"
+            style={{ color: "var(--accent)" }}
             aria-hidden="true"
           >
             .
           </span>
         </Link>
 
-        {/* ── Nav links ─────────────────────────────────────────── */}
-        <ul
-          className="hidden md:flex items-center gap-7"
-          role="list"
-          aria-label="Site sections"
-        >
-          {NAV_LINKS.map(({ label, to }) => (
-            <li key={to}>
-              <Link
-                to={to}
-                className="font-mono text-xs font-bold tracking-[0.12em] text-cy-ink
-                           opacity-80 hover:opacity-100 transition-opacity"
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        {/* ── Spacer ────────────────────────────────────────────── */}
+        {/* ── Spacer pushes everything to the right ──────────────── */}
         <div className="flex-1" />
 
         {/* ── Search ────────────────────────────────────────────── */}
-        <div className="hidden sm:flex items-center border border-cy-ink bg-cy-bg px-3 h-9 gap-2 w-56 lg:min-w-[280px]">
+        <div className="hidden sm:flex items-center border-2 border-cy-ink bg-cy-bg px-3 h-9 gap-2 w-56 lg:min-w-[260px]">
           <SearchIcon />
           <label className="sr-only" htmlFor="marketing-search">Search</label>
           <input
@@ -126,19 +97,10 @@ export default function MarketingNav() {
           />
         </div>
 
-        {/* ── Sign In ───────────────────────────────────────────── */}
+        {/* ── Sign In ───────────────────────────────── */}
         <div className="relative flex items-center shrink-0">
           {!showSignIn ? (
             <div className="flex items-center gap-3">
-              {isDemoMode && (
-                <button
-                  onClick={() => signInAsGuest()}
-                  className="font-mono text-[10px] font-bold text-cy-orange tracking-[0.06em] uppercase
-                             border-b border-cy-orange hover:opacity-70 transition-opacity"
-                >
-                  → Guest Mode
-                </button>
-              )}
               <button
                 id="marketing-sign-in-btn"
                 onClick={() => setShowSignIn(true)}
@@ -164,9 +126,9 @@ export default function MarketingNav() {
                   }}
                   placeholder="College email..."
                   className="bg-cy-bg font-mono text-xs text-cy-ink px-3 py-2 w-48"
-                  style={{ border: "1.5px solid #111111", borderRadius: 0, outline: "none" }}
-                  onFocus={(e) => { e.target.style.borderColor = emailError ? "#E8542A" : "#111111"; }}
-                  onBlur={(e) => { e.target.style.borderColor = emailError ? "#E8542A" : "#111111"; }}
+                  style={{ border: "1.5px solid var(--text)", borderRadius: 0, outline: "none" }}
+                  onFocus={(e) => { e.target.style.borderColor = emailError ? "var(--accent)" : "var(--text)"; }}
+                  onBlur={(e) => { e.target.style.borderColor = emailError ? "var(--accent)" : "var(--text)"; }}
                   autoFocus
                 />
                 {emailError && (

@@ -9,16 +9,50 @@
 /* ── Tailwind v4 entry point ──────────────────────────────────── */
 @import "tailwindcss";
 
+:root {
+  /* Colour palette (Light) */
+  --bg:            #FBF8F2;   /* warm cream */
+  --surface:       #FBF8F2;
+  --surface-2:     rgba(17,17,17,0.03);
+  --text:          #111111;
+  --text-muted:    #6B6B6B;
+  --text-light:    #FFFFFF;
+  --border:        #111111;
+  --border-subtle: rgba(17,17,17,0.2);
+  --accent:        #E8542A;
+  --shadow:        #111111;
+  
+  --cat-blue:      #2D5FE0;
+  --cat-green:     #1E8A5A;
+}
+
+[data-theme="dark"] {
+  /* Colour palette (Dark) */
+  --bg:            #111315;
+  --surface:       #17191B;
+  --surface-2:     #1D2022;
+  --text:          #F2EEE6;
+  --text-muted:    #817D76;
+  --text-light:    #FFFFFF;
+  --border:        #D0CBC1;
+  --border-subtle: #45494B;
+  --accent:        #F0522F;
+  --shadow:        #050505;
+  
+  --cat-blue:      #4677E8;
+  --cat-green:     #2D9B67;
+}
+
 /* ── Design-system tokens (replaces tailwind.config.js in v4) ─── */
 @theme {
-  /* Colour palette */
-  --color-cy-bg:     #FBF8F2;   /* warm cream — page background  */
-  --color-cy-ink:    #111111;   /* near-black — text & borders   */
-  --color-cy-orange: #E8542A;   /* primary accent / CTA          */
-  --color-cy-blue:   #2D5FE0;   /* teammate type                 */
-  --color-cy-green:  #1E8A5A;   /* build_log type                */
-  --color-cy-help:   #E8542A;   /* help type (= orange)          */
-  --color-cy-muted:  #6B6B6B;   /* secondary / meta copy         */
+  /* Colour palette mapped to CSS vars */
+  --color-cy-bg:     var(--bg);
+  --color-cy-ink:    var(--text);
+  --color-cy-orange: var(--accent);
+  --color-cy-blue:   var(--cat-blue);
+  --color-cy-green:  var(--cat-green);
+  --color-cy-help:   var(--accent);
+  --color-cy-muted:  var(--text-muted);
 
   /* Typography */
   --font-display: "Playfair Display", Georgia, ui-serif, serif;
@@ -42,9 +76,9 @@
   --border-width-4: 4px;
 
   /* Brutalist hard drop-shadows */
-  --shadow-brutal:        4px 4px 0 #111111;
-  --shadow-brutal-sm:     2px 2px 0 #111111;
-  --shadow-brutal-orange: 4px 4px 0 #E8542A;
+  --shadow-brutal:        4px 4px 0 var(--shadow);
+  --shadow-brutal-sm:     2px 2px 0 var(--shadow);
+  --shadow-brutal-orange: 4px 4px 0 var(--accent);
 }
 
 /* ── Base layer ───────────────────────────────────────────────── */
@@ -100,9 +134,9 @@
 
   /* Slim, on-brand webkit scrollbars */
   ::-webkit-scrollbar           { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track     { background: var(--color-cy-bg); }
-  ::-webkit-scrollbar-thumb     { background: rgba(17,17,17,0.25); }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(17,17,17,0.5); }
+  ::-webkit-scrollbar-track     { background: var(--bg); }
+  ::-webkit-scrollbar-thumb     { background: var(--border-subtle); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 }
 
 /* ── Utility layer — design-system helpers ────────────────────── */
@@ -153,7 +187,7 @@
   /* Primary orange CTA button */
   .btn-primary {
     background-color: var(--color-cy-orange);
-    color:            #FBF8F2;
+    color:            var(--text-light);
     border:           1.5px solid var(--color-cy-orange);
     font-family:      var(--font-mono);
     font-weight:      700;
@@ -187,6 +221,6 @@
   }
   .btn-ghost:hover {
     background-color: var(--color-cy-ink);
-    color:            #FBF8F2;
+    color:            var(--text-light);
   }
 }

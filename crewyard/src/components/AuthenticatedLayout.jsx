@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import AppNav from "./AppNav";
 import AppSidebar from "./AppSidebar";
+import PixelCat from "./PixelCat/PixelCat";
 
 /**
  * AuthenticatedLayout — protects all logged-in routes.
@@ -35,7 +36,7 @@ export default function AuthenticatedLayout() {
 
   return (
     // h-screen + flex-col: total height is exactly the viewport. Nothing overflows here.
-    <div className="h-screen flex flex-col bg-cy-bg overflow-hidden">
+    <div className="h-screen flex flex-col bg-cy-bg overflow-hidden relative">
       {/* Sticky top nav — shrink-0 so it never grows/shrinks */}
       <AppNav onMenuClick={() => setMobileNavOpen(true)} />
 
@@ -55,6 +56,7 @@ export default function AuthenticatedLayout() {
           <Outlet />
         </main>
       </div>
+      <PixelCat />
     </div>
   );
 }

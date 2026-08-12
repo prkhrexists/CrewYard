@@ -120,13 +120,13 @@ export default function CompleteProfile() {
   }
 
   // Border focus handlers for brutalist inputs
-  function onFocus(e)  { e.target.style.borderColor = "#E8542A"; }
+  function onFocus(e)  { e.target.style.borderColor = "var(--accent)"; }
   function onBlur(e, hasError) {
-    e.target.style.borderColor = hasError ? "#E8542A" : "#111111";
+    e.target.style.borderColor = hasError ? "var(--accent)" : "var(--text)";
   }
 
   const borderStyle = (hasError) => ({
-    border: hasError ? "1.5px solid #E8542A" : "1.5px solid #111111",
+    border: hasError ? "1.5px solid var(--accent)" : "1.5px solid var(--text)",
     borderRadius: 0,
     outline: "none",
   });
@@ -139,7 +139,7 @@ export default function CompleteProfile() {
         <div className="mb-8">
           {/* Wordmark */}
           <p className="font-display font-bold text-2xl text-cy-ink leading-none mb-6">
-            CrewYard<span style={{ color: "#E8542A" }}>.</span>
+            CrewYard<span style={{ color: "var(--accent)" }}>.</span>
           </p>
           <h1
             className="font-display font-black text-cy-ink leading-tight mb-2"
@@ -183,7 +183,7 @@ export default function CompleteProfile() {
               type="text"
               value={form.college}
               onChange={set("college")}
-              placeholder="e.g. NIT Trichy"
+              placeholder="e.g. Jaypee Institute"
               className={INPUT_BASE}
               style={borderStyle(!!errors.college)}
               onFocus={onFocus}

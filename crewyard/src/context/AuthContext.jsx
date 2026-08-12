@@ -58,9 +58,39 @@ const DEMO_USER = {
   commitsChangePercent: 12,
   topLanguage:          "Python",
   topLanguagePercent:   64,
-  avatarUrl:            "https://api.dicebear.com/7.x/pixel-art/svg?seed=prkhr_exists",
+  avatarUrl:            "/avatars/avatar_01.jpg",
   email:                "prkhr.exists@gmail.com",
   joinedDate:           "2024-08-15T00:00:00Z",
+  bio:                  "Building autonomous systems, AI tools and products that solve problems outside the classroom.",
+  availability:         "OPEN TO BUILD",
+  skills:               ["Python", "C++", "ROS 2", "Docker", "OpenCV", "React", "FastAPI", "PyTorch"],
+  lookingFor:           ["Embedded Systems", "ROS", "Computer Vision"],
+  lookingForDetails:    "Looking for 1 Embedded Systems builder for autonomous infrastructure inspection.",
+  building: {
+    name: "FORGE",
+    description: "Autonomous Career Intelligence Platform",
+    stack: ["MULTI-AGENT AI", "PYTHON", "LLMs"],
+    status: "BUILDING",
+    lastUpdated: "2025-08-11T10:00:00Z",
+    repoUrl: "https://github.com/prkhrexists/forge",
+    demoUrl: "https://forge.example.com"
+  },
+  projects: [
+    {
+      id: "p1",
+      name: "FORGE — Autonomous Career Intelligence Platform",
+      description: "Multi-agent AI system for resume analysis and career recommendations.",
+      stack: ["PYTHON", "LLMs", "GITHUB API", "STREAMLIT"],
+      repoUrl: "https://github.com/prkhrexists/forge",
+      demoUrl: "https://forge.example.com"
+    }
+  ],
+  reputationHistory: [
+    { id: "rh1", event: "Helpful answer marked by Arjun", points: 18, date: "2025-08-10T14:00:00Z" },
+    { id: "rh2", event: "Successful teammate collaboration", points: 25, date: "2025-08-05T10:00:00Z" },
+    { id: "rh3", event: "Build shipped", points: 40, date: "2025-08-01T10:00:00Z" },
+    { id: "rh4", event: "Build log contribution", points: 10, date: "2025-07-28T10:00:00Z" }
+  ]
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -90,6 +120,14 @@ function mapProfile(row, authUser) {
     avatarUrl:            row.avatar_url,
     joinedDate:           row.created_at,
     email:                authUser?.email ?? row.email,
+    bio:                  row.bio ?? "",
+    availability:         row.availability ?? "OPEN TO BUILD",
+    skills:               row.skills ?? [],
+    lookingFor:           row.lookingFor ?? [],
+    lookingForDetails:    row.lookingForDetails ?? "",
+    building:             row.building ?? null,
+    projects:             row.projects ?? [],
+    reputationHistory:    row.reputationHistory ?? []
   };
 }
 

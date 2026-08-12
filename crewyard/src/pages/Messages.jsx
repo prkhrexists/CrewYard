@@ -80,7 +80,7 @@ function Avatar({ seed, name, size = "sm" }) {
                     bg-cy-ink flex items-center justify-center shrink-0`}
          aria-hidden="true">
       <img
-        src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${seed}`}
+        src={`/avatars/avatar_09.jpg`}
         alt={name}
         className="w-full h-full object-cover"
         onError={(e) => { e.target.style.display = "none"; }}
@@ -106,9 +106,9 @@ function ThreadItem({ thread, isActive, onClick }) {
                    border-b border-cy-ink transition-colors duration-150"
         style={{
           borderBottomWidth: "1px",
-          backgroundColor: isActive ? "rgba(17,17,17,0.05)" : "transparent",
+          backgroundColor: isActive ? "var(--surface-2)" : "transparent",
           border: "none",
-          borderBottom: "1px solid #111111",
+          borderBottom: "1px solid var(--text)",
         }}
       >
         <Avatar seed={thread.avatarSeed} name={thread.participantName} />
@@ -140,7 +140,7 @@ function MessageBubble({ msg, isMe }) {
         className={[
           "max-w-xs font-sans text-sm px-4 py-2.5",
           isMe
-            ? "bg-cy-ink text-white"
+            ? "bg-cy-ink text-[var(--bg)]"
             : "bg-cy-bg border border-cy-ink text-cy-ink",
         ].join(" ")}
         style={{ borderWidth: isMe ? 0 : "1.5px" }}
@@ -276,9 +276,9 @@ export default function Messages() {
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder={`Message ${activeThread.participantName}…`}
                 className="flex-1 bg-cy-bg font-sans text-sm text-cy-ink px-4 py-2.5"
-                style={{ border: "1.5px solid #111111", borderRadius: 0, outline: "none" }}
-                onFocus={(e)  => { e.target.style.borderColor = "#E8542A"; }}
-                onBlur={(e)   => { e.target.style.borderColor = "#111111"; }}
+                style={{ border: "1.5px solid var(--text)", borderRadius: 0, outline: "none" }}
+                onFocus={(e)  => { e.target.style.borderColor = "var(--accent)"; }}
+                onBlur={(e)   => { e.target.style.borderColor = "var(--text)"; }}
               />
               <button
                 id="message-send-btn"

@@ -1,7 +1,36 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, Menu, Search } from "lucide-react";
+import { ChevronDown, Menu, Search, Moon, Sun } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+
+// ─────────────────────────────────────────────────────────────
+//  Theme Toggle
+// ─────────────────────────────────────────────────────────────
+function ThemeToggle() {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("crewyard-theme") || "light";
+  });
+
+  function toggleTheme() {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("crewyard-theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+  }
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="flex items-center gap-1.5 px-3 py-1.5 border-2 border-cy-ink transition-colors hover:bg-cy-ink/5"
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+    >
+      {theme === "light" ? <Moon size={12} strokeWidth={2.5} /> : <Sun size={12} strokeWidth={2.5} className="text-cy-orange" />}
+      <span className={`font-mono text-[10px] font-bold tracking-[0.1em] uppercase ${theme === "dark" ? "text-cy-orange" : "text-cy-ink"}`}>
+        {theme === "light" ? "DARK" : "LIGHT"}
+      </span>
+    </button>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────
 //  Helpers
@@ -73,7 +102,7 @@ function AvatarMenu({ user, onLogout }) {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-4 py-2.5 font-mono text-xs
                        tracking-[0.06em] uppercase text-cy-ink
-                       hover:bg-cy-ink hover:text-white transition-colors duration-150"
+                       hover:bg-cy-ink hover:text-[var(--bg)] transition-colors duration-150"
           >
             Profile
           </Link>
@@ -84,7 +113,7 @@ function AvatarMenu({ user, onLogout }) {
             onClick={handleLogout}
             className="w-full text-left flex items-center gap-2 px-4 py-2.5
                        font-mono text-xs tracking-[0.06em] uppercase text-cy-ink
-                       hover:bg-cy-ink hover:text-white transition-colors duration-150"
+                       hover:bg-cy-ink hover:text-[var(--bg)] transition-colors duration-150"
             style={{ border: "none", background: "transparent" }}
           >
             Log out
@@ -126,14 +155,17 @@ export default function AppNav({ onMenuClick }) {
             CREWYARD
           </span>
           <span className="font-display font-bold text-xl leading-none"
-            style={{ color: "#E8542A" }} aria-hidden="true">.</span>
+            style={{ color: "var(--accent)" }} aria-hidden="true">.</span>
         </Link>
 
         {/* Spacer pushes search + avatar to the right */}
         <div className="flex-1" />
 
+        {/* Theme Toggle */}
+        <ThemeToggle />
+
         {/* Search rectangle */}
-        <div className="relative hidden md:flex items-center mr-3">
+        <div className="relative hidden md:flex items-center mr-3 ml-2">
           <input
             id="app-nav-search"
             type="text"

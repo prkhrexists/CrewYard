@@ -2,35 +2,36 @@ import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { getAsks } from "../data/db";
 import { useAuth } from "../context/AuthContext";
+import { useCat } from "../context/CatContext";
 
 // ─────────────────────────────────────────────────────────────
 //  Constants
 // ─────────────────────────────────────────────────────────────
 const TYPE_FILTERS = [
-  { label: "ALL",       value: null,        color: "#111111" },
-  { label: "HELP",      value: "help",      color: "#E8542A" },
-  { label: "TEAMMATE",  value: "teammate",  color: "#2D5FE0" },
-  { label: "BUILD_LOG", value: "build_log", color: "#1E8A5A" },
+  { label: "ALL",       value: null,        color: "var(--text)" },
+  { label: "HELP",      value: "help",      color: "var(--accent)" },
+  { label: "TEAMMATE",  value: "teammate",  color: "var(--cat-blue)" },
+  { label: "BUILD_LOG", value: "build_log", color: "var(--cat-green)" },
 ];
 
 const TYPE_META = {
-  help:      { label: "HELP",      color: "#E8542A" },
-  teammate:  { label: "TEAMMATE",  color: "#2D5FE0" },
-  build_log: { label: "BUILD_LOG", color: "#1E8A5A" },
+  help:      { label: "HELP",      color: "var(--accent)" },
+  teammate:  { label: "TEAMMATE",  color: "var(--cat-blue)" },
+  build_log: { label: "BUILD_LOG", color: "var(--cat-green)" },
 };
 
 // Mock comments per ask for prototype
 const MOCK_COMMENTS = {
   a1: [
-    { id: "c1", author: { name: "Priya Nair", college: "BITS Pilani", avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=priya_builds" }, body: "You're using `req.text()` but Razorpay expects the raw body buffer. In Next.js App Router, make sure you're not parsing the body before verifying. Try using `Buffer.from(await req.text())` directly.", createdAt: "2025-08-10T10:20:00Z", upvotes: 18 },
-    { id: "c2", author: { name: "Karan Mehta", college: "IIIT Hyderabad", avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=karan_hacks" }, body: "Also double check that your webhook secret in `.env` doesn't have extra whitespace. Caught me off guard once.", createdAt: "2025-08-10T11:00:00Z", upvotes: 7 },
+    { id: "c1", author: { name: "Priya Nair", college: "KIIT Bhubaneswar", avatarUrl: "/avatars/avatar_02.jpg" }, body: "You're using `req.text()` but Razorpay expects the raw body buffer. In Next.js App Router, make sure you're not parsing the body before verifying. Try using `Buffer.from(await req.text())` directly.", createdAt: "2025-08-10T10:20:00Z", upvotes: 18 },
+    { id: "c2", author: { name: "Karan Mehta", college: "UPES Dehradun", avatarUrl: "/avatars/avatar_05.jpg" }, body: "Also double check that your webhook secret in `.env` doesn't have extra whitespace. Caught me off guard once.", createdAt: "2025-08-10T11:00:00Z", upvotes: 7 },
   ],
   a2: [
-    { id: "c3", author: { name: "Rohan Gupta", college: "IIT Bombay", avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=rohan_ml" }, body: "I have 1.5 yrs PyTorch + YOLO experience and can do model fine-tuning. Drop me a DM!", createdAt: "2025-08-09T15:00:00Z", upvotes: 12 },
-    { id: "c4", author: { name: "Sneha Reddy", college: "PESIT Bangalore", avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=sneha_404" }, body: "What's the timeline for final submission? Also is this open to non-NIT colleges?", createdAt: "2025-08-09T16:30:00Z", upvotes: 3 },
+    { id: "c3", author: { name: "Rohan Gupta", college: "PES University", avatarUrl: "/avatars/avatar_03.jpg" }, body: "I have 1.5 yrs PyTorch + YOLO experience and can do model fine-tuning. Drop me a DM!", createdAt: "2025-08-09T15:00:00Z", upvotes: 12 },
+    { id: "c4", author: { name: "Sneha Reddy", college: "Chandigarh University", avatarUrl: "/avatars/avatar_06.jpg" }, body: "What's the timeline for final submission? Also is this open to non-NIT colleges?", createdAt: "2025-08-09T16:30:00Z", upvotes: 3 },
   ],
   a3: [
-    { id: "c5", author: { name: "Prakhar Jaiswal", college: "NMIMS MPSTME Shirpur", avatarUrl: "https://api.dicebear.com/7.x/pixel-art/svg?seed=prkhr_exists" }, body: "The Supabase Realtime approach is underrated. I used the same pattern for a live polling app. Solid choice.", createdAt: "2025-08-07T19:00:00Z", upvotes: 22 },
+    { id: "c5", author: { name: "Prakhar Jaiswal", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_01.jpg" }, body: "The Supabase Realtime approach is underrated. I used the same pattern for a live polling app. Solid choice.", createdAt: "2025-08-07T19:00:00Z", upvotes: 22 },
   ],
 };
 
@@ -82,8 +83,8 @@ function GitHubIcon({ size = 11 }) {
 // ─────────────────────────────────────────────────────────────
 //  FeedCard
 // ─────────────────────────────────────────────────────────────
-function FeedCard({ ask, isSelected, onClick }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111111" };
+function FeedCard({ ask, isSelected, isCompact, onClick }) {
+  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
   const author  = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
 
@@ -96,69 +97,67 @@ function FeedCard({ ask, isSelected, onClick }) {
       className={[
         "group cursor-pointer transition-all duration-150 border-2",
         isSelected
-          ? "border-cy-ink bg-cy-ink/5 shadow-[6px_6px_0px_0px_#111111] -translate-y-1 -translate-x-1"
-          : "border-cy-ink bg-cy-bg hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[6px_6px_0px_0px_#111111]",
+          ? "border-cy-orange bg-cy-orange/5 shadow-[4px_4px_0px_0px_var(--accent)] -translate-y-px -translate-x-px"
+          : "border-cy-ink bg-cy-bg hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_var(--text)]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cy-orange",
       ].join(" ")}
-      style={{ borderLeftColor: meta.color, borderLeftWidth: "4px" }}
+      style={isSelected ? { borderLeftColor: "var(--accent)", borderLeftWidth: "6px" } : { borderLeftColor: meta.color, borderLeftWidth: "4px" }}
     >
-      {/* Type badge + timestamp */}
-      <div className="flex items-center justify-between px-4 pt-3 pb-2">
+      <div className={`flex items-start justify-between px-3 ${isCompact ? "pt-2 pb-1" : "pt-3 pb-2"}`}>
         <span
-          className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase text-white px-2.5 py-1"
+          className={`font-mono font-bold tracking-[0.14em] uppercase text-white ${isCompact ? "text-[8px] px-2 py-0.5" : "text-[9px] px-2.5 py-1"}`}
           style={{ backgroundColor: meta.color }}
         >
           {meta.label}
         </span>
         {timeAgo && (
-          <span className="font-mono text-[10px] text-cy-muted tracking-[0.04em]">{timeAgo}</span>
+          <span className={`font-mono text-cy-muted tracking-[0.04em] ${isCompact ? "text-[8px]" : "text-[10px]"}`}>{timeAgo}</span>
         )}
       </div>
 
-      {/* Title */}
       <h3
-        className="font-sans font-bold text-[15px] leading-snug text-cy-ink px-4 pb-2"
-        style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+        className={`font-sans font-bold leading-tight text-cy-ink px-3 ${isCompact ? "text-[12px] pb-2 line-clamp-2" : "text-[15px] pb-2 line-clamp-2"}`}
       >
         {ask.title}
       </h3>
 
-      {/* Description preview */}
-      <p className="font-sans text-sm text-cy-muted leading-relaxed px-4 pb-3 line-clamp-2">
-        {stripMarkdown(ask.details)}
-      </p>
-
-      {/* Tags */}
-      {ask.tags?.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5 px-4 pb-3">
-          {ask.tags.map((tag) => (
-            <li key={tag} className="font-mono text-[9px] tracking-[0.06em] uppercase border border-cy-ink px-2 py-0.5 text-cy-ink">
-              {tag}
-            </li>
-          ))}
-        </ul>
+      {!isCompact && (
+        <>
+          <p className="font-sans text-sm text-cy-muted leading-relaxed px-3 pb-3 line-clamp-2">
+            {stripMarkdown(ask.details)}
+          </p>
+          {ask.tags?.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5 px-3 pb-3">
+              {ask.tags.map((tag) => (
+                <li key={tag} className="font-mono text-[8px] tracking-[0.06em] uppercase border border-cy-ink px-1.5 py-0.5 text-cy-ink">
+                  {tag}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
 
-      {/* Footer */}
-      <footer className="flex items-center justify-between gap-3 px-4 py-3 border-t border-cy-ink/20">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-cy-ink flex items-center justify-center bg-cy-ink" aria-hidden="true">
-            {author?.avatarUrl
-              ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
-              : <span className="font-mono text-[8px] font-bold text-white">{getInitials(author?.name ?? "?")}</span>
-            }
+      <footer className={`flex items-center justify-between gap-3 px-3 py-2 border-t ${isSelected ? 'border-cy-orange/30' : 'border-cy-ink/20'}`}>
+        {!isCompact && (
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-cy-ink flex items-center justify-center bg-cy-ink" aria-hidden="true">
+              {author?.avatarUrl
+                ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
+                : <span className="font-mono text-[8px] font-bold text-white">{getInitials(author?.name ?? "?")}</span>
+              }
+            </div>
+            <div className="min-w-0">
+              <span className="font-mono text-[10px] font-bold text-cy-ink truncate block">{author?.name ?? "You"}</span>
+            </div>
           </div>
-          <div className="min-w-0">
-            <span className="font-mono text-[10px] font-bold text-cy-ink truncate block">{author?.name ?? "You"}</span>
-            {author?.college && <span className="font-mono text-[9px] text-cy-muted truncate block">{author.college}</span>}
-          </div>
-        </div>
-        <div className="flex items-center gap-3 shrink-0 text-cy-muted">
-          {typeof ask.commitsThisMonth === "number" && ask.commitsThisMonth > 0 && (
-            <span className="flex items-center gap-1 font-mono text-[10px]"><GitHubIcon /> {ask.commitsThisMonth}</span>
+        )}
+        <div className={`flex items-center gap-3 shrink-0 text-cy-muted ${isCompact ? "w-full justify-start" : ""}`}>
+          {!isCompact && typeof ask.commitsThisMonth === "number" && ask.commitsThisMonth > 0 && (
+            <span className="flex items-center gap-1 font-mono text-[9px]"><GitHubIcon /> {ask.commitsThisMonth}</span>
           )}
-          <span className="font-mono text-[10px]">💬 {ask.commentCount ?? 0}</span>
-          <span className="font-mono text-[10px]">▲ {ask.likeCount ?? 0}</span>
+          <span className="font-mono text-[9px]">💬 {ask.commentCount ?? 0}</span>
+          <span className="font-mono text-[9px]">▲ {ask.likeCount ?? 0}</span>
         </div>
       </footer>
     </article>
@@ -169,7 +168,7 @@ function FeedCard({ ask, isSelected, onClick }) {
 //  DetailPanel — Reddit-style post view
 // ─────────────────────────────────────────────────────────────
 function DetailPanel({ ask, onClose }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111111" };
+  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
   const author  = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
   const comments = MOCK_COMMENTS[ask.id] ?? [];
@@ -207,123 +206,179 @@ function DetailPanel({ ask, onClose }) {
 
   // Format details with basic markdown-like rendering
   const renderDetails = (text = "") => {
-    return text.split("\n").map((line, i) => {
-      if (line.startsWith("```")) return null;
+    let inCodeBlock = false;
+    let codeContent = [];
+    const elements = [];
+    
+    text.split("\n").forEach((line, i) => {
+      if (line.startsWith("```")) {
+        if (inCodeBlock) {
+          elements.push(
+            <div key={`code-${i}`} className="my-5 border-2 border-cy-ink bg-[var(--text)] p-5 text-white overflow-x-auto shadow-[4px_4px_0px_0px_var(--shadow)]">
+              <pre className="font-mono text-[13px] leading-relaxed">
+                <code>{codeContent.join("\n")}</code>
+              </pre>
+            </div>
+          );
+          codeContent = [];
+          inCodeBlock = false;
+        } else {
+          inCodeBlock = true;
+        }
+        return;
+      }
+      
+      if (inCodeBlock) {
+        codeContent.push(line);
+        return;
+      }
+      
       if (line.startsWith("**") && line.endsWith("**")) {
-        return <p key={i} className="font-sans font-bold text-sm text-cy-ink mt-3 mb-1">{line.replace(/\*\*/g, "")}</p>;
+        elements.push(<p key={i} className="font-sans font-bold text-[15px] text-cy-ink mt-5 mb-2">{line.replace(/\*\*/g, "")}</p>);
+      } else if (line.startsWith("• ") || line.startsWith("- ")) {
+        elements.push(<p key={i} className="font-sans text-[15px] text-cy-ink pl-4 leading-relaxed relative before:content-['•'] before:absolute before:left-0 before:text-cy-ink">{line.slice(2)}</p>);
+      } else if (line.trim() === "") {
+        elements.push(<div key={i} className="h-3" />);
+      } else {
+        elements.push(<p key={i} className="font-sans text-[15px] text-cy-ink leading-relaxed">{line}</p>);
       }
-      if (line.startsWith("• ") || line.startsWith("- ")) {
-        return <p key={i} className="font-sans text-sm text-cy-muted pl-3 leading-relaxed">• {line.slice(2)}</p>;
-      }
-      if (line.trim() === "") return <div key={i} className="h-2" />;
-      return <p key={i} className="font-sans text-sm text-cy-muted leading-relaxed">{line}</p>;
-    }).filter(Boolean);
+    });
+    
+    // Catch unclosed code blocks
+    if (inCodeBlock) {
+      elements.push(
+        <div key={`code-end`} className="my-5 border-2 border-cy-ink bg-[var(--text)] p-5 text-white overflow-x-auto shadow-[4px_4px_0px_0px_var(--shadow)]">
+          <pre className="font-mono text-[13px] leading-relaxed">
+            <code>{codeContent.join("\n")}</code>
+          </pre>
+        </div>
+      );
+    }
+    
+    return elements;
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden border-l-2 border-cy-ink bg-cy-bg">
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b-2 border-cy-ink shrink-0">
-        <span
-          className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase text-white px-2.5 py-1"
-          style={{ backgroundColor: meta.color }}
-        >
-          {meta.label}
-        </span>
-        <button
-          onClick={onClose}
-          className="font-mono text-xs text-cy-muted hover:text-cy-ink transition-colors"
-          style={{ background: "none", border: "none", cursor: "pointer" }}
-          aria-label="Close detail"
-        >
-          ✕ close
-        </button>
-      </div>
-
+    <div className="h-full flex flex-col overflow-hidden bg-cy-bg">
       {/* Scrollable body */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-5 pt-4 pb-6 flex flex-col gap-5">
+        <div className="px-6 lg:px-10 pt-6 pb-12 flex flex-col">
 
-          {/* Voting + Title row */}
-          <div className="flex gap-3 items-start">
-            {/* Vote column */}
-            <div className="flex flex-col items-center gap-1 pt-1 shrink-0">
-              <button
-                onClick={() => handleVote("up")}
-                className={`w-8 h-8 flex items-center justify-center border-2 text-sm font-bold transition-all
-                            ${voted === "up" ? "bg-cy-orange border-cy-orange text-white" : "border-cy-ink text-cy-ink hover:border-cy-orange hover:text-cy-orange"}`}
-                aria-label="Upvote"
-              >
-                ▲
-              </button>
-              <span className="font-mono text-sm font-bold text-cy-ink tabular-nums">{upvotes}</span>
-              <button
-                onClick={() => handleVote("down")}
-                className={`w-8 h-8 flex items-center justify-center border-2 text-sm font-bold transition-all
-                            ${voted === "down" ? "bg-cy-ink border-cy-ink text-white" : "border-cy-ink text-cy-ink hover:border-cy-ink/60"}`}
-                aria-label="Downvote"
-              >
-                ▼
-              </button>
-            </div>
-
-            {/* Title */}
-            <h2 className="font-sans font-black text-lg leading-snug text-cy-ink flex-1">
-              {ask.title}
-            </h2>
-          </div>
-
-          {/* Author row */}
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full overflow-hidden border border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
-              {author?.avatarUrl
-                ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
-                : <span className="font-mono text-[8px] font-bold text-white">{getInitials(author?.name ?? "?")}</span>
-              }
-            </div>
-            <div>
-              <span className="font-mono text-[11px] font-bold text-cy-ink">{author?.name ?? "You"}</span>
-              {author?.college && <span className="font-mono text-[10px] text-cy-muted ml-2">{author.college}</span>}
-            </div>
-            <span className="ml-auto font-mono text-[10px] text-cy-muted">{timeAgo}</span>
-          </div>
-
-          {/* Full body */}
-          <div className="border-l-2 pl-4 flex flex-col gap-0.5" style={{ borderLeftColor: meta.color }}>
-            {renderDetails(ask.details)}
-          </div>
-
-          {/* Tags */}
-          {ask.tags?.length > 0 && (
-            <ul className="flex flex-wrap gap-1.5">
-              {ask.tags.map((tag) => (
-                <li key={tag} className="font-mono text-[9px] tracking-[0.06em] uppercase border border-cy-ink px-2 py-0.5 text-cy-ink">
-                  {tag}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          {/* GitHub commits */}
-          {typeof ask.commitsThisMonth === "number" && ask.commitsThisMonth > 0 && (
-            <div className="flex items-center gap-2 font-mono text-[10px] text-cy-muted">
-              <GitHubIcon size={12} />
-              <span>{ask.commitsThisMonth} commits this month</span>
-            </div>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex items-center gap-2 border-t border-cy-ink/20 pt-4">
-            <button className="font-mono text-[10px] tracking-[0.08em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-white transition-colors">
-              💬 Reply
-            </button>
-            <button className="font-mono text-[10px] tracking-[0.08em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-white transition-colors">
-              🔗 Share
-            </button>
-            <button className="font-mono text-[10px] tracking-[0.08em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-white transition-colors">
-              🔖 Save
+          {/* Type Badge & Close Button */}
+          <div className="flex items-start justify-between mb-4">
+            <span
+              className="font-mono text-[10px] font-bold tracking-[0.14em] uppercase text-white px-3 py-1.5"
+              style={{ backgroundColor: meta.color }}
+            >
+              {meta.label}
+            </span>
+            <button
+              onClick={onClose}
+              className="font-mono text-[11px] font-bold tracking-[0.08em] text-cy-ink hover:text-cy-orange transition-colors flex items-center gap-1 bg-cy-bg border-2 border-transparent hover:border-cy-orange px-2 py-1 uppercase"
+            >
+              ✕ CLOSE
             </button>
           </div>
+
+          <div className="flex gap-4 sm:gap-6">
+            {/* Voting Column (Reddit Style) */}
+            <div className="flex flex-col items-center gap-1 pt-1 shrink-0 w-8">
+              <button onClick={() => handleVote("up")} className={`text-xl hover:text-cy-orange transition-colors leading-none ${voted === 'up' ? 'text-cy-orange' : 'text-cy-muted'}`}>▲</button>
+              <span className="font-mono text-[13px] font-bold text-cy-ink">{upvotes}</span>
+              <button onClick={() => handleVote("down")} className={`text-xl hover:text-cy-ink transition-colors leading-none ${voted === 'down' ? 'text-cy-ink' : 'text-cy-muted'}`}>▼</button>
+            </div>
+
+            {/* Content Column */}
+            <div className="flex-1 flex flex-col min-w-0">
+              {/* Title */}
+              <h2 className="font-display font-black text-2xl md:text-3xl leading-tight tracking-tight text-cy-ink mb-4 max-w-3xl">
+                {ask.title}
+              </h2>
+
+              {/* Author row & Actions */}
+              <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b-2 border-cy-ink pb-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
+                    {author?.avatarUrl
+                      ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
+                      : <span className="font-mono text-xs font-bold text-white">{getInitials(author?.name ?? "?")}</span>
+                    }
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-sans font-bold text-[14px] text-cy-ink">{author?.name ?? "You"}</span>
+                    <div className="flex items-center gap-2 font-mono text-[10px] text-cy-muted mt-0.5">
+                      {author?.college && <span>{author.college}</span>}
+                      <span>•</span>
+                      <span>{timeAgo}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action buttons (Right-aligned) */}
+                <div className="flex items-center gap-2">
+                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
+                    SAVE
+                  </button>
+                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
+                    SHARE
+                  </button>
+                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
+                    REPLY
+                  </button>
+                </div>
+              </div>
+
+              {/* Full body */}
+              <div className="flex flex-col gap-2 max-w-3xl">
+                {renderDetails(ask.details)}
+              </div>
+
+              {/* Tags */}
+              {ask.tags?.length > 0 && (
+                <ul className="flex flex-wrap gap-2 mt-6">
+                  {ask.tags.map((tag) => (
+                    <li key={tag} className="font-mono text-[10px] font-bold tracking-[0.08em] uppercase border-2 border-cy-ink px-3 py-1 text-cy-ink">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Engagement */}
+              <div className="flex items-center gap-4 font-mono text-[11px] text-cy-muted mt-6 max-w-3xl">
+                <span>{allComments.length} comments</span>
+                <span>{Math.floor(Math.random() * 5 + 1)}.{Math.floor(Math.random() * 9)}k views</span>
+              </div>
+
+              <hr className="border-t-2 border-cy-ink mt-6 mb-6 max-w-3xl" />
+
+              {/* TOP ANSWER Section */}
+              {allComments.length > 0 && (
+                <div className="flex flex-col gap-4 max-w-3xl">
+                  <div className="flex items-center gap-2 text-[var(--cat-green)]">
+                    <span className="font-mono text-[13px] font-bold">✓</span>
+                    <span className="font-mono text-[11px] font-bold tracking-[0.12em] uppercase">Top Answer</span>
+                  </div>
+                  
+                  <div className="border-2 border-[var(--cat-green)] bg-[var(--cat-green)]/5 p-5 flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(30,138,90,0.2)]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
+                        {allComments[0].author?.avatarUrl
+                          ? <img src={allComments[0].author.avatarUrl} alt={allComments[0].author.name} className="w-full h-full object-cover" />
+                          : <span className="font-mono text-[9px] font-bold text-white">{getInitials(allComments[0].author?.name ?? "?")}</span>
+                        }
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-sans font-bold text-[14px] text-cy-ink">{allComments[0].author?.name}</span>
+                        <span className="font-mono text-[10px] text-cy-muted mt-0.5">{allComments[0].author?.college}</span>
+                      </div>
+                    </div>
+                    <p className="font-sans text-[14px] text-cy-ink leading-relaxed">
+                      {allComments[0].body}
+                    </p>
+                  </div>
+                </div>
+              )}
 
           {/* Comment box */}
           <form onSubmit={handleComment} className="flex flex-col gap-2 border-t border-cy-ink/20 pt-4">
@@ -339,7 +394,7 @@ function DetailPanel({ ask, onClose }) {
             <button
               type="submit"
               className="self-end font-mono text-[10px] font-bold tracking-[0.1em] uppercase
-                         px-4 py-2 border-2 border-cy-ink bg-cy-ink text-white
+                         px-4 py-2 border-2 border-cy-ink bg-cy-ink text-[var(--bg)]
                          hover:bg-transparent hover:text-cy-ink transition-colors"
             >
               Post →
@@ -374,6 +429,8 @@ function DetailPanel({ ask, onClose }) {
               ))}
             </div>
           )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -385,12 +442,17 @@ function DetailPanel({ ask, onClose }) {
 // ─────────────────────────────────────────────────────────────
 export default function Board() {
   const { profile } = useAuth();
+  const { setContext, react } = useCat();
 
   const [allAsks,     setAllAsks]     = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [activeType,  setActiveType]  = useState(null);
   const [activeTag,   setActiveTag]   = useState(null);
   const [selectedAsk, setSelectedAsk] = useState(null);
+
+  useEffect(() => {
+    setContext({ page: 'board' });
+  }, [setContext]);
 
   useEffect(() => {
     let cancelled = false;
@@ -415,16 +477,19 @@ export default function Board() {
     });
   }, [allAsks, activeType, activeTag]);
 
+  const isDetailMode = selectedAsk !== null;
+
   return (
-    // Full-height flex row: feed left, detail panel right
-    <div className="flex gap-0 items-start h-full -m-6 md:-m-8">
-
-      {/* ── Feed column ──────────────────────────────────────── */}
-      <div className={`flex flex-col flex-1 min-w-0 h-full overflow-y-auto ${selectedAsk ? "hidden xl:flex" : "flex"}`}>
-        <div className="px-6 md:px-8 pt-6 md:pt-8 pb-0">
-
-          {/* Page header */}
-          <header className="flex items-start justify-between gap-4 flex-wrap pb-5">
+    <div className="flex h-full w-full relative overflow-hidden -m-6 md:-m-8 transition-all duration-300 ease-out bg-cy-bg">
+      
+      {/* ── Feed column (Compact or Full) ────────────────────── */}
+      <div 
+        className={`flex flex-col h-full overflow-y-auto border-cy-ink bg-cy-bg transition-all duration-300 ease-out shrink-0
+          ${isDetailMode ? "w-[250px] lg:w-[280px] border-r-2" : "w-full flex-1"}`}
+      >
+        <div className={`px-4 md:px-6 pt-6 md:pt-8 pb-0 ${isDetailMode ? "hidden" : "block"}`}>
+          {/* Detailed Header (hidden in compact mode) */}
+          <header className="flex items-start justify-between gap-4 flex-wrap pb-5 transition-opacity duration-300">
             <div>
               <h1 className="font-display font-black text-4xl text-cy-ink leading-tight">Board</h1>
               <p className="font-mono text-xs text-cy-muted mt-1 tracking-[0.04em]">
@@ -434,76 +499,86 @@ export default function Board() {
             <Link
               to="/ask/new"
               className="font-mono text-xs font-bold tracking-[0.1em] uppercase
-                         px-4 py-2.5 border-2 border-cy-ink bg-cy-ink text-white shrink-0
-                         shadow-[4px_4px_0px_0px_rgba(17,17,17,1)]
+                         px-4 py-2.5 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] shrink-0
+                         shadow-[4px_4px_0px_0px_var(--shadow)]
                          hover:translate-x-0.5 hover:translate-y-0.5
-                         hover:shadow-[2px_2px_0px_0px_rgba(17,17,17,1)]
+                         hover:shadow-[2px_2px_0px_0px_var(--shadow)]
                          active:translate-x-1 active:translate-y-1 active:shadow-none
                          transition-all flex items-center gap-2"
             >
               + Post an Ask
             </Link>
           </header>
-
-          {/* Filter bar — scrolls WITH the feed, not sticky */}
-          <section aria-labelledby="filter-heading" className="border-y-2 border-cy-ink -mx-6 md:-mx-8 px-6 md:px-8 py-3 flex flex-col gap-3 mb-6">
-            <h2 id="filter-heading" className="sr-only">Filters</h2>
-            <div className="flex items-center gap-2 flex-wrap" role="group" aria-label="Filter by type">
-              {TYPE_FILTERS.map(({ label, value, color }) => {
-                const isActive = activeType === value;
-                return (
-                  <button
-                    key={label}
-                    id={`filter-type-${label.toLowerCase()}`}
-                    onClick={() => { setActiveType(value); setActiveTag(null); }}
-                    aria-pressed={isActive}
-                    className="font-mono text-[10px] font-bold tracking-[0.12em] uppercase
-                               px-4 py-1.5 border-2 transition-all duration-150 hover:-translate-y-px"
-                    style={
-                      isActive
-                        ? { backgroundColor: value === null ? "#111111" : color, borderColor: color, color: "#ffffff", boxShadow: `3px 3px 0 0 ${color}66` }
-                        : { backgroundColor: "transparent", borderColor: color, color: color }
-                    }
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-              {!loading && (
-                <span className="ml-auto font-mono text-[9px] text-cy-muted tracking-[0.08em] uppercase">
-                  {filteredAsks.length} ask{filteredAsks.length !== 1 ? "s" : ""}
-                </span>
-              )}
-            </div>
-            {allTags.length > 0 && (
-              <ul className="flex flex-wrap gap-1.5" aria-label="Tag filters" role="list">
-                {allTags.map((tag) => {
-                  const isActive = activeTag === tag;
-                  return (
-                    <li key={tag}>
-                      <button
-                        id={`filter-tag-${tag}`}
-                        onClick={() => setActiveTag((prev) => (prev === tag ? null : tag))}
-                        aria-pressed={isActive}
-                        className="font-mono text-[9px] tracking-[0.04em] uppercase px-2 py-0.5 border transition-colors duration-150"
-                        style={
-                          isActive
-                            ? { backgroundColor: "#111111", borderColor: "#111111", color: "#FBF8F2" }
-                            : { backgroundColor: "transparent", borderColor: "#111111", color: "#111111" }
-                        }
-                      >
-                        {tag}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </section>
         </div>
 
+        {/* Compact Header (only shown in compact mode) */}
+        {isDetailMode && (
+          <div className="px-4 py-4 border-b-2 border-cy-ink bg-cy-bg sticky top-0 z-10">
+            <h2 className="font-display font-black text-xl text-cy-ink leading-tight">BOARD</h2>
+            <Link to="/ask/new" className="font-mono text-[10px] uppercase font-bold text-cy-orange mt-1 inline-block hover:underline">
+              + Post an Ask
+            </Link>
+          </div>
+        )}
+
+        {/* Filter bar */}
+        <section aria-labelledby="filter-heading" className={`border-b-2 border-cy-ink px-4 md:px-6 py-3 flex flex-col gap-3 mb-4 bg-cy-bg sticky ${isDetailMode ? "top-[76px]" : "top-0"} z-10 transition-all`}>
+          <h2 id="filter-heading" className="sr-only">Filters</h2>
+          <div className={`flex items-center gap-1.5 flex-wrap ${isDetailMode ? "justify-start" : ""}`} role="group" aria-label="Filter by type">
+            {TYPE_FILTERS.map(({ label, value, color }) => {
+              const isActive = activeType === value;
+              return (
+                <button
+                  key={label}
+                  id={`filter-type-${label.toLowerCase()}`}
+                  onClick={() => { setActiveType(value); setActiveTag(null); }}
+                  aria-pressed={isActive}
+                  className={`font-mono font-bold tracking-[0.1em] uppercase transition-all duration-150 hover:-translate-y-px
+                              ${isDetailMode ? "text-[8px] px-2 py-1 border" : "text-[10px] px-4 py-1.5 border-2"}`}
+                  style={
+                    isActive
+                      ? { backgroundColor: value === null ? "var(--text)" : color, borderColor: color, color: "#ffffff", boxShadow: isDetailMode ? 'none' : `3px 3px 0 0 ${color}66` }
+                      : { backgroundColor: "transparent", borderColor: color, color: color }
+                  }
+                >
+                  {isDetailMode ? (value === null ? "ALL" : TYPE_META[value]?.label) : label}
+                </button>
+              );
+            })}
+            {!loading && !isDetailMode && (
+              <span className="ml-auto font-mono text-[9px] text-cy-muted tracking-[0.08em] uppercase">
+                {filteredAsks.length} ask{filteredAsks.length !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+          {!isDetailMode && allTags.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5" aria-label="Tag filters" role="list">
+              {allTags.map((tag) => {
+                const isActive = activeTag === tag;
+                return (
+                  <li key={tag}>
+                    <button
+                      id={`filter-tag-${tag}`}
+                      onClick={() => setActiveTag((prev) => (prev === tag ? null : tag))}
+                      aria-pressed={isActive}
+                      className="font-mono text-[9px] tracking-[0.04em] uppercase px-2 py-0.5 border transition-colors duration-150"
+                      style={
+                        isActive
+                          ? { backgroundColor: "var(--text)", borderColor: "var(--text)", color: "var(--bg)" }
+                          : { backgroundColor: "transparent", borderColor: "var(--text)", color: "var(--text)" }
+                      }
+                    >
+                      {tag}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
         {/* Ask feed */}
-        <div className="px-6 md:px-8 pb-12">
+        <div className="px-4 md:px-6 pb-12">
           <section aria-labelledby="asks-list-heading" aria-live="polite">
             <h2 id="asks-list-heading" className="sr-only">Asks</h2>
             {loading ? (
@@ -513,7 +588,7 @@ export default function Board() {
                 ))}
               </div>
             ) : filteredAsks.length === 0 ? (
-              <div className="border-2 border-cy-ink p-10 text-center shadow-[6px_6px_0px_0px_rgba(17,17,17,1)]">
+              <div className="border-2 border-cy-ink p-10 text-center shadow-[6px_6px_0px_0px_var(--shadow)]">
                 <p className="font-display font-bold text-lg text-cy-ink">No asks match these filters.</p>
                 <button
                   onClick={() => { setActiveType(null); setActiveTag(null); }}
@@ -524,12 +599,13 @@ export default function Board() {
                 </button>
               </div>
             ) : (
-              <ul className="flex flex-col gap-5">
+              <ul className={`flex flex-col ${isDetailMode ? "gap-2" : "gap-5"}`}>
                 {filteredAsks.map((ask) => (
                   <li key={ask.id}>
                     <FeedCard
                       ask={ask}
                       isSelected={selectedAsk?.id === ask.id}
+                      isCompact={isDetailMode}
                       onClick={() => setSelectedAsk(selectedAsk?.id === ask.id ? null : ask)}
                     />
                   </li>
@@ -541,24 +617,17 @@ export default function Board() {
       </div>
 
       {/* ── Detail Panel ─────────────────────────────────────── */}
-      {selectedAsk ? (
-        <div className="w-full xl:w-[440px] shrink-0 h-full sticky top-0 self-start border-l-2 border-cy-ink">
+      <div 
+        className={`h-full bg-cy-bg transition-all duration-300 ease-out overflow-hidden
+          ${isDetailMode ? "flex-1 opacity-100 translate-x-0" : "w-0 opacity-0 translate-x-12 pointer-events-none"}`}
+      >
+        {selectedAsk && (
           <DetailPanel
             ask={selectedAsk}
             onClose={() => setSelectedAsk(null)}
           />
-        </div>
-      ) : (
-        // Empty state when nothing selected
-        <div className="hidden xl:flex w-[380px] shrink-0 h-full items-center justify-center border-l-2 border-cy-ink/30 border-dashed">
-          <div className="text-center px-8">
-            <p className="font-display font-black text-5xl text-cy-ink/10 mb-3">→</p>
-            <p className="font-mono text-xs text-cy-muted tracking-[0.08em] uppercase">
-              Click a post to read it
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

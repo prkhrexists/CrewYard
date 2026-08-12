@@ -1,16 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
-import { X, LayoutGrid, Hash, MessageCircle, FileText,
-         Plus, Bookmark, Info, HelpCircle } from "lucide-react";
+import { X, LayoutGrid, Hash, Users, FileText,
+         Plus, Bookmark, Info, HelpCircle, Swords, Radio } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 // ─────────────────────────────────────────────────────────────
 //  Link group configs
 // ─────────────────────────────────────────────────────────────
 const MAIN_LINKS = [
-  { label: "BOARD",      to: "/board",      Icon: LayoutGrid    },
-  { label: "GROUPS",     to: "/groups",     Icon: Hash          },
-  { label: "MESSAGES",   to: "/messages",   Icon: MessageCircle },
-  { label: "BUILD_LOGS", to: "/build-logs", Icon: FileText      },
+  { label: "BOARD",      to: "/board",       Icon: LayoutGrid },
+  { label: "GROUPS",     to: "/groups",      Icon: Hash       },
+  { label: "CAMPUSPODS", to: "/campus-pods", Icon: Swords     },
+  { label: "CREW",       to: "/crew",        Icon: Users      },
+  { label: "SIGNALS",    to: "/signals",     Icon: Radio      },
 ];
 
 const MY_STUFF_LINKS = [
@@ -89,7 +90,7 @@ function SidebarContent({ onClose, showCloseButton = false }) {
       {showCloseButton && (
         <div className="flex items-center justify-between px-3 mb-4">
           <span className="font-display font-bold text-lg text-cy-ink leading-none">
-            CREWYARD<span style={{ color: "#E8542A" }}>.</span>
+            CREWYARD<span style={{ color: "var(--accent)" }}>.</span>
           </span>
           <button
             onClick={onClose}
@@ -131,7 +132,7 @@ function SidebarContent({ onClose, showCloseButton = false }) {
         <div className="mx-3 mt-auto">
           <div className="mx-0 mb-3 border-t border-cy-ink"
                style={{ borderTopWidth: "1px", opacity: 0.15 }} role="separator" />
-          <div className="border-2 border-cy-ink p-3 flex items-center gap-3 shadow-[3px_3px_0px_0px_rgba(17,17,17,1)]">
+          <div className="border-2 border-cy-ink p-3 flex items-center gap-3 shadow-[3px_3px_0px_0px_var(--shadow)]">
             {/* Avatar */}
             <div className="w-9 h-9 rounded-full overflow-hidden shrink-0 border-2 border-cy-ink flex items-center justify-center bg-cy-ink">
               {profile.avatarUrl ? (
@@ -150,7 +151,7 @@ function SidebarContent({ onClose, showCloseButton = false }) {
               {profile.college && (
                 <p className="font-mono text-[9px] text-cy-muted truncate">{profile.college}</p>
               )}
-              <p className="font-mono text-[9px] tracking-[0.04em] mt-0.5" style={{ color: "#E8542A" }}>
+              <p className="font-mono text-[9px] tracking-[0.04em] mt-0.5" style={{ color: "var(--accent)" }}>
                 {(profile.reputation ?? 0).toLocaleString("en-IN")} rep
               </p>
             </div>
@@ -211,7 +212,7 @@ export default function AppSidebar({ mobileOpen = false, onClose = () => {} }) {
           "fixed inset-0 z-40 md:hidden transition-opacity duration-200",
           mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         ].join(" ")}
-        style={{ backgroundColor: "rgba(17,17,17,0.35)" }}
+        style={{ backgroundColor: "var(--shadow)" }}
       />
 
       {/* Drawer panel — slides in from left */}

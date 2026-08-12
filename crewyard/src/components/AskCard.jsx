@@ -15,12 +15,12 @@ export const TYPE_LABELS = {
 
 /** 4px left-border + badge background colour per type */
 const TYPE_COLORS = {
-  help:      "#E8542A",   // cy-help / cy-orange
-  teammate:  "#2D5FE0",   // cy-blue
-  build_log: "#1E8A5A",   // cy-green
+  help:      "var(--accent)",   // cy-help / cy-orange
+  teammate:  "var(--cat-blue)",   // cy-blue
+  build_log: "var(--cat-green)",   // cy-green
 };
 
-const DEFAULT_COLOR = "#111111"; // cy-ink fallback
+const DEFAULT_COLOR = "var(--text)"; // cy-ink fallback
 
 // ─────────────────────────────────────────────────────────────
 //  Helpers

@@ -69,9 +69,9 @@ export default function Search() {
           autoFocus
           className="w-full bg-cy-bg font-mono text-sm text-cy-ink
                      pl-10 pr-4 py-3"
-          style={{ border: "1.5px solid #111111", borderRadius: 0, outline: "none" }}
-          onFocus={(e)  => { e.target.style.borderColor = "#E8542A"; }}
-          onBlur={(e)   => { e.target.style.borderColor = "#111111"; }}
+          style={{ border: "1.5px solid var(--text)", borderRadius: 0, outline: "none" }}
+          onFocus={(e)  => { e.target.style.borderColor = "var(--accent)"; }}
+          onBlur={(e)   => { e.target.style.borderColor = "var(--text)"; }}
         />
       </div>
 

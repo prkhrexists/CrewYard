@@ -20,25 +20,25 @@ const ASK_TYPES = [
     value: "help",
     label: "HELP",
     Icon: HelpCircle,
-    color: "#E8542A",       // cy-help
-    borderClass: "border-[#E8542A]",
-    textClass: "text-[#E8542A]",
+    color: "var(--accent)",       // cy-help
+    borderClass: "border-[var(--accent)]",
+    textClass: "text-[var(--accent)]",
   },
   {
     value: "teammate",
     label: "TEAMMATE",
     Icon: Users,
-    color: "#2D5FE0",       // cy-blue
-    borderClass: "border-[#2D5FE0]",
-    textClass: "text-[#2D5FE0]",
+    color: "var(--cat-blue)",       // cy-blue
+    borderClass: "border-[var(--cat-blue)]",
+    textClass: "text-[var(--cat-blue)]",
   },
   {
     value: "build_log",
     label: "BUILD_LOG",
     Icon: FileText,
-    color: "#1E8A5A",       // cy-green
-    borderClass: "border-[#1E8A5A]",
-    textClass: "text-[#1E8A5A]",
+    color: "var(--cat-green)",       // cy-green
+    borderClass: "border-[var(--cat-green)]",
+    textClass: "text-[var(--cat-green)]",
   },
 ];
 
@@ -215,12 +215,12 @@ export default function PostAsk() {
                 aria-invalid={!!errors.title}
                 className="font-sans text-sm text-cy-ink bg-cy-bg px-4 py-3 w-full"
                 style={{
-                  border: errors.title ? "1.5px solid #E8542A" : "1.5px solid #111111",
+                  border: errors.title ? "1.5px solid var(--accent)" : "1.5px solid var(--text)",
                   borderRadius: 0,
                   outline: "none",
                 }}
-                onFocus={(e) => { e.target.style.borderColor = "#E8542A"; }}
-                onBlur={(e)  => { e.target.style.borderColor = errors.title ? "#E8542A" : "#111111"; }}
+                onFocus={(e) => { e.target.style.borderColor = "var(--accent)"; }}
+                onBlur={(e)  => { e.target.style.borderColor = errors.title ? "var(--accent)" : "var(--text)"; }}
               />
               {errors.title && (
                 <p
@@ -254,13 +254,13 @@ export default function PostAsk() {
                 aria-invalid={!!errors.details}
                 className="font-sans text-sm text-cy-ink bg-cy-bg px-4 py-3 w-full resize-y"
                 style={{
-                  border: errors.details ? "1.5px solid #E8542A" : "1.5px solid #111111",
+                  border: errors.details ? "1.5px solid var(--accent)" : "1.5px solid var(--text)",
                   borderRadius: 0,
                   outline: "none",
                   minHeight: "160px",
                 }}
-                onFocus={(e) => { e.target.style.borderColor = "#E8542A"; }}
-                onBlur={(e)  => { e.target.style.borderColor = errors.details ? "#E8542A" : "#111111"; }}
+                onFocus={(e) => { e.target.style.borderColor = "var(--accent)"; }}
+                onBlur={(e)  => { e.target.style.borderColor = errors.details ? "var(--accent)" : "var(--text)"; }}
               />
               {errors.details && (
                 <p
@@ -336,7 +336,7 @@ export default function PostAsk() {
                 <li key={tip} className="flex items-start gap-2.5">
                   <span
                     className="font-mono text-xs font-bold shrink-0 leading-relaxed"
-                    style={{ color: "#E8542A" }}
+                    style={{ color: "var(--accent)" }}
                     aria-hidden="true"
                   >
                     →
