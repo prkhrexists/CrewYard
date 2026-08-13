@@ -132,16 +132,13 @@ export default function Home() {
   }
 
   return (
-    <div
-      className="bg-cy-bg w-full overflow-hidden flex flex-col md:flex-row"
-      style={{ height: "calc(100vh - 65px)" }}
-    >
+    <div className="bg-cy-bg w-full h-full flex flex-col md:flex-row overflow-hidden">
 
       {/* ══════════════════════════════════════════════════════════
           LEFT COLUMN: 55% Desktop, 100% Mobile (Centered)
           ══════════════════════════════════════════════════════════ */}
       <section
-        className="w-full md:w-[60%] h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 overflow-y-auto"
+        className="w-full md:w-[50%] h-full flex flex-col justify-center px-8 md:px-16 lg:px-24"
         aria-labelledby="hero-heading"
       >
         <div className="flex flex-col gap-7 w-full max-w-2xl mx-auto md:mx-0 py-12 md:py-0">
@@ -152,7 +149,7 @@ export default function Home() {
                        border-2 border-cy-ink bg-cy-bg px-3 py-1.5 w-fit text-cy-ink
                        shadow-[4px_4px_0px_0px_var(--shadow)]"
           >
-            For Indian College Student Builders
+            FOR BUILDERS WHO'VE OUTGROWN THEIR CAMPUS
           </span>
 
           {/* H1 — display serif with typing effect */}
@@ -188,9 +185,7 @@ export default function Home() {
 
           {/* Body description */}
           <p className="font-sans text-base text-cy-muted leading-relaxed">
-            CrewYard helps student builders get real help and find real teammates —
-            verified by GitHub activity, not follower counts. Ask a technical
-            question, post a teammate request, or ship a build log.
+            CrewYard is where student builders find real help, real teammates, and people who actually build — verified by what they do, not what they claim.
           </p>
 
           {/* CTA button / Inline Form */}
@@ -281,7 +276,7 @@ export default function Home() {
           ══════════════════════════════════════════════════════════ */}
       <aside
         aria-label="Live board preview"
-        className="hidden md:flex w-[40%] h-full relative items-center justify-center bg-cy-bg border-l-2 border-cy-ink overflow-hidden p-6"
+        className="hidden md:flex w-[50%] h-full relative items-center justify-center bg-cy-bg border-l-2 border-cy-ink overflow-hidden p-6"
       >
         {/* Dot pattern background for extra texture */}
         <div

@@ -8,25 +8,25 @@ import { useCat } from "../context/CatContext";
 //  Constants
 // ─────────────────────────────────────────────────────────────
 const CATEGORY_FILTERS = [
-  { label: "ALL",         value: null },
-  { label: "HACKATHONS",  value: "hackathons" },
+  { label: "ALL", value: null },
+  { label: "HACKATHONS", value: "hackathons" },
   { label: "OPEN SOURCE", value: "open-source" },
-  { label: "WEB",         value: "web" },
-  { label: "AI / ML",     value: "ai-ml" },
-  { label: "COLLEGE",     value: "college" },
-  { label: "OTHER",       value: "other" },
+  { label: "WEB", value: "web" },
+  { label: "AI / ML", value: "ai-ml" },
+  { label: "COLLEGE", value: "college" },
+  { label: "OTHER", value: "other" },
 ];
 
 const TYPE_META = {
-  help:      { label: "HELP",      color: "var(--accent)" },
-  teammate:  { label: "TEAMMATE",  color: "var(--cat-blue)" },
+  help: { label: "HELP", color: "var(--accent)" },
+  teammate: { label: "TEAMMATE", color: "var(--cat-blue)" },
   build_log: { label: "BUILD_LOG", color: "var(--cat-green)" },
 };
 
 const TYPE_FILTERS = [
-  { label: "ALL",       value: null },
-  { label: "HELP",      value: "help",      color: "var(--accent)" },
-  { label: "TEAMMATE",  value: "teammate",  color: "var(--cat-blue)" },
+  { label: "ALL", value: null },
+  { label: "HELP", value: "help", color: "var(--accent)" },
+  { label: "TEAMMATE", value: "teammate", color: "var(--cat-blue)" },
   { label: "BUILD_LOG", value: "build_log", color: "var(--cat-green)" },
 ];
 
@@ -37,9 +37,9 @@ const GROUP_SECTIONS = ["OVERVIEW", "OPEN ASKS", "DISCUSSION", "MEMBERS", "RESOU
 // ─────────────────────────────────────────────────────────────
 function formatRelative(iso) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60)     return "just now";
-  if (diff < 3600)   return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400)  return `${Math.floor(diff / 3600)}h ago`;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
@@ -83,7 +83,7 @@ function Avatar({ url, name, size = "sm" }) {
 //  Mini FeedCard (used inside group workspace)
 // ─────────────────────────────────────────────────────────────
 function MiniAskCard({ ask, isSelected, isCompact, onClick }) {
-  const meta   = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
+  const meta = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
   const author = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
 
@@ -126,7 +126,7 @@ function MiniAskCard({ ask, isSelected, isCompact, onClick }) {
           </p>
           {ask.tags?.length > 0 && (
             <ul className="flex flex-wrap gap-1.5 px-3 pb-3">
-              {ask.tags.slice(0,3).map((tag) => (
+              {ask.tags.slice(0, 3).map((tag) => (
                 <li key={tag} className="font-mono text-[8px] tracking-[0.06em] uppercase border border-cy-ink px-1.5 py-0.5 text-cy-ink">
                   {tag}
                 </li>
@@ -168,14 +168,14 @@ const MOCK_COMMENTS = {
 };
 
 function AskDetailPanel({ ask, onClose }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
-  const author  = ask.author;
+  const meta = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
+  const author = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
   const comments = MOCK_COMMENTS[ask.id] ?? [];
 
-  const [upvotes,    setUpvotes]    = useState(ask.likeCount ?? 0);
-  const [voted,      setVoted]      = useState(null);
-  const [comment,    setComment]    = useState("");
+  const [upvotes, setUpvotes] = useState(ask.likeCount ?? 0);
+  const [voted, setVoted] = useState(null);
+  const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState(comments);
   const { profile } = useAuth();
 
@@ -423,10 +423,10 @@ function GroupCard({ group, isSelected, isCompact, onClick, joined, onJoin }) {
 function GroupWorkspace({ group, joined, onJoin }) {
   const { setContext, react } = useCat();
   const [activeSection, setActiveSection] = useState("OVERVIEW");
-  const [selectedAsk,   setSelectedAsk]   = useState(null);
-  const [activeType,    setActiveType]    = useState(null);
+  const [selectedAsk, setSelectedAsk] = useState(null);
+  const [activeType, setActiveType] = useState(null);
   const [newDiscussion, setNewDiscussion] = useState("");
-  const [discussions,   setDiscussions]   = useState(group.discussions ?? []);
+  const [discussions, setDiscussions] = useState(group.discussions ?? []);
 
   useEffect(() => {
     setContext({ page: 'groups' });
@@ -883,16 +883,16 @@ function GroupWorkspace({ group, joined, onJoin }) {
 //  Groups page — two-state layout
 // ─────────────────────────────────────────────────────────────
 export default function Groups() {
-  const [selectedGroup,  setSelectedGroup]  = useState(null);
-  const [joinedGroups,   setJoinedGroups]   = useState(new Set());
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [joinedGroups, setJoinedGroups] = useState(new Set());
   const [activeCategory, setActiveCategory] = useState(null);
-  const [searchQuery,    setSearchQuery]    = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isWorkspaceMode = selectedGroup !== null;
 
   const filteredGroups = useMemo(() => {
     return mockGroups.filter((g) => {
-      const catMatch   = activeCategory === null || g.category === activeCategory;
+      const catMatch = activeCategory === null || g.category === activeCategory;
       const searchMatch = searchQuery === "" || g.name.toLowerCase().includes(searchQuery.toLowerCase()) || g.description.toLowerCase().includes(searchQuery.toLowerCase());
       return catMatch && searchMatch;
     });

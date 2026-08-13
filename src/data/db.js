@@ -21,7 +21,7 @@ import { mockAsks, mockUsers, mockStats } from "./mockData.js";
 //  Demo-mode in-memory mutable stores
 //  (mutated by createAsk etc. so the session stays consistent)
 // ─────────────────────────────────────────────────────────────
-let _demoAsks  = mockAsks.map((a) => ({
+let _demoAsks = mockAsks.map((a) => ({
   ...a,
   author: mockUsers.find((u) => u.id === a.authorId) ?? null,
 }));
@@ -36,21 +36,21 @@ let _demoUsers = mockUsers.map((u) => ({ ...u }));
 function mapProfile(row) {
   if (!row) return null;
   return {
-    id:                   row.id,
-    username:             row.username,
-    name:                 row.name,
-    college:              row.college,
-    year:                 row.year,
-    major:                row.major,
-    githubVerified:       row.github_verified,
-    githubUsername:       row.github_username,
-    reputation:           row.reputation ?? 0,
-    commitsThisWeek:      row.commits_this_week ?? 0,
+    id: row.id,
+    username: row.username,
+    name: row.name,
+    college: row.college,
+    year: row.year,
+    major: row.major,
+    githubVerified: row.github_verified,
+    githubUsername: row.github_username,
+    reputation: row.reputation ?? 0,
+    commitsThisWeek: row.commits_this_week ?? 0,
     commitsChangePercent: row.commits_change_percent ?? 0,
-    topLanguage:          row.top_language,
-    topLanguagePercent:   row.top_language_percent,
-    avatarUrl:            row.avatar_url,
-    joinedDate:           row.created_at,
+    topLanguage: row.top_language,
+    topLanguagePercent: row.top_language_percent,
+    avatarUrl: row.avatar_url,
+    joinedDate: row.created_at,
   };
 }
 
@@ -58,19 +58,19 @@ function mapProfile(row) {
 function mapAsk(row) {
   if (!row) return null;
   return {
-    id:               row.id,
-    type:             row.type,
-    title:            row.title,
-    details:          row.details,
-    tags:             row.tags ?? [],
-    authorId:         row.author_id,
-    createdAt:        row.created_at,
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    details: row.details,
+    tags: row.tags ?? [],
+    authorId: row.author_id,
+    createdAt: row.created_at,
     commitsThisMonth: row.commits_this_month ?? 0,
-    commentCount:     row.commentCount  ?? row.comment_count  ?? 0,
-    likeCount:        row.likeCount     ?? row.like_count     ?? 0,
-    saved:            row.saved         ?? false,
+    commentCount: row.commentCount ?? row.comment_count ?? 0,
+    likeCount: row.likeCount ?? row.like_count ?? 0,
+    saved: row.saved ?? false,
     // Flattened author fields when joined
-    author:           row.profiles ? mapProfile(row.profiles) : null,
+    author: row.profiles ? mapProfile(row.profiles) : null,
   };
 }
 
@@ -78,12 +78,12 @@ function mapAsk(row) {
 function mapComment(row) {
   if (!row) return null;
   return {
-    id:        row.id,
-    askId:     row.ask_id,
-    authorId:  row.author_id,
-    body:      row.body,
+    id: row.id,
+    askId: row.ask_id,
+    authorId: row.author_id,
+    body: row.body,
     createdAt: row.created_at,
-    author:    row.profiles ? mapProfile(row.profiles) : null,
+    author: row.profiles ? mapProfile(row.profiles) : null,
   };
 }
 
@@ -91,12 +91,12 @@ function mapComment(row) {
 function mapGroup(row) {
   if (!row) return null;
   return {
-    id:          row.id,
-    name:        row.name,
+    id: row.id,
+    name: row.name,
     description: row.description,
-    tags:        row.tags ?? [],
+    tags: row.tags ?? [],
     memberCount: row.memberCount ?? row.member_count ?? 0,
-    createdAt:   row.created_at,
+    createdAt: row.created_at,
   };
 }
 
@@ -104,8 +104,8 @@ function mapGroup(row) {
 function mapConversation(row) {
   if (!row) return null;
   return {
-    id:           row.id,
-    createdAt:    row.created_at,
+    id: row.id,
+    createdAt: row.created_at,
     participants: (row.conversation_participants ?? []).map((p) =>
       p.profiles ? mapProfile(p.profiles) : { id: p.user_id }
     ),
@@ -116,12 +116,12 @@ function mapConversation(row) {
 function mapMessage(row) {
   if (!row) return null;
   return {
-    id:             row.id,
+    id: row.id,
     conversationId: row.conversation_id,
-    senderId:       row.sender_id,
-    body:           row.body,
-    createdAt:      row.created_at,
-    sender:         row.profiles ? mapProfile(row.profiles) : null,
+    senderId: row.sender_id,
+    body: row.body,
+    createdAt: row.created_at,
+    sender: row.profiles ? mapProfile(row.profiles) : null,
   };
 }
 
@@ -154,15 +154,15 @@ export async function updateProfile(updates) {
 
   // Map camelCase input → snake_case DB columns
   const dbUpdates = {};
-  if (updates.name              !== undefined) dbUpdates.name               = updates.name;
-  if (updates.college           !== undefined) dbUpdates.college            = updates.college;
-  if (updates.year              !== undefined) dbUpdates.year               = updates.year;
-  if (updates.major             !== undefined) dbUpdates.major              = updates.major;
-  if (updates.githubUsername    !== undefined) dbUpdates.github_username    = updates.githubUsername;
-  if (updates.avatarUrl         !== undefined) dbUpdates.avatar_url         = updates.avatarUrl;
-  if (updates.username          !== undefined) dbUpdates.username           = updates.username;
-  if (updates.topLanguage       !== undefined) dbUpdates.top_language       = updates.topLanguage;
-  if (updates.commitsThisWeek   !== undefined) dbUpdates.commits_this_week  = updates.commitsThisWeek;
+  if (updates.name !== undefined) dbUpdates.name = updates.name;
+  if (updates.college !== undefined) dbUpdates.college = updates.college;
+  if (updates.year !== undefined) dbUpdates.year = updates.year;
+  if (updates.major !== undefined) dbUpdates.major = updates.major;
+  if (updates.githubUsername !== undefined) dbUpdates.github_username = updates.githubUsername;
+  if (updates.avatarUrl !== undefined) dbUpdates.avatar_url = updates.avatarUrl;
+  if (updates.username !== undefined) dbUpdates.username = updates.username;
+  if (updates.topLanguage !== undefined) dbUpdates.top_language = updates.topLanguage;
+  if (updates.commitsThisWeek !== undefined) dbUpdates.commits_this_week = updates.commitsThisWeek;
 
   const { data, error } = await supabase
     .from("profiles")
@@ -207,7 +207,7 @@ export async function getMyAsks() {
 
   return (data ?? []).map((row) => {
     const commentCount = row.commentCount?.[0]?.count ?? 0;
-    const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+    const likeCount = row.likeCount?.[0]?.count ?? 0;
     return mapAsk({ ...row, commentCount, likeCount });
   });
 }
@@ -246,7 +246,7 @@ export async function getSavedAsks() {
     .filter(Boolean)
     .map((row) => {
       const commentCount = row.commentCount?.[0]?.count ?? 0;
-      const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+      const likeCount = row.likeCount?.[0]?.count ?? 0;
       return mapAsk({ ...row, commentCount, likeCount, saved: true });
     });
 }
@@ -286,7 +286,7 @@ export async function getAsks(filterByType) {
 
   return (data ?? []).map((row) => {
     const commentCount = row.commentCount?.[0]?.count ?? 0;
-    const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+    const likeCount = row.likeCount?.[0]?.count ?? 0;
     return mapAsk({ ...row, commentCount, likeCount });
   });
 }
@@ -337,18 +337,18 @@ export async function getAskById(id) {
 export async function createAsk(newAsk) {
   if (isDemoMode) {
     const ask = {
-      id:               `demo-${Date.now()}`,
-      type:             newAsk.type,
-      title:            newAsk.title,
-      details:          newAsk.details,
-      tags:             newAsk.tags ?? [],
-      authorId:         "u1",
-      createdAt:        new Date().toISOString(),
+      id: `demo-${Date.now()}`,
+      type: newAsk.type,
+      title: newAsk.title,
+      details: newAsk.details,
+      tags: newAsk.tags ?? [],
+      authorId: "u1",
+      createdAt: new Date().toISOString(),
       commitsThisMonth: newAsk.commitsThisMonth ?? 0,
-      commentCount:     0,
-      likeCount:        0,
-      saved:            false,
-      author:           _demoUsers.find((u) => u.id === "u1") ?? null,
+      commentCount: 0,
+      likeCount: 0,
+      saved: false,
+      author: _demoUsers.find((u) => u.id === "u1") ?? null,
     };
     _demoAsks = [ask, ..._demoAsks];
     return { ...ask };
@@ -358,11 +358,11 @@ export async function createAsk(newAsk) {
   if (authError || !user) throw new Error("You must be signed in to post an ask.");
 
   const payload = {
-    author_id:          user.id,
-    type:               newAsk.type,
-    title:              newAsk.title,
-    details:            newAsk.details,
-    tags:               newAsk.tags ?? [],
+    author_id: user.id,
+    type: newAsk.type,
+    title: newAsk.title,
+    details: newAsk.details,
+    tags: newAsk.tags ?? [],
     commits_this_month: newAsk.commitsThisMonth ?? newAsk.commits_this_month ?? 0,
   };
 
@@ -414,7 +414,7 @@ export async function getUserByUsername(username) {
   const mappedProfile = mapProfile(profile);
   mappedProfile.asks = (asks ?? []).map((row) => {
     const commentCount = row.commentCount?.[0]?.count ?? 0;
-    const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+    const likeCount = row.likeCount?.[0]?.count ?? 0;
     return mapAsk({ ...row, commentCount, likeCount });
   });
 
@@ -470,10 +470,10 @@ export async function getStats() {
   );
 
   return {
-    activeBuilders:    activeBuilders  ?? 0,
+    activeBuilders: activeBuilders ?? 0,
     questionsAnswered: questionsAnswered ?? 0,
-    teamsFormed:       teamsFormed     ?? 0,
-    collegesCount:     distinctColleges.size,
+    teamsFormed: teamsFormed ?? 0,
+    collegesCount: distinctColleges.size,
   };
 }
 
@@ -562,12 +562,12 @@ export async function toggleSave(askId) {
 export async function addComment(askId, body) {
   if (isDemoMode) {
     const comment = {
-      id:        `demo-c-${Date.now()}`,
+      id: `demo-c-${Date.now()}`,
       askId,
-      authorId:  "u1",
+      authorId: "u1",
       body,
       createdAt: new Date().toISOString(),
-      author:    _demoUsers[0],
+      author: _demoUsers[0],
     };
     return comment;
   }
@@ -598,10 +598,10 @@ export async function getGroups() {
   if (isDemoMode) {
     // Return some mock groups for the prototype
     return [
-      { id: "g1", name: "SIH 2025 Prep", description: "For teams preparing for Smart India Hackathon 2025.", tags: ["hackathon","SIH"], memberCount: 42, createdAt: "2025-07-01T00:00:00Z" },
-      { id: "g2", name: "ML Study Group", description: "Weekly sessions on ML papers and implementations.", tags: ["machine-learning","python"], memberCount: 28, createdAt: "2025-06-15T00:00:00Z" },
-      { id: "g3", name: "Web Dev Crew", description: "Frontend and backend web devs at Indian colleges.", tags: ["react","node.js","fullstack"], memberCount: 65, createdAt: "2025-05-20T00:00:00Z" },
-      { id: "g4", name: "Open Source Contributors", description: "Find GSoC/Outreachy buddies and collaborate on OSS.", tags: ["open-source","GSoC"], memberCount: 34, createdAt: "2025-07-10T00:00:00Z" },
+      { id: "g1", name: "SIH 2025 Prep", description: "For teams preparing for Smart India Hackathon 2025.", tags: ["hackathon", "SIH"], memberCount: 42, createdAt: "2025-07-01T00:00:00Z" },
+      { id: "g2", name: "ML Study Group", description: "Weekly sessions on ML papers and implementations.", tags: ["machine-learning", "python"], memberCount: 28, createdAt: "2025-06-15T00:00:00Z" },
+      { id: "g3", name: "Web Dev Crew", description: "Frontend and backend web devs at Indian colleges.", tags: ["react", "node.js", "fullstack"], memberCount: 65, createdAt: "2025-05-20T00:00:00Z" },
+      { id: "g4", name: "Open Source Contributors", description: "Find GSoC/Outreachy buddies and collaborate on OSS.", tags: ["open-source", "GSoC"], memberCount: 34, createdAt: "2025-07-10T00:00:00Z" },
     ];
   }
 

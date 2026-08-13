@@ -43,10 +43,10 @@ export default function Signals() {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-[var(--bg)]">
-      
+
       {/* MAIN CONTENT COLUMN */}
       <div className="flex-1 p-6 lg:p-8 lg:pr-10 border-r border-cy-ink" style={{ borderRightWidth: '1.5px', borderRightColor: 'var(--text)' }}>
-        
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-display font-black text-4xl text-[var(--text)] uppercase tracking-tight mb-2">SIGNALS</h1>
@@ -59,11 +59,10 @@ export default function Signals() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`font-mono text-[10px] tracking-[0.1em] font-bold border-2 border-[var(--text)] px-3 py-1.5 uppercase transition-colors ${
-                activeCategory === cat.id 
-                  ? 'bg-[var(--text)] text-[var(--bg)]' 
+              className={`font-mono text-[10px] tracking-[0.1em] font-bold border-2 border-[var(--text)] px-3 py-1.5 uppercase transition-colors ${activeCategory === cat.id
+                  ? 'bg-[var(--text)] text-[var(--bg)]'
                   : 'hover:bg-[var(--surface-2)] text-[var(--text)]'
-              }`}
+                }`}
             >
               {cat.label}
             </button>
@@ -77,10 +76,10 @@ export default function Signals() {
           </div>
         ) : (
           <div className="flex flex-col gap-10">
-            
+
             {/* Featured Signal */}
             {featuredSignal && (
-              <div 
+              <div
                 onClick={() => handleSignalClick(featuredSignal.id)}
                 className="group border-2 border-[var(--text)] bg-[var(--surface-2)] shadow-[6px_6px_0px_0px_var(--shadow)] p-6 md:p-8 cursor-pointer hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[8px_8px_0px_0px_var(--shadow)] transition-all"
               >
@@ -92,11 +91,11 @@ export default function Signals() {
                     {formatRelativeTime(featuredSignal.publishedAt)}
                   </span>
                 </div>
-                
+
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-[var(--text)] leading-tight mb-4 group-hover:text-[var(--accent)] transition-colors">
                   {featuredSignal.title}
                 </h2>
-                
+
                 <p className="font-sans text-base md:text-lg text-[var(--text)] leading-relaxed mb-6 opacity-90 max-w-3xl">
                   {featuredSignal.summary}
                 </p>
@@ -125,7 +124,7 @@ export default function Signals() {
 
             {/* PROJECTS & READ 2-Column Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              
+
               {/* Projects Column */}
               <div>
                 <div className="flex items-center justify-between mb-4 border-b-2 border-[var(--text)] pb-2">
@@ -134,7 +133,7 @@ export default function Signals() {
                 </div>
                 <div className="flex flex-col gap-4">
                   {projects.map(project => (
-                    <div 
+                    <div
                       key={project.id}
                       onClick={() => handleSignalClick(project.id)}
                       className="group border border-[var(--text)] p-5 cursor-pointer hover:bg-[var(--surface-2)] hover:shadow-[4px_4px_0px_0px_var(--shadow)] hover:-translate-y-0.5 hover:-translate-x-0.5 transition-all"
@@ -142,7 +141,7 @@ export default function Signals() {
                       <span className="font-mono text-[9px] tracking-wider uppercase text-[var(--text)] opacity-70 mb-2 block">PROJECT</span>
                       <h4 className="font-display font-bold text-xl text-[var(--text)] leading-tight mb-2 group-hover:text-[var(--accent)] transition-colors">{project.title}</h4>
                       <p className="font-sans text-sm text-[var(--text)] opacity-80 line-clamp-2 mb-3">{project.summary}</p>
-                      
+
                       <div className="flex items-center justify-between mt-auto">
                         <div className="flex items-center gap-2 font-mono text-[9px] text-[var(--text)]">
                           <span className="font-bold">{project.source}</span>
@@ -152,7 +151,7 @@ export default function Signals() {
                           <span className="opacity-70">Built by {project.author}</span>
                         </div>
                       </div>
-                      
+
                       <div className="flex flex-wrap gap-1.5 mt-4">
                         {project.tags.map(tag => (
                           <span key={tag} className="font-mono text-[8px] tracking-[0.06em] text-[var(--text)] border border-[var(--text)] px-1 py-0.5 opacity-60 uppercase">{tag}</span>
@@ -172,7 +171,7 @@ export default function Signals() {
                 </div>
                 <div className="flex flex-col gap-0 border-y border-[var(--text)] divide-y divide-[var(--text)]">
                   {articles.map(article => (
-                    <div 
+                    <div
                       key={article.id}
                       onClick={() => handleSignalClick(article.id)}
                       className="group py-4 cursor-pointer hover:px-2 transition-all"
@@ -193,7 +192,7 @@ export default function Signals() {
 
             {/* RELEASES & HAPPENING 2-Column Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-              
+
               {/* Releases Column */}
               <div>
                 <div className="flex items-center justify-between mb-4 border-b-2 border-[var(--text)] pb-2">
@@ -201,7 +200,7 @@ export default function Signals() {
                 </div>
                 <div className="flex flex-col divide-y divide-dashed divide-[var(--text)] border-b border-dashed border-[var(--text)]">
                   {releases.map(release => (
-                    <div 
+                    <div
                       key={release.id}
                       onClick={() => handleSignalClick(release.id)}
                       className="group py-3 flex items-center justify-between cursor-pointer hover:bg-[var(--surface-2)] px-2 -mx-2 transition-colors"
@@ -227,7 +226,7 @@ export default function Signals() {
                 </div>
                 <div className="flex flex-col divide-y divide-dashed divide-[var(--text)] border-b border-dashed border-[var(--text)]">
                   {events.map(event => (
-                    <div 
+                    <div
                       key={event.id}
                       onClick={() => handleSignalClick(event.id)}
                       className="group py-3 flex items-center justify-between cursor-pointer hover:bg-[var(--surface-2)] px-2 -mx-2 transition-colors"
@@ -246,7 +245,7 @@ export default function Signals() {
 
       {/* RIGHT SIGNAL PANEL (Intelligence Desk) */}
       <div className="w-full lg:w-72 p-6 lg:p-8 bg-[var(--surface-2)] border-t lg:border-t-0 border-[var(--text)]" style={{ borderLeftWidth: '0' }}>
-        
+
         {/* SECTION 1: CREWYARD SIGNAL */}
         <div className="mb-10">
           <h3 className="font-mono text-[10px] tracking-[0.15em] font-bold uppercase text-[var(--text)] mb-4 flex items-center gap-2">

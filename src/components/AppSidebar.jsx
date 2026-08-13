@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { X, LayoutGrid, Hash, Users, FileText,
          Plus, Bookmark, Info, HelpCircle, Swords, Radio } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useCat } from "../context/CatContext";
 
 // ─────────────────────────────────────────────────────────────
 //  Link group configs
@@ -82,6 +83,7 @@ function getInitials(name = "") {
 
 function SidebarContent({ onClose, showCloseButton = false }) {
   const { profile, signOut } = useAuth();
+  const { react } = useCat();
 
   return (
     <div className="flex flex-col flex-1 py-5 overflow-y-auto">
@@ -126,6 +128,21 @@ function SidebarContent({ onClose, showCloseButton = false }) {
           ))}
         </ul>
       </nav>
+
+      {/* Cat Home Container */}
+      <div id="cat-home-bounds" className="mx-3 mt-4 flex-1 min-h-[90px] relative border-b-2 border-cy-ink/20 flex flex-col justify-end items-end p-2 pb-0">
+        
+        {/* Clickable Minecraft style sign */}
+        <button
+          onClick={() => react('eat')}
+          className="bg-[#8b5a2b] border-[3px] border-[#5c3a21] px-2 py-1 shadow-[3px_3px_0_0_var(--text)] hover:scale-105 active:scale-95 transition-transform cursor-pointer relative z-10 mb-2 mr-2"
+          title="Feed the cat"
+        >
+          <p className="font-mono text-[9px] font-black text-[#f5d6a3] uppercase tracking-wider text-center" style={{ textShadow: '1px 1px 0 #3b2515' }}>
+            Feed the<br/>CrewCat
+          </p>
+        </button>
+      </div>
 
       {/* User summary card */}
       {profile && (

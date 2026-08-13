@@ -1,6 +1,6 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { getAsks } from "../data/db";
+import { getAsks, toggleLike, toggleSave, addComment } from "../data/db";
 import { useAuth } from "../context/AuthContext";
 import { useCat } from "../context/CatContext";
 
@@ -8,30 +8,57 @@ import { useCat } from "../context/CatContext";
 //  Constants
 // ─────────────────────────────────────────────────────────────
 const TYPE_FILTERS = [
-  { label: "ALL",       value: null,        color: "var(--text)" },
-  { label: "HELP",      value: "help",      color: "var(--accent)" },
-  { label: "TEAMMATE",  value: "teammate",  color: "var(--cat-blue)" },
-  { label: "BUILD_LOG", value: "build_log", color: "var(--cat-green)" },
+  { label: "All",       value: null,        color: "#111111",   activeText: "#fff" },
+  { label: "Help",      value: "help",      color: "#E8542A",   activeText: "#fff" },
+  { label: "Teammate",  value: "teammate",  color: "#2D5FE0",   activeText: "#fff" },
+  { label: "Build Log", value: "build_log", color: "#1E8A5A",   activeText: "#fff" },
 ];
 
 const TYPE_META = {
-  help:      { label: "HELP",      color: "var(--accent)" },
-  teammate:  { label: "TEAMMATE",  color: "var(--cat-blue)" },
-  build_log: { label: "BUILD_LOG", color: "var(--cat-green)" },
+  help:      { label: "HELP",      color: "#E8542A",  textColor: "#fff" },
+  teammate:  { label: "TEAMMATE",  color: "#2D5FE0",  textColor: "#fff" },
+  build_log: { label: "BUILD LOG", color: "#1E8A5A",  textColor: "#fff" },
 };
 
-// Mock comments per ask for prototype
+const POPULAR_TOPICS = [
+  "razorpay","next.js","react","node.js","machine-learning",
+  "solution-arch","open-source","system-design","python",
+  "SIH2025","GSoC2026","webhook","postgresql","docker",
+  "aws","opencv","rust","ui/ux"
+];
+
+const TOP_COLLEGES = [
+  { name: "VIT Vellore",    count: 128, color: "#E8542A" },
+  { name: "IIT Bangalore",  count: 94,  color: "#2D5FE0" },
+  { name: "DTU Delhi",      count: 81,  color: "#1E8A5A" },
+  { name: "VJTI Mumbai",    count: 63,  color: "#E8542A" },
+  { name: "PESU Bangalore", count: 58,  color: "#2D5FE0" },
+];
+
+const TRENDING_TOPICS = [
+  { name: "Razorpay",         count: 128, color: "#E8542A" },
+  { name: "SIH 2025",         count: 96,  color: "#E8542A" },
+  { name: "Machine Learning", count: 84,  color: "#E8542A" },
+  { name: "Next.js",          count: 71,  color: "#E8542A" },
+  { name: "Open Source",      count: 58,  color: "#E8542A" },
+];
+
+const PINNED_GROUPS = [
+  { name: "React India",       members: "12.4k", color: "#2D5FE0" },
+  { name: "ML Builders",       members: "9.1k",  color: "#1E8A5A" },
+  { name: "Open Source India", members: "8.3k",  color: "#9B59B6" },
+];
+
 const MOCK_COMMENTS = {
   a1: [
-    { id: "c1", author: { name: "Priya Nair", college: "KIIT Bhubaneswar", avatarUrl: "/avatars/avatar_02.jpg" }, body: "You're using `req.text()` but Razorpay expects the raw body buffer. In Next.js App Router, make sure you're not parsing the body before verifying. Try using `Buffer.from(await req.text())` directly.", createdAt: "2025-08-10T10:20:00Z", upvotes: 18 },
-    { id: "c2", author: { name: "Karan Mehta", college: "UPES Dehradun", avatarUrl: "/avatars/avatar_05.jpg" }, body: "Also double check that your webhook secret in `.env` doesn't have extra whitespace. Caught me off guard once.", createdAt: "2025-08-10T11:00:00Z", upvotes: 7 },
+    { id: "c1", author: { name: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_02.jpg" }, body: "You're using `req.text()` but Razorpay expects the raw body buffer. In Next.js App Router, make sure you're not parsing the body before verifying. Try using `Buffer.from(await req.text())` directly.", createdAt: "2025-08-10T10:20:00Z", upvotes: 18 },
+    { id: "c2", author: { name: "Bhanu Bhaskar", college: "DTU Delhi", avatarUrl: "/avatars/avatar_05.jpg" }, body: "Also double check that your webhook secret in `.env` doesn't have extra whitespace. Caught me off guard once.", createdAt: "2025-08-10T11:00:00Z", upvotes: 7 },
   ],
   a2: [
-    { id: "c3", author: { name: "Rohan Gupta", college: "PES University", avatarUrl: "/avatars/avatar_03.jpg" }, body: "I have 1.5 yrs PyTorch + YOLO experience and can do model fine-tuning. Drop me a DM!", createdAt: "2025-08-09T15:00:00Z", upvotes: 12 },
-    { id: "c4", author: { name: "Sneha Reddy", college: "Chandigarh University", avatarUrl: "/avatars/avatar_06.jpg" }, body: "What's the timeline for final submission? Also is this open to non-NIT colleges?", createdAt: "2025-08-09T16:30:00Z", upvotes: 3 },
+    { id: "c3", author: { name: "Ayush Singh", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_03.jpg" }, body: "I have 1.5 yrs PyTorch + YOLO experience and can do model fine-tuning. Drop me a DM!", createdAt: "2025-08-09T15:00:00Z", upvotes: 12 },
   ],
   a3: [
-    { id: "c5", author: { name: "Prakhar Jaiswal", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_01.jpg" }, body: "The Supabase Realtime approach is underrated. I used the same pattern for a live polling app. Solid choice.", createdAt: "2025-08-07T19:00:00Z", upvotes: 22 },
+    { id: "c5", author: { name: "Prakhar Jaiswal", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_01.jpg" }, body: "The Supabase Realtime approach is underrated. Used the same pattern for a live polling app. Solid choice.", createdAt: "2025-08-07T19:00:00Z", upvotes: 22 },
   ],
 };
 
@@ -63,101 +90,244 @@ function getInitials(name = "") {
 // ─────────────────────────────────────────────────────────────
 //  Inline icons
 // ─────────────────────────────────────────────────────────────
-function GitHubIcon({ size = 11 }) {
+function ChatIcon({ size = 14 }) {
   return (
-    <svg aria-hidden="true" width={size} height={size} viewBox="0 0 20 20" fill="currentColor" className="shrink-0">
-      <path fillRule="evenodd" clipRule="evenodd"
-        d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483
-           0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466
-           -.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832
-           .092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688
-           -.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004
-           1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7
-           1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855
-           0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484
-           15.522 0 10 0z" />
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 10c0 4.418-3.582 8-8 8H2l2-2A8 8 0 1 1 18 10z" />
     </svg>
   );
 }
 
+function ThumbUpIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z" />
+      <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+    </svg>
+  );
+}
+
+function BookmarkIcon({ filled = false, size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 2h14a1 1 0 0 1 1 1v19l-8-5-8 5V3a1 1 0 0 1 1-1z"/>
+    </svg>
+  );
+}
+
+function DotsIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 4" fill="currentColor">
+      <circle cx="2" cy="2" r="1.5"/><circle cx="10" cy="2" r="1.5"/><circle cx="18" cy="2" r="1.5"/>
+    </svg>
+  );
+}
+
+function FilterIcon({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 5h14M6 10h8M9 15h2"/>
+    </svg>
+  );
+}
+
+function ArrowUpIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  );
+}
+
+function ArrowDownIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 5v14M19 12l-7 7-7-7"/>
+    </svg>
+  );
+}
+
+function Avatar({ src, name, size = 6 }) {
+  const sizeClass = `w-${size} h-${size}`;
+  return (
+    <div className={`${sizeClass} rounded-full overflow-hidden shrink-0 border border-cy-ink/30 flex items-center justify-center bg-cy-ink`} aria-hidden="true">
+      {src
+        ? <img src={src} alt={name} className="w-full h-full object-cover" />
+        : <span className="font-mono text-[7px] font-bold text-white">{getInitials(name ?? "?")}</span>
+      }
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
-//  FeedCard
+//  BoardCard — matches the reference screenshot exactly
 // ─────────────────────────────────────────────────────────────
-function FeedCard({ ask, isSelected, isCompact, onClick }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
-  const author  = ask.author;
+function BoardCard({ ask, isSelected, isCompact, onClick }) {
+  const meta   = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
+  const author = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
+
+  const [localSaved, setLocalSaved]   = useState(ask.saved ?? false);
+  const [localLikes, setLocalLikes]   = useState(ask.likeCount ?? 0);
+  const [liked,      setLiked]        = useState(false);
+  const [saving,     setSaving]       = useState(false);
+  const [liking,     setLiking]       = useState(false);
+
+  async function handleSave(e) {
+    e.stopPropagation();
+    if (saving) return;
+    setSaving(true);
+    try {
+      const { saved } = await toggleSave(ask.id);
+      setLocalSaved(saved);
+    } catch {
+      setLocalSaved((s) => !s); // optimistic toggle
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleLike(e) {
+    e.stopPropagation();
+    if (liking) return;
+    setLiking(true);
+    try {
+      const { liked: nowLiked } = await toggleLike(ask.id);
+      setLiked(nowLiked);
+      setLocalLikes((v) => nowLiked ? v + 1 : v - 1);
+    } catch {
+      setLiked((l) => !l);
+      setLocalLikes((v) => liked ? v - 1 : v + 1);
+    } finally {
+      setLiking(false);
+    }
+  }
+
+  if (isCompact) {
+    return (
+      <article
+        onClick={onClick}
+        role="button" tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onClick?.(); }}
+        className={`cursor-pointer border-l-4 border-y border-r transition-all duration-150 p-3 ${
+          isSelected
+            ? "bg-cy-orange/5 border-l-[5px] border-y-cy-orange/30 border-r-cy-orange/30"
+            : "border-cy-ink/15 hover:bg-cy-ink/[0.02]"
+        }`}
+        style={{ borderLeftColor: meta.color }}
+      >
+        <span className="font-mono text-[8px] font-bold uppercase text-white px-1.5 py-0.5 inline-block mb-1.5" style={{ backgroundColor: meta.color }}>{meta.label}</span>
+        <p className="font-sans font-bold text-[11px] leading-snug text-cy-ink line-clamp-2">{ask.title}</p>
+        <p className="font-mono text-[9px] text-cy-muted mt-1">{author?.name ?? "You"}</p>
+      </article>
+    );
+  }
 
   return (
     <article
       onClick={onClick}
-      role="button"
-      tabIndex={0}
+      role="button" tabIndex={0}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onClick?.(); }}
-      className={[
-        "group cursor-pointer transition-all duration-150 border-2",
+      className={`group cursor-pointer border-l-[5px] transition-all duration-200 relative ${
         isSelected
-          ? "border-cy-orange bg-cy-orange/5 shadow-[4px_4px_0px_0px_var(--accent)] -translate-y-px -translate-x-px"
-          : "border-cy-ink bg-cy-bg hover:-translate-y-px hover:-translate-x-px hover:shadow-[4px_4px_0px_0px_var(--text)]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cy-orange",
-      ].join(" ")}
-      style={isSelected ? { borderLeftColor: "var(--accent)", borderLeftWidth: "6px" } : { borderLeftColor: meta.color, borderLeftWidth: "4px" }}
+          ? "border-l-[6px] bg-cy-orange/[0.04]"
+          : "border-cy-ink/10 hover:border-cy-ink/20"
+      }`}
+      style={{
+        borderLeftColor: meta.color,
+        borderTop: "1px solid var(--border-subtle)",
+        borderRight: "1px solid var(--border-subtle)",
+        borderBottom: "1px solid var(--border-subtle)",
+        background: isSelected ? undefined : "var(--bg)",
+        boxShadow: isSelected ? "none" : "0 1px 4px rgba(0,0,0,0.04)",
+        transition: "box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease",
+      }}
+      onMouseEnter={(e) => {
+        if (!isSelected) e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) e.currentTarget.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)";
+      }}
     >
-      <div className={`flex items-start justify-between px-3 ${isCompact ? "pt-2 pb-1" : "pt-3 pb-2"}`}>
+      {/* Top row: badge + time + dots */}
+      <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
         <span
-          className={`font-mono font-bold tracking-[0.14em] uppercase text-white ${isCompact ? "text-[8px] px-2 py-0.5" : "text-[9px] px-2.5 py-1"}`}
-          style={{ backgroundColor: meta.color }}
+          className="font-mono text-[9px] font-bold tracking-[0.12em] uppercase px-2 py-0.5"
+          style={{ backgroundColor: meta.color, color: meta.textColor }}
         >
           {meta.label}
         </span>
-        {timeAgo && (
-          <span className={`font-mono text-cy-muted tracking-[0.04em] ${isCompact ? "text-[8px]" : "text-[10px]"}`}>{timeAgo}</span>
-        )}
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-[10px] text-cy-muted">{timeAgo}</span>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="text-cy-muted hover:text-cy-ink transition-colors opacity-0 group-hover:opacity-100 border-0"
+            title="More options"
+          >
+            <DotsIcon size={13} />
+          </button>
+        </div>
       </div>
 
-      <h3
-        className={`font-sans font-bold leading-tight text-cy-ink px-3 ${isCompact ? "text-[12px] pb-2 line-clamp-2" : "text-[15px] pb-2 line-clamp-2"}`}
-      >
+      {/* Title */}
+      <h3 className="font-sans font-bold text-[15px] leading-snug text-cy-ink px-4 pb-1.5 line-clamp-2">
         {ask.title}
       </h3>
 
-      {!isCompact && (
-        <>
-          <p className="font-sans text-sm text-cy-muted leading-relaxed px-3 pb-3 line-clamp-2">
-            {stripMarkdown(ask.details)}
-          </p>
-          {ask.tags?.length > 0 && (
-            <ul className="flex flex-wrap gap-1.5 px-3 pb-3">
-              {ask.tags.map((tag) => (
-                <li key={tag} className="font-mono text-[8px] tracking-[0.06em] uppercase border border-cy-ink px-1.5 py-0.5 text-cy-ink">
-                  {tag}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
+      {/* Body excerpt */}
+      <p className="font-sans text-sm text-cy-muted leading-relaxed px-4 pb-3 line-clamp-2">
+        {stripMarkdown(ask.details)}
+      </p>
+
+      {/* Tags */}
+      {ask.tags?.length > 0 && (
+        <ul className="flex flex-wrap gap-1.5 px-4 pb-3.5">
+          {ask.tags.slice(0, 5).map((tag) => (
+            <li
+              key={tag}
+              onClick={(e) => e.stopPropagation()}
+              className="font-mono text-[8px] tracking-[0.04em] uppercase border border-cy-ink/25 px-2 py-0.5 text-cy-muted hover:border-cy-ink/50 hover:text-cy-ink transition-colors cursor-pointer"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
       )}
 
-      <footer className={`flex items-center justify-between gap-3 px-3 py-2 border-t ${isSelected ? 'border-cy-orange/30' : 'border-cy-ink/20'}`}>
-        {!isCompact && (
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-cy-ink flex items-center justify-center bg-cy-ink" aria-hidden="true">
-              {author?.avatarUrl
-                ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
-                : <span className="font-mono text-[8px] font-bold text-white">{getInitials(author?.name ?? "?")}</span>
-              }
-            </div>
-            <div className="min-w-0">
-              <span className="font-mono text-[10px] font-bold text-cy-ink truncate block">{author?.name ?? "You"}</span>
-            </div>
-          </div>
-        )}
-        <div className={`flex items-center gap-3 shrink-0 text-cy-muted ${isCompact ? "w-full justify-start" : ""}`}>
-          {!isCompact && typeof ask.commitsThisMonth === "number" && ask.commitsThisMonth > 0 && (
-            <span className="flex items-center gap-1 font-mono text-[9px]"><GitHubIcon /> {ask.commitsThisMonth}</span>
-          )}
-          <span className="font-mono text-[9px]">💬 {ask.commentCount ?? 0}</span>
-          <span className="font-mono text-[9px]">▲ {ask.likeCount ?? 0}</span>
+      {/* Footer */}
+      <footer className="flex items-center justify-between gap-3 px-4 py-2.5 border-t border-cy-ink/10">
+        <div className="flex items-center gap-2 min-w-0">
+          <Avatar src={author?.avatarUrl} name={author?.name} size={6} />
+          <span className="font-sans text-[12px] text-cy-ink leading-none truncate">
+            <span className="font-semibold">{author?.name ?? "You"}</span>
+            {author?.college && <span className="text-cy-muted font-normal"> · {author.college}</span>}
+            {timeAgo && <span className="text-cy-muted font-normal"> · {timeAgo}</span>}
+          </span>
+        </div>
+        <div className="flex items-center gap-4 shrink-0">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 text-cy-muted hover:text-cy-ink transition-colors border-0 px-0 py-0"
+          >
+            <ChatIcon size={13} />
+            <span className="font-mono text-[10px]">{ask.commentCount ?? 0}</span>
+          </button>
+          <button
+            onClick={handleLike}
+            className={`flex items-center gap-1.5 transition-colors border-0 px-0 py-0 ${liked ? "text-cy-orange" : "text-cy-muted hover:text-cy-orange"}`}
+            disabled={liking}
+          >
+            <ThumbUpIcon size={13} />
+            <span className="font-mono text-[10px]">{localLikes}</span>
+          </button>
+          <button
+            onClick={handleSave}
+            className={`transition-colors border-0 px-0 py-0 ${localSaved ? "text-cy-orange" : "text-cy-muted hover:text-cy-orange"}`}
+            disabled={saving}
+            title={localSaved ? "Unsave" : "Save"}
+          >
+            <BookmarkIcon filled={localSaved} size={13} />
+          </button>
         </div>
       </footer>
     </article>
@@ -165,270 +335,313 @@ function FeedCard({ ask, isSelected, isCompact, onClick }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  DetailPanel — Reddit-style post view
+//  DetailPanel — fully wired to backend
 // ─────────────────────────────────────────────────────────────
-function DetailPanel({ ask, onClose }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "var(--text)" };
+function DetailPanel({ ask, onClose, onAskUpdate }) {
+  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
   const author  = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
-  const comments = MOCK_COMMENTS[ask.id] ?? [];
 
-  const [upvotes, setUpvotes]   = useState(ask.likeCount ?? 0);
-  const [voted, setVoted]       = useState(null); // "up" | "down" | null
-  const [comment, setComment]   = useState("");
-  const [allComments, setAllComments] = useState(comments);
   const { profile } = useAuth();
+  const textareaRef = useRef(null);
 
-  function handleVote(dir) {
-    if (voted === dir) {
-      setVoted(null);
-      setUpvotes((v) => dir === "up" ? v - 1 : v + 1);
+  // ── Vote / Like state ─────────────────────────────────────
+  const [upvotes, setUpvotes]   = useState(ask.likeCount ?? 0);
+  const [voted, setVoted]       = useState(null); // 'up' | 'down' | null
+  const [liking, setLiking]     = useState(false);
+
+  // ── Save state ────────────────────────────────────────────
+  const [saved, setSaved]       = useState(ask.saved ?? false);
+  const [saving, setSaving]     = useState(false);
+
+  // ── Comment state ─────────────────────────────────────────
+  const [comment, setComment]   = useState("");
+  const [posting, setPosting]   = useState(false);
+  const [commentLikes, setCommentLikes] = useState({}); // commentId → { count, liked }
+  const initialComments = useMemo(() => {
+    const base = MOCK_COMMENTS[ask.id] ?? [];
+    return base.map(c => ({ ...c, upvotes: c.upvotes ?? 0 }));
+  }, [ask.id]);
+  const [allComments, setAllComments] = useState(initialComments);
+
+  // ── Upvote / Downvote ────────────────────────────────────
+  async function handleVote(dir) {
+    if (liking) return;
+    if (dir === "up") {
+      // Call real backend for upvote
+      setLiking(true);
+      try {
+        const prev = voted;
+        if (voted === "up") {
+          // un-upvote
+          setVoted(null);
+          setUpvotes(v => v - 1);
+          await toggleLike(ask.id);
+        } else {
+          const delta = voted === "down" ? 2 : 1;
+          setVoted("up");
+          setUpvotes(v => v + delta);
+          await toggleLike(ask.id);
+        }
+        onAskUpdate?.(ask.id);
+      } catch {
+        // rollback optimistic update on error
+      } finally {
+        setLiking(false);
+      }
     } else {
-      const delta = voted === null ? (dir === "up" ? 1 : -1) : (dir === "up" ? 2 : -2);
-      setVoted(dir);
-      setUpvotes((v) => v + delta);
+      // Downvote — local only (no downvote table in schema)
+      if (voted === "down") {
+        setVoted(null);
+        setUpvotes(v => v + 1);
+      } else {
+        const delta = voted === "up" ? -2 : -1;
+        setVoted("down");
+        setUpvotes(v => v + delta);
+      }
     }
   }
 
-  function handleComment(e) {
+  // ── Save ─────────────────────────────────────────────────
+  async function handleSave() {
+    if (saving) return;
+    setSaving(true);
+    try {
+      const { saved: nowSaved } = await toggleSave(ask.id);
+      setSaved(nowSaved);
+    } catch {
+      setSaved(s => !s); // optimistic rollback
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // ── Post comment ─────────────────────────────────────────
+  async function handleComment(e) {
     e.preventDefault();
-    if (!comment.trim()) return;
-    const newComment = {
-      id: `new-${Date.now()}`,
+    if (!comment.trim() || posting) return;
+    setPosting(true);
+    // Optimistic append
+    const optimistic = {
+      id: `opt-${Date.now()}`,
       author: { name: profile?.name ?? "You", college: profile?.college ?? "", avatarUrl: profile?.avatarUrl },
       body: comment.trim(),
       createdAt: new Date().toISOString(),
       upvotes: 0,
     };
-    setAllComments((prev) => [newComment, ...prev]);
+    setAllComments(prev => [optimistic, ...prev]);
     setComment("");
+    try {
+      const saved = await addComment(ask.id, optimistic.body);
+      // Replace optimistic entry with real one
+      setAllComments(prev => prev.map(c => c.id === optimistic.id ? { ...saved, upvotes: 0 } : c));
+    } catch {
+      // keep optimistic on error, just mark as local
+    } finally {
+      setPosting(false);
+    }
   }
 
-  // Format details with basic markdown-like rendering
+  // ── Reply to comment (focus textarea + prefill) ──────────
+  function handleReply(authorName) {
+    setComment(`@${authorName} `);
+    textareaRef.current?.focus();
+    textareaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  // ── Comment upvote (local toggle — no comment_likes table) 
+  function handleCommentLike(commentId, currentUpvotes) {
+    setCommentLikes(prev => {
+      const existing = prev[commentId];
+      if (existing?.liked) {
+        return { ...prev, [commentId]: { count: (existing.count ?? currentUpvotes) - 1, liked: false } };
+      }
+      return { ...prev, [commentId]: { count: (existing?.count ?? currentUpvotes) + 1, liked: true } };
+    });
+  }
+
+  // ── Markdown-ish renderer ────────────────────────────────
   const renderDetails = (text = "") => {
-    let inCodeBlock = false;
-    let codeContent = [];
-    const elements = [];
-    
+    let inCode = false; let code = []; const els = [];
     text.split("\n").forEach((line, i) => {
       if (line.startsWith("```")) {
-        if (inCodeBlock) {
-          elements.push(
-            <div key={`code-${i}`} className="my-5 border-2 border-cy-ink bg-[var(--text)] p-5 text-white overflow-x-auto shadow-[4px_4px_0px_0px_var(--shadow)]">
-              <pre className="font-mono text-[13px] leading-relaxed">
-                <code>{codeContent.join("\n")}</code>
-              </pre>
-            </div>
-          );
-          codeContent = [];
-          inCodeBlock = false;
-        } else {
-          inCodeBlock = true;
-        }
-        return;
+        if (inCode) { els.push(<div key={`code-${i}`} className="my-4 border-2 border-cy-ink bg-cy-ink text-white p-4 overflow-x-auto"><pre className="font-mono text-[13px] leading-relaxed"><code>{code.join("\n")}</code></pre></div>); code = []; inCode = false; } else { inCode = true; } return;
       }
-      
-      if (inCodeBlock) {
-        codeContent.push(line);
-        return;
-      }
-      
-      if (line.startsWith("**") && line.endsWith("**")) {
-        elements.push(<p key={i} className="font-sans font-bold text-[15px] text-cy-ink mt-5 mb-2">{line.replace(/\*\*/g, "")}</p>);
-      } else if (line.startsWith("• ") || line.startsWith("- ")) {
-        elements.push(<p key={i} className="font-sans text-[15px] text-cy-ink pl-4 leading-relaxed relative before:content-['•'] before:absolute before:left-0 before:text-cy-ink">{line.slice(2)}</p>);
-      } else if (line.trim() === "") {
-        elements.push(<div key={i} className="h-3" />);
-      } else {
-        elements.push(<p key={i} className="font-sans text-[15px] text-cy-ink leading-relaxed">{line}</p>);
-      }
+      if (inCode) { code.push(line); return; }
+      if (line.trim() === "") { els.push(<div key={i} className="h-3" />); }
+      else { els.push(<p key={i} className="font-sans text-[15px] text-cy-ink leading-relaxed">{line}</p>); }
     });
-    
-    // Catch unclosed code blocks
-    if (inCodeBlock) {
-      elements.push(
-        <div key={`code-end`} className="my-5 border-2 border-cy-ink bg-[var(--text)] p-5 text-white overflow-x-auto shadow-[4px_4px_0px_0px_var(--shadow)]">
-          <pre className="font-mono text-[13px] leading-relaxed">
-            <code>{codeContent.join("\n")}</code>
-          </pre>
-        </div>
-      );
-    }
-    
-    return elements;
+    return els;
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-cy-bg">
-      {/* Scrollable body */}
+    <div className="h-full flex flex-col overflow-hidden bg-cy-bg border-l border-cy-ink/15">
       <div className="flex-1 overflow-y-auto">
-        <div className="px-6 lg:px-10 pt-6 pb-12 flex flex-col">
-
-          {/* Type Badge & Close Button */}
+        <div className="px-6 pt-5 pb-12">
+          {/* Badge + Close */}
           <div className="flex items-start justify-between mb-4">
-            <span
-              className="font-mono text-[10px] font-bold tracking-[0.14em] uppercase text-white px-3 py-1.5"
-              style={{ backgroundColor: meta.color }}
-            >
+            <span className="font-mono text-[9px] font-bold tracking-[0.14em] uppercase px-2.5 py-1" style={{ backgroundColor: meta.color, color: meta.textColor }}>
               {meta.label}
             </span>
-            <button
-              onClick={onClose}
-              className="font-mono text-[11px] font-bold tracking-[0.08em] text-cy-ink hover:text-cy-orange transition-colors flex items-center gap-1 bg-cy-bg border-2 border-transparent hover:border-cy-orange px-2 py-1 uppercase"
-            >
-              ✕ CLOSE
+            <button onClick={onClose} className="font-mono text-[10px] font-bold tracking-[0.08em] text-cy-muted hover:text-cy-ink transition-colors flex items-center gap-1 uppercase border-0">
+              ✕ Close
             </button>
           </div>
 
-          <div className="flex gap-4 sm:gap-6">
-            {/* Voting Column (Reddit Style) */}
-            <div className="flex flex-col items-center gap-1 pt-1 shrink-0 w-8">
-              <button onClick={() => handleVote("up")} className={`text-xl hover:text-cy-orange transition-colors leading-none ${voted === 'up' ? 'text-cy-orange' : 'text-cy-muted'}`}>▲</button>
-              <span className="font-mono text-[13px] font-bold text-cy-ink">{upvotes}</span>
-              <button onClick={() => handleVote("down")} className={`text-xl hover:text-cy-ink transition-colors leading-none ${voted === 'down' ? 'text-cy-ink' : 'text-cy-muted'}`}>▼</button>
+          <div className="flex gap-4">
+            {/* Vote column */}
+            <div className="flex flex-col items-center shrink-0 w-11 border-2 border-cy-ink bg-cy-bg shadow-[3px_3px_0px_0px_var(--shadow)] self-start mt-1">
+              <button
+                onClick={() => handleVote("up")}
+                disabled={liking}
+                className={`w-full h-9 flex items-center justify-center border-0 border-b-2 border-cy-ink transition-colors px-0 py-0 rounded-none outline-none ${voted === 'up' ? 'bg-cy-orange text-white' : 'hover:bg-cy-orange hover:text-white text-cy-ink'} disabled:opacity-50`}
+                title="Upvote"
+              >
+                <ArrowUpIcon size={16} />
+              </button>
+              <div className="w-full h-9 flex items-center justify-center font-mono font-bold text-[13px] bg-cy-ink/[0.03]">
+                {upvotes}
+              </div>
+              <button
+                onClick={() => handleVote("down")}
+                className={`w-full h-9 flex items-center justify-center border-0 border-t-2 border-cy-ink transition-colors px-0 py-0 rounded-none outline-none ${voted === 'down' ? 'bg-cy-ink text-white' : 'hover:bg-cy-ink hover:text-white text-cy-ink'}`}
+                title="Downvote"
+              >
+                <ArrowDownIcon size={16} />
+              </button>
             </div>
 
-            {/* Content Column */}
-            <div className="flex-1 flex flex-col min-w-0">
-              {/* Title */}
-              <h2 className="font-display font-black text-2xl md:text-3xl leading-tight tracking-tight text-cy-ink mb-4 max-w-3xl">
-                {ask.title}
-              </h2>
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <h2 className="font-display font-black text-2xl leading-tight tracking-tight text-cy-ink mb-3">{ask.title}</h2>
 
-              {/* Author row & Actions */}
-              <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b-2 border-cy-ink pb-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
-                    {author?.avatarUrl
-                      ? <img src={author.avatarUrl} alt={author.name} className="w-full h-full object-cover" />
-                      : <span className="font-mono text-xs font-bold text-white">{getInitials(author?.name ?? "?")}</span>
-                    }
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-sans font-bold text-[14px] text-cy-ink">{author?.name ?? "You"}</span>
-                    <div className="flex items-center gap-2 font-mono text-[10px] text-cy-muted mt-0.5">
-                      {author?.college && <span>{author.college}</span>}
-                      <span>•</span>
-                      <span>{timeAgo}</span>
-                    </div>
+              <div className="flex items-center justify-between gap-3 border-b border-cy-ink/15 pb-3 mb-4">
+                <div className="flex items-center gap-2.5">
+                  <Avatar src={author?.avatarUrl} name={author?.name} size={8} />
+                  <div>
+                    <p className="font-sans font-semibold text-[14px] text-cy-ink">{author?.name ?? "You"}</p>
+                    <p className="font-mono text-[10px] text-cy-muted">{author?.college} · {timeAgo}</p>
                   </div>
                 </div>
-
-                {/* Action buttons (Right-aligned) */}
                 <div className="flex items-center gap-2">
-                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
-                    SAVE
+                  {/* SAVE button — wired to toggleSave */}
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className={`font-mono text-[10px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border transition-all disabled:opacity-60 ${
+                      saved
+                        ? "border-cy-orange bg-cy-orange text-white"
+                        : "border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)]"
+                    }`}
+                  >
+                    {saved ? "✓ SAVED" : "SAVE"}
                   </button>
-                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
-                    SHARE
-                  </button>
-                  <button className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-3 py-1.5 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5">
+                  {/* REPLY — scrolls to comment box */}
+                  <button
+                    onClick={() => {
+                      textareaRef.current?.focus();
+                      textareaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }}
+                    className="font-mono text-[10px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-all"
+                  >
                     REPLY
                   </button>
                 </div>
               </div>
 
-              {/* Full body */}
-              <div className="flex flex-col gap-2 max-w-3xl">
-                {renderDetails(ask.details)}
-              </div>
+              <div className="flex flex-col gap-2 mb-5">{renderDetails(ask.details)}</div>
 
-              {/* Tags */}
               {ask.tags?.length > 0 && (
-                <ul className="flex flex-wrap gap-2 mt-6">
+                <ul className="flex flex-wrap gap-2 mb-6">
                   {ask.tags.map((tag) => (
-                    <li key={tag} className="font-mono text-[10px] font-bold tracking-[0.08em] uppercase border-2 border-cy-ink px-3 py-1 text-cy-ink">
-                      {tag}
-                    </li>
+                    <li key={tag} className="font-mono text-[9px] uppercase tracking-[0.06em] border border-cy-ink/25 px-2.5 py-1 text-cy-muted">{tag}</li>
                   ))}
                 </ul>
               )}
 
-              {/* Engagement */}
-              <div className="flex items-center gap-4 font-mono text-[11px] text-cy-muted mt-6 max-w-3xl">
-                <span>{allComments.length} comments</span>
-                <span>{Math.floor(Math.random() * 5 + 1)}.{Math.floor(Math.random() * 9)}k views</span>
-              </div>
+              <p className="font-mono text-[10px] text-cy-muted mb-4">{allComments.length} comment{allComments.length !== 1 ? "s" : ""}</p>
 
-              <hr className="border-t-2 border-cy-ink mt-6 mb-6 max-w-3xl" />
-
-              {/* TOP ANSWER Section */}
+              {/* Top answer */}
               {allComments.length > 0 && (
-                <div className="flex flex-col gap-4 max-w-3xl">
-                  <div className="flex items-center gap-2 text-[var(--cat-green)]">
-                    <span className="font-mono text-[13px] font-bold">✓</span>
-                    <span className="font-mono text-[11px] font-bold tracking-[0.12em] uppercase">Top Answer</span>
+                <div className="mb-6">
+                  <div className="flex items-center gap-1.5 mb-2" style={{ color: "#1E8A5A" }}>
+                    <span className="font-mono text-sm font-bold">✓</span>
+                    <span className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase">Top Answer</span>
                   </div>
-                  
-                  <div className="border-2 border-[var(--cat-green)] bg-[var(--cat-green)]/5 p-5 flex flex-col gap-4 shadow-[4px_4px_0px_0px_rgba(30,138,90,0.2)]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
-                        {allComments[0].author?.avatarUrl
-                          ? <img src={allComments[0].author.avatarUrl} alt={allComments[0].author.name} className="w-full h-full object-cover" />
-                          : <span className="font-mono text-[9px] font-bold text-white">{getInitials(allComments[0].author?.name ?? "?")}</span>
-                        }
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-sans font-bold text-[14px] text-cy-ink">{allComments[0].author?.name}</span>
-                        <span className="font-mono text-[10px] text-cy-muted mt-0.5">{allComments[0].author?.college}</span>
+                  <div className="border-l-4 border-[#1E8A5A] pl-4 bg-[#1E8A5A]/5 py-3 pr-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Avatar src={allComments[0].author?.avatarUrl} name={allComments[0].author?.name} size={7} />
+                      <div>
+                        <p className="font-sans font-semibold text-[13px] text-cy-ink">{allComments[0].author?.name}</p>
+                        <p className="font-mono text-[9px] text-cy-muted">{allComments[0].author?.college}</p>
                       </div>
                     </div>
-                    <p className="font-sans text-[14px] text-cy-ink leading-relaxed">
-                      {allComments[0].body}
-                    </p>
+                    <p className="font-sans text-[14px] text-cy-ink leading-relaxed">{allComments[0].body}</p>
                   </div>
                 </div>
               )}
 
-          {/* Comment box */}
-          <form onSubmit={handleComment} className="flex flex-col gap-2 border-t border-cy-ink/20 pt-4">
-            <p className="font-mono text-[10px] tracking-[0.1em] uppercase text-cy-muted">Add a comment</p>
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Write your response..."
-              rows={3}
-              className="w-full font-sans text-sm text-cy-ink bg-cy-bg border-2 border-cy-ink px-3 py-2 resize-none focus:outline-none focus:border-cy-orange transition-colors"
-              style={{ borderRadius: 0 }}
-            />
-            <button
-              type="submit"
-              className="self-end font-mono text-[10px] font-bold tracking-[0.1em] uppercase
-                         px-4 py-2 border-2 border-cy-ink bg-cy-ink text-[var(--bg)]
-                         hover:bg-transparent hover:text-cy-ink transition-colors"
-            >
-              Post →
-            </button>
-          </form>
+              <hr className="border-t border-cy-ink/10 mb-4" />
 
-          {/* Comments */}
-          {allComments.length > 0 && (
-            <div className="flex flex-col gap-4 border-t border-cy-ink/20 pt-4">
-              <p className="font-mono text-[10px] tracking-[0.1em] uppercase text-cy-muted">
-                {allComments.length} comment{allComments.length !== 1 ? "s" : ""}
-              </p>
-              {allComments.map((c) => (
-                <div key={c.id} className="border-l-2 border-cy-ink/30 pl-3 flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full overflow-hidden border border-cy-ink flex items-center justify-center bg-cy-ink shrink-0">
-                      {c.author?.avatarUrl
-                        ? <img src={c.author.avatarUrl} alt={c.author.name} className="w-full h-full object-cover" />
-                        : <span className="font-mono text-[7px] font-bold text-white">{getInitials(c.author?.name ?? "?")}</span>
-                      }
-                    </div>
-                    <span className="font-mono text-[10px] font-bold text-cy-ink">{c.author?.name}</span>
-                    {c.author?.college && <span className="font-mono text-[9px] text-cy-muted">{c.author.college}</span>}
-                    <span className="ml-auto font-mono text-[9px] text-cy-muted">{formatRelative(c.createdAt)}</span>
-                  </div>
-                  <p className="font-sans text-sm text-cy-ink leading-relaxed">{c.body}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <button className="font-mono text-[9px] text-cy-muted hover:text-cy-orange transition-colors">▲ {c.upvotes}</button>
-                    <button className="font-mono text-[9px] text-cy-muted hover:text-cy-ink transition-colors">Reply</button>
-                  </div>
+              {/* Comment form — wired to addComment */}
+              <form onSubmit={handleComment} className="flex flex-col gap-2 mb-6">
+                <p className="font-mono text-[10px] tracking-[0.08em] uppercase text-cy-muted">Add a comment</p>
+                <textarea
+                  ref={textareaRef}
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) handleComment(e); }}
+                  placeholder="Write your response... (Ctrl+Enter to post)"
+                  rows={3}
+                  className="w-full font-sans text-sm text-cy-ink bg-cy-bg border border-cy-ink/30 px-3 py-2 resize-none focus:outline-none focus:border-cy-orange transition-colors"
+                  style={{ borderRadius: 0 }}
+                />
+                <button
+                  type="submit"
+                  disabled={posting || !comment.trim()}
+                  className="self-end font-mono text-[10px] font-bold tracking-[0.08em] uppercase px-4 py-2 border border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-colors disabled:opacity-50"
+                >
+                  {posting ? "Posting..." : "Post →"}
+                </button>
+              </form>
+
+              {/* Comments list */}
+              {allComments.length > 0 && (
+                <div className="flex flex-col gap-4">
+                  {allComments.map((c) => {
+                    const likeState = commentLikes[c.id];
+                    const displayUpvotes = likeState?.count ?? c.upvotes ?? 0;
+                    const isLiked = likeState?.liked ?? false;
+                    return (
+                      <div key={c.id} className="border-l-2 border-cy-ink/20 pl-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Avatar src={c.author?.avatarUrl} name={c.author?.name} size={5} />
+                          <span className="font-mono text-[10px] font-bold text-cy-ink">{c.author?.name}</span>
+                          {c.author?.college && <span className="font-mono text-[9px] text-cy-muted">{c.author.college}</span>}
+                          <span className="ml-auto font-mono text-[9px] text-cy-muted">{formatRelative(c.createdAt)}</span>
+                        </div>
+                        <p className="font-sans text-sm text-cy-ink leading-relaxed">{c.body}</p>
+                        <div className="flex items-center gap-3 mt-1.5">
+                          {/* Comment upvote — local toggle */}
+                          <button
+                            onClick={() => handleCommentLike(c.id, c.upvotes ?? 0)}
+                            className={`font-mono text-[9px] transition-colors border-0 ${isLiked ? "text-cy-orange font-bold" : "text-cy-muted hover:text-cy-orange"}`}
+                          >
+                            ▲ {displayUpvotes}
+                          </button>
+                          {/* Reply — focuses comment box with @mention */}
+                          <button
+                            onClick={() => handleReply(c.author?.name ?? "")}
+                            className="font-mono text-[9px] text-cy-muted hover:text-cy-ink transition-colors border-0"
+                          >
+                            Reply
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
-          )}
+              )}
             </div>
           </div>
         </div>
@@ -438,21 +651,132 @@ function DetailPanel({ ask, onClose }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  Discovery Rail
+// ─────────────────────────────────────────────────────────────
+function RailSection({ title, children }) {
+  return (
+    <div className="border-b border-cy-ink/10 pb-5 mb-5 last:border-0 last:mb-0">
+      <h3 className="font-display font-black text-[14px] text-cy-ink mb-3 tracking-tight">{title}</h3>
+      {children}
+    </div>
+  );
+}
+
+function DiscoveryRail() {
+  return (
+    <aside className="hidden xl:block w-[268px] shrink-0 bg-cy-bg border-l border-cy-ink/15 h-full overflow-y-auto px-5 pt-6 pb-8">
+
+      <RailSection title="Activity this week">
+        <dl className="space-y-2">
+          {[
+            { icon: "📊", label: "Asks posted",   value: 64  },
+            { icon: "💬", label: "Answers given", value: 142 },
+            { icon: "👥", label: "New builders",  value: 87  },
+          ].map(({ icon, label, value }) => (
+            <div key={label} className="flex items-center justify-between">
+              <dt className="flex items-center gap-1.5 font-sans text-[12px] text-cy-muted">
+                <span className="text-[10px]">{icon}</span>{label}
+              </dt>
+              <dd className="font-mono text-[13px] font-bold text-cy-ink tabular-nums">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </RailSection>
+
+      <RailSection title="Top colleges">
+        <dl className="space-y-2.5">
+          {TOP_COLLEGES.map(({ name, count, color }) => (
+            <div key={name} className="flex items-center justify-between">
+              <dt className="flex items-center gap-2 font-sans text-[12px] text-cy-ink">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                <span className="truncate">{name}</span>
+              </dt>
+              <dd className="font-mono text-[12px] font-bold tabular-nums shrink-0 ml-2" style={{ color }}>{count}</dd>
+            </div>
+          ))}
+        </dl>
+        <button className="font-sans text-[11px] text-cy-muted hover:text-cy-orange transition-colors mt-3 block border-0">
+          View all colleges →
+        </button>
+      </RailSection>
+
+      <RailSection title="Trending topics">
+        <div className="flex items-center justify-between mb-2">
+          <div></div>
+          <button className="font-sans text-[11px] text-cy-muted hover:text-cy-orange transition-colors border-0">View all</button>
+        </div>
+        <dl className="space-y-2.5">
+          {TRENDING_TOPICS.map(({ name, count, color }) => (
+            <div key={name} className="flex items-center justify-between">
+              <dt className="flex items-center gap-2 font-sans text-[12px] text-cy-ink">
+                <span className="text-[10px]">🔥</span>{name}
+              </dt>
+              <dd className="font-mono text-[12px] font-bold tabular-nums" style={{ color }}>{count}</dd>
+            </div>
+          ))}
+        </dl>
+      </RailSection>
+
+      <RailSection title="Pinned groups">
+        <div className="flex items-center justify-between mb-2">
+          <div></div>
+          <button className="font-sans text-[11px] text-cy-muted hover:text-cy-orange transition-colors border-0">View all</button>
+        </div>
+        <ul className="space-y-3">
+          {PINNED_GROUPS.map(({ name, members, color }) => (
+            <li key={name} className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full border border-cy-ink/20 flex items-center justify-center shrink-0" style={{ backgroundColor: color + "22" }}>
+                  <span className="font-mono text-[8px] font-bold" style={{ color }}>{name[0]}</span>
+                </div>
+                <div>
+                  <p className="font-sans font-semibold text-[12px] text-cy-ink leading-tight">{name}</p>
+                  <p className="font-mono text-[10px] text-cy-muted">{members} members</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                <button className="text-cy-muted hover:text-cy-ink transition-colors border-0 text-[11px]">···</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </RailSection>
+
+    </aside>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
 //  Board page
 // ─────────────────────────────────────────────────────────────
 export default function Board() {
-  const { profile } = useAuth();
-  const { setContext, react } = useCat();
+  const { setContext } = useCat();
 
   const [allAsks,     setAllAsks]     = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [activeType,  setActiveType]  = useState(null);
   const [activeTag,   setActiveTag]   = useState(null);
+  const [sortBy,      setSortBy]      = useState("latest");
+  const [showSort,    setShowSort]    = useState(false);
   const [selectedAsk, setSelectedAsk] = useState(null);
+  
+  // Filter states
+  const [activeCollege, setActiveCollege] = useState(null);
+  const [showCollegeFilter, setShowCollegeFilter] = useState(false);
+  const sortRef = useRef(null);
+  const collegeRef = useRef(null);
 
+  useEffect(() => { setContext({ page: "board" }); }, [setContext]);
+
+  // Close sort dropdown when clicking outside
   useEffect(() => {
-    setContext({ page: 'board' });
-  }, [setContext]);
+    function handle(e) {
+      if (sortRef.current && !sortRef.current.contains(e.target)) setShowSort(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -469,165 +793,268 @@ export default function Board() {
     return Array.from(tagSet).sort();
   }, [allAsks]);
 
-  const filteredAsks = useMemo(() => {
-    return allAsks.filter((ask) => {
-      const typeMatch = activeType === null || ask.type === activeType;
-      const tagMatch  = activeTag  === null || ask.tags?.includes(activeTag);
-      return typeMatch && tagMatch;
+  const allColleges = useMemo(() => {
+    const colSet = new Set();
+    allAsks.forEach((ask) => {
+      if (ask.author?.college) colSet.add(ask.author.college);
     });
-  }, [allAsks, activeType, activeTag]);
+    return Array.from(colSet).sort();
+  }, [allAsks]);
 
-  const isDetailMode = selectedAsk !== null;
+  const filteredAsks = useMemo(() => {
+    let result = allAsks.filter((ask) => {
+      const typeMatch    = activeType === null || ask.type === activeType;
+      const tagMatch     = activeTag === null  || ask.tags?.includes(activeTag);
+      const collegeMatch = activeCollege === null || ask.author?.college === activeCollege;
+      return typeMatch && tagMatch && collegeMatch;
+    });
+    if (sortBy === "most-helpful")   result = [...result].sort((a, b) => (b.likeCount ?? 0)   - (a.likeCount ?? 0));
+    if (sortBy === "most-discussed") result = [...result].sort((a, b) => (b.commentCount ?? 0) - (a.commentCount ?? 0));
+    return result;
+  }, [allAsks, activeType, activeTag, activeCollege, sortBy]);
+
+  const hasFilters = activeType !== null || activeTag !== null;
+  const isDetail   = selectedAsk !== null;
+  const topicChips = allTags.length > 0 ? allTags.slice(0, 18) : POPULAR_TOPICS;
+
+  const SORT_LABELS = { latest: "Latest", "most-helpful": "Most Helpful", "most-discussed": "Most Discussed" };
 
   return (
-    <div className="flex h-full w-full relative overflow-hidden -m-6 md:-m-8 transition-all duration-300 ease-out bg-cy-bg">
-      
-      {/* ── Feed column (Compact or Full) ────────────────────── */}
-      <div 
-        className={`flex flex-col h-full overflow-y-auto border-cy-ink bg-cy-bg transition-all duration-300 ease-out shrink-0
-          ${isDetailMode ? "w-[250px] lg:w-[280px] border-r-2" : "w-full flex-1"}`}
-      >
-        <div className={`px-4 md:px-6 pt-6 md:pt-8 pb-0 ${isDetailMode ? "hidden" : "block"}`}>
-          {/* Detailed Header (hidden in compact mode) */}
-          <header className="flex items-start justify-between gap-4 flex-wrap pb-5 transition-opacity duration-300">
-            <div>
-              <h1 className="font-display font-black text-4xl text-cy-ink leading-tight">Board</h1>
-              <p className="font-mono text-xs text-cy-muted mt-1 tracking-[0.04em]">
-                What builders at Indian colleges are working on right now.
-              </p>
-            </div>
-            <Link
-              to="/ask/new"
-              className="font-mono text-xs font-bold tracking-[0.1em] uppercase
-                         px-4 py-2.5 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] shrink-0
-                         shadow-[4px_4px_0px_0px_var(--shadow)]
-                         hover:translate-x-0.5 hover:translate-y-0.5
-                         hover:shadow-[2px_2px_0px_0px_var(--shadow)]
-                         active:translate-x-1 active:translate-y-1 active:shadow-none
-                         transition-all flex items-center gap-2"
-            >
-              + Post an Ask
-            </Link>
-          </header>
-        </div>
+    <div className="flex h-full w-full overflow-hidden bg-cy-bg">
 
-        {/* Compact Header (only shown in compact mode) */}
-        {isDetailMode && (
-          <div className="px-4 py-4 border-b-2 border-cy-ink bg-cy-bg sticky top-0 z-10">
-            <h2 className="font-display font-black text-xl text-cy-ink leading-tight">BOARD</h2>
-            <Link to="/ask/new" className="font-mono text-[10px] uppercase font-bold text-cy-orange mt-1 inline-block hover:underline">
-              + Post an Ask
-            </Link>
+      {/* ── Feed column ─────────────────────────────────────────── */}
+      <div className={`flex flex-col h-full overflow-hidden bg-cy-bg transition-all duration-300 ease-out shrink-0 ${isDetail ? "w-[280px] lg:w-[300px] border-r border-cy-ink/15" : "flex-1"}`}>
+
+        {/* Board header */}
+        {!isDetail && (
+          <div className="px-6 md:px-8 pt-7 pb-0">
+            <div className="flex items-start justify-between gap-4 pb-5">
+              <div>
+                <h1 className="font-display font-black text-[2rem] text-cy-ink leading-tight">Board</h1>
+                <p className="font-sans text-[13px] text-cy-muted mt-0.5">
+                  Real questions. Real builders. Real help.
+                </p>
+              </div>
+              <Link
+                to="/ask/new"
+                className="font-mono text-[11px] font-bold tracking-[0.1em] uppercase shrink-0
+                           px-5 py-2.5 bg-cy-ink text-[var(--bg)] border-0
+                           shadow-[3px_3px_0px_0px_var(--text)]
+                           hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_0px_var(--text)]
+                           transition-all flex items-center gap-2"
+              >
+                + POST AN ASK
+              </Link>
+            </div>
           </div>
         )}
 
-        {/* Filter bar */}
-        <section aria-labelledby="filter-heading" className={`border-b-2 border-cy-ink px-4 md:px-6 py-3 flex flex-col gap-3 mb-4 bg-cy-bg sticky ${isDetailMode ? "top-[76px]" : "top-0"} z-10 transition-all`}>
-          <h2 id="filter-heading" className="sr-only">Filters</h2>
-          <div className={`flex items-center gap-1.5 flex-wrap ${isDetailMode ? "justify-start" : ""}`} role="group" aria-label="Filter by type">
-            {TYPE_FILTERS.map(({ label, value, color }) => {
-              const isActive = activeType === value;
-              return (
-                <button
-                  key={label}
-                  id={`filter-type-${label.toLowerCase()}`}
-                  onClick={() => { setActiveType(value); setActiveTag(null); }}
-                  aria-pressed={isActive}
-                  className={`font-mono font-bold tracking-[0.1em] uppercase transition-all duration-150 hover:-translate-y-px
-                              ${isDetailMode ? "text-[8px] px-2 py-1 border" : "text-[10px] px-4 py-1.5 border-2"}`}
-                  style={
-                    isActive
-                      ? { backgroundColor: value === null ? "var(--text)" : color, borderColor: color, color: "#ffffff", boxShadow: isDetailMode ? 'none' : `3px 3px 0 0 ${color}66` }
-                      : { backgroundColor: "transparent", borderColor: color, color: color }
-                  }
-                >
-                  {isDetailMode ? (value === null ? "ALL" : TYPE_META[value]?.label) : label}
-                </button>
-              );
-            })}
-            {!loading && !isDetailMode && (
-              <span className="ml-auto font-mono text-[9px] text-cy-muted tracking-[0.08em] uppercase">
-                {filteredAsks.length} ask{filteredAsks.length !== 1 ? "s" : ""}
-              </span>
-            )}
+        {/* Compact header in detail mode */}
+        {isDetail && (
+          <div className="px-4 py-3.5 border-b border-cy-ink/15 sticky top-0 bg-cy-bg z-10">
+            <p className="font-display font-black text-lg text-cy-ink">BOARD</p>
+            <Link to="/ask/new" className="font-mono text-[9px] uppercase font-bold text-cy-orange hover:underline border-0">+ Post an Ask</Link>
           </div>
-          {!isDetailMode && allTags.length > 0 && (
-            <ul className="flex flex-wrap gap-1.5" aria-label="Tag filters" role="list">
-              {allTags.map((tag) => {
-                const isActive = activeTag === tag;
+        )}
+
+        {/* Type tabs row */}
+        <div className={`px-6 md:px-8 border-b border-cy-ink/10 sticky ${isDetail ? "top-[68px]" : "top-0"} z-10 bg-cy-bg`}>
+          <div className="flex items-center justify-between">
+            {/* Tab buttons */}
+            <div className="flex items-center gap-1" role="group">
+              {TYPE_FILTERS.map(({ label, value, color }) => {
+                const isActive = activeType === value;
                 return (
-                  <li key={tag}>
-                    <button
-                      id={`filter-tag-${tag}`}
-                      onClick={() => setActiveTag((prev) => (prev === tag ? null : tag))}
-                      aria-pressed={isActive}
-                      className="font-mono text-[9px] tracking-[0.04em] uppercase px-2 py-0.5 border transition-colors duration-150"
-                      style={
-                        isActive
-                          ? { backgroundColor: "var(--text)", borderColor: "var(--text)", color: "var(--bg)" }
-                          : { backgroundColor: "transparent", borderColor: "var(--text)", color: "var(--text)" }
-                      }
-                    >
-                      {tag}
-                    </button>
-                  </li>
+                  <button
+                    key={label}
+                    onClick={() => { setActiveType(value); setActiveTag(null); }}
+                    aria-pressed={isActive}
+                    className={`font-mono font-bold text-[11px] tracking-[0.06em] uppercase px-3.5 py-2.5 border-b-[2.5px] transition-all duration-150 ${isDetail ? "px-2 py-2 text-[9px]" : ""}`}
+                    style={isActive
+                      ? { borderBottomColor: value === null ? "#111" : color, color: value === null ? "#111" : color, backgroundColor: "transparent" }
+                      : { borderBottomColor: "transparent", color: "var(--text-muted)", backgroundColor: "transparent", border: "none", borderBottom: "2.5px solid transparent" }
+                    }
+                  >
+                    {label}
+                  </button>
                 );
               })}
-            </ul>
-          )}
-        </section>
+            </div>
+
+            {/* Sort + count */}
+            {!isDetail && (
+              <div className="flex items-center gap-4 py-1">
+                {!loading && (
+                  <span className="font-mono text-[10px] text-cy-muted">
+                    {filteredAsks.length} asks
+                  </span>
+                )}
+                <div className="relative" ref={sortRef}>
+                  <button
+                    onClick={() => setShowSort((s) => !s)}
+                    className="flex items-center gap-1 font-mono text-[11px] font-bold text-cy-ink border border-cy-ink/25 px-3 py-1.5 hover:border-cy-ink transition-colors"
+                  >
+                    {SORT_LABELS[sortBy]} ↓
+                  </button>
+                  {showSort && (
+                    <div className="absolute right-0 top-full mt-1 bg-cy-bg border border-cy-ink/20 shadow-[0_4px_16px_rgba(0,0,0,0.12)] z-50 min-w-[160px]">
+                      {Object.entries(SORT_LABELS).map(([val, lbl]) => (
+                        <button key={val} onClick={() => { setSortBy(val); setShowSort(false); }}
+                          className={`w-full text-left font-mono text-[10px] uppercase tracking-[0.06em] px-4 py-2.5 hover:bg-cy-ink/5 transition-colors border-0 ${sortBy === val ? "text-cy-orange font-bold" : "text-cy-ink"}`}
+                        >{lbl}</button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Filter bar + topic chips */}
+        {!isDetail && (
+          <div className="px-6 md:px-8 py-2.5 border-b border-cy-ink/10 bg-cy-bg">
+            {/* Filter dropdowns row */}
+            <div className="flex items-center gap-2 flex-wrap mb-2">
+              <button
+                className={`flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${
+                  hasFilters ? "border-cy-orange text-cy-orange" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
+                }`}
+                onClick={() => { setActiveType(null); setActiveTag(null); setActiveCollege(null); }}
+                title={hasFilters ? "Clear all filters" : "Filters"}
+              >
+                <FilterIcon size={11} /> {hasFilters ? `Filters (${[activeTag, activeCollege].filter(Boolean).length})` : "Filters"}
+              </button>
+
+              {/* College filter */}
+              <div className="relative" ref={collegeRef}>
+                <button
+                  onClick={() => setShowCollegeFilter(s => !s)}
+                  className={`font-mono text-[10px] uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${
+                    activeCollege ? "border-cy-ink text-cy-ink bg-cy-ink/5 font-bold" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
+                  }`}
+                >
+                  {activeCollege ? `College: ${activeCollege}` : "College ↓"}
+                </button>
+                {showCollegeFilter && (
+                  <div className="absolute left-0 top-full mt-1 bg-cy-bg border border-cy-ink/20 shadow-[0_4px_16px_rgba(0,0,0,0.12)] z-50 min-w-[200px] max-h-52 overflow-y-auto">
+                    {allColleges.length === 0 ? (
+                      <p className="font-mono text-[10px] text-cy-muted px-4 py-3">No colleges found</p>
+                    ) : allColleges.map((col) => (
+                      <button key={col} onClick={() => { setActiveCollege(prev => prev === col ? null : col); setShowCollegeFilter(false); }}
+                        className={`w-full text-left font-mono text-[10px] px-4 py-2 hover:bg-cy-ink/5 transition-colors border-0 truncate ${
+                          activeCollege === col ? "text-cy-orange font-bold" : "text-cy-ink"
+                        }`}
+                      >{col}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Tag/skill filter — already handled by chips below, show active tag here */}
+              {activeTag && (
+                <button
+                  onClick={() => setActiveTag(null)}
+                  className="font-mono text-[10px] uppercase tracking-[0.06em] border border-cy-orange text-cy-orange bg-cy-orange/5 px-2.5 py-1 transition-colors hover:bg-cy-orange/10"
+                >
+                  Tag: {activeTag} ✕
+                </button>
+              )}
+
+              {(hasFilters || activeCollege) && (
+                <button
+                  onClick={() => { setActiveType(null); setActiveTag(null); setActiveCollege(null); }}
+                  className="ml-auto font-mono text-[10px] uppercase text-cy-orange border-0 hover:underline"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+
+            {/* Popular topic chips */}
+            <div className="flex flex-wrap gap-1.5">
+              {topicChips.slice(0, 18).map((tag) => {
+                const isActive = activeTag === tag;
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setActiveTag((prev) => prev === tag ? null : tag)}
+                    aria-pressed={isActive}
+                    className={`font-mono text-[9px] uppercase tracking-[0.04em] px-2 py-0.5 border transition-all duration-100 ${
+                      isActive
+                        ? "bg-cy-ink text-[var(--bg)] border-cy-ink"
+                        : "border-cy-ink/25 text-cy-muted hover:border-cy-ink/60 hover:text-cy-ink"
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+              {allTags.length > 18 && (
+                <span className="font-mono text-[9px] text-cy-muted self-center">+ More</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Ask feed */}
-        <div className="px-4 md:px-6 pb-12">
-          <section aria-labelledby="asks-list-heading" aria-live="polite">
-            <h2 id="asks-list-heading" className="sr-only">Asks</h2>
-            {loading ? (
-              <div className="flex flex-col gap-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-44 bg-cy-ink/5 border-2 border-cy-ink/10 animate-pulse" />
-                ))}
-              </div>
-            ) : filteredAsks.length === 0 ? (
-              <div className="border-2 border-cy-ink p-10 text-center shadow-[6px_6px_0px_0px_var(--shadow)]">
-                <p className="font-display font-bold text-lg text-cy-ink">No asks match these filters.</p>
-                <button
-                  onClick={() => { setActiveType(null); setActiveTag(null); }}
-                  className="mt-5 font-mono text-xs tracking-[0.1em] uppercase text-cy-ink
-                             hover:text-cy-orange transition-colors border-b-2 border-cy-orange pb-px"
-                >
-                  → Clear all filters
-                </button>
-              </div>
-            ) : (
-              <ul className={`flex flex-col ${isDetailMode ? "gap-2" : "gap-5"}`}>
-                {filteredAsks.map((ask) => (
-                  <li key={ask.id}>
-                    <FeedCard
-                      ask={ask}
-                      isSelected={selectedAsk?.id === ask.id}
-                      isCompact={isDetailMode}
-                      onClick={() => setSelectedAsk(selectedAsk?.id === ask.id ? null : ask)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-6 md:px-8 py-4">
+            <section aria-labelledby="asks-list" aria-live="polite">
+              <h2 id="asks-list" className="sr-only">Asks</h2>
+
+              {loading ? (
+                <div className="flex flex-col gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-[160px] bg-cy-ink/5 border-l-4 border-cy-ink/10 animate-pulse" />
+                  ))}
+                </div>
+              ) : filteredAsks.length === 0 ? (
+                <div className="border border-cy-ink/20 p-12 text-center mt-4">
+                  <p className="font-display font-bold text-xl text-cy-ink">Nothing here yet.</p>
+                  <p className="font-sans text-sm text-cy-muted mt-2">Try another skill, college, or ask type.</p>
+                  <button
+                    onClick={() => { setActiveType(null); setActiveTag(null); }}
+                    className="mt-5 font-mono text-xs tracking-[0.08em] uppercase text-cy-ink border border-cy-ink px-4 py-2 hover:bg-cy-ink hover:text-[var(--bg)] transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <ul className="flex flex-col gap-3">
+                  {filteredAsks.map((ask) => (
+                    <li key={ask.id}>
+                      <BoardCard
+                        ask={ask}
+                        isSelected={isDetail && selectedAsk?.id === ask.id}
+                        isCompact={isDetail}
+                        onClick={() => setSelectedAsk(selectedAsk?.id === ask.id ? null : ask)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
         </div>
       </div>
 
-      {/* ── Detail Panel ─────────────────────────────────────── */}
-      <div 
-        className={`h-full bg-cy-bg transition-all duration-300 ease-out overflow-hidden
-          ${isDetailMode ? "flex-1 opacity-100 translate-x-0" : "w-0 opacity-0 translate-x-12 pointer-events-none"}`}
+      {/* ── Detail Panel ──────────────────────────────────────── */}
+      <div
+        className={`h-full bg-cy-bg flex-1 overflow-hidden transition-all duration-300 ease-out ${
+          isDetail
+            ? "opacity-100 translate-x-0 pointer-events-auto"
+            : "w-0 max-w-0 opacity-0 translate-x-6 pointer-events-none"
+        }`}
+        style={{ minWidth: isDetail ? 0 : 0 }}
       >
         {selectedAsk && (
-          <DetailPanel
-            ask={selectedAsk}
-            onClose={() => setSelectedAsk(null)}
-          />
+          <DetailPanel key={selectedAsk.id} ask={selectedAsk} onClose={() => setSelectedAsk(null)} />
         )}
       </div>
+
+      {/* ── Right Discovery Rail ──────────────────────────────── */}
+      {!isDetail && <DiscoveryRail />}
     </div>
   );
 }

@@ -162,30 +162,30 @@ const INITIAL_MY_CREW = [
 //  INTENT CONFIG
 // ─────────────────────────────────────────────────────────────
 const INTENTS = [
-  { id: "hackathon-teammate",      label: "HACKATHON TEAMMATE" },
-  { id: "accountability-partner",  label: "ACCOUNTABILITY PARTNER" },
-  { id: "project-collaborator",    label: "PROJECT COLLABORATOR" },
-  { id: "open-source-buddy",       label: "OPEN-SOURCE BUDDY" },
-  { id: "code-reviewer",           label: "CODE REVIEWER" },
-  { id: "study-partner",           label: "STUDY PARTNER" },
-  { id: "co-founder",              label: "CO-FOUNDER" },
-  { id: "mentor",                  label: "MENTOR" },
-  { id: "just-meet-builders",      label: "JUST MEET BUILDERS" },
+  { id: "hackathon-teammate", label: "HACKATHON TEAMMATE" },
+  { id: "accountability-partner", label: "ACCOUNTABILITY PARTNER" },
+  { id: "project-collaborator", label: "PROJECT COLLABORATOR" },
+  { id: "open-source-buddy", label: "OPEN-SOURCE BUDDY" },
+  { id: "code-reviewer", label: "CODE REVIEWER" },
+  { id: "study-partner", label: "STUDY PARTNER" },
+  { id: "co-founder", label: "CO-FOUNDER" },
+  { id: "mentor", label: "MENTOR" },
+  { id: "just-meet-builders", label: "JUST MEET BUILDERS" },
 ];
 
 const ACCOUNTABILITY_GOALS = [
-  { id: "ship-portfolio",    label: "Ship my portfolio" },
-  { id: "learn-react",       label: "Learn React" },
-  { id: "solve-dsa-daily",   label: "Solve DSA daily" },
+  { id: "ship-portfolio", label: "Ship my portfolio" },
+  { id: "learn-react", label: "Learn React" },
+  { id: "solve-dsa-daily", label: "Solve DSA daily" },
   { id: "contribute-to-oss", label: "Contribute to OSS" },
-  { id: "build-startup",     label: "Build a startup" },
-  { id: "placement-prep",    label: "Prepare for placements" },
+  { id: "build-startup", label: "Build a startup" },
+  { id: "placement-prep", label: "Prepare for placements" },
   { id: "ship-side-project", label: "Ship a side project" },
 ];
 
 const HACKATHON_EVENTS = ["SIH", "Smart India Hackathon", "College Hackathon", "Other"];
-const HACKATHON_ROLES  = ["Frontend", "Backend", "ML", "DevOps", "Designer", "Hardware", "Product"];
-const SKILL_CHIPS      = ["React", "Next.js", "Python", "Go", "TypeScript", "Java", "Flutter", "Docker", "Kubernetes", "FastAPI"];
+const HACKATHON_ROLES = ["Frontend", "Backend", "ML", "DevOps", "Designer", "Hardware", "Product"];
+const SKILL_CHIPS = ["React", "Next.js", "Python", "Go", "TypeScript", "Java", "Flutter", "Docker", "Kubernetes", "FastAPI"];
 
 // ─────────────────────────────────────────────────────────────
 //  MESSAGES (preserved from original Messages.jsx)
@@ -197,9 +197,9 @@ const INITIAL_THREADS = [
     lastMessage: "Yeah, let me know if the Supabase realtime approach works for you!", lastTime: "11m ago",
     messages: [
       { id: "m1", from: "priya_builds", text: "Hey! Saw your Razorpay webhook question on the board.", time: "9:41 AM" },
-      { id: "m2", from: "me",           text: "Yeah, been stuck on it for two days now 😅", time: "9:42 AM" },
+      { id: "m2", from: "me", text: "Yeah, been stuck on it for two days now 😅", time: "9:42 AM" },
       { id: "m3", from: "priya_builds", text: "The issue is probably the body parsing — Next.js App Router reads the stream once. You need to call req.text() before any middleware touches it.", time: "9:44 AM" },
-      { id: "m4", from: "me",           text: "Oh wait, I think that's exactly it. Let me try.", time: "9:45 AM" },
+      { id: "m4", from: "me", text: "Oh wait, I think that's exactly it. Let me try.", time: "9:45 AM" },
       { id: "m5", from: "priya_builds", text: "Yeah, let me know if the Supabase realtime approach works for you!", time: "9:50 AM" },
     ],
   },
@@ -209,7 +209,7 @@ const INITIAL_THREADS = [
     lastMessage: "We're doing standups at 9pm IST, works?", lastTime: "2h ago",
     messages: [
       { id: "m1", from: "karan_hacks", text: "Saw you're interested in the SIH agriculture team!", time: "7:15 PM" },
-      { id: "m2", from: "me",          text: "Yes! ML + drone imagery is right up my alley. What's the dataset size?", time: "7:18 PM" },
+      { id: "m2", from: "me", text: "Yes! ML + drone imagery is right up my alley. What's the dataset size?", time: "7:18 PM" },
       { id: "m3", from: "karan_hacks", text: "Around 8k labelled images. We have AWS Educate credits too.", time: "7:20 PM" },
       { id: "m4", from: "karan_hacks", text: "We're doing standups at 9pm IST, works?", time: "7:22 PM" },
     ],
@@ -220,7 +220,7 @@ const INITIAL_THREADS = [
     lastMessage: "Cloudinary free tier is more than enough for campus scale 👍", lastTime: "Yesterday",
     messages: [
       { id: "m1", from: "divya_fs", text: "Loved your build log for the lost & found app!", time: "Yesterday" },
-      { id: "m2", from: "me",       text: "Thanks! How did you handle image upload costs?", time: "Yesterday" },
+      { id: "m2", from: "me", text: "Thanks! How did you handle image upload costs?", time: "Yesterday" },
       { id: "m3", from: "divya_fs", text: "Cloudinary free tier is more than enough for campus scale 👍", time: "Yesterday" },
     ],
   },
@@ -230,9 +230,9 @@ const INITIAL_THREADS = [
     lastMessage: "useRef flag is the cleanest solution tbh", lastTime: "3d ago",
     messages: [
       { id: "m1", from: "sneha_404", text: "For the useEffect double-fire — just use a ref flag.", time: "3d ago" },
-      { id: "m2", from: "me",        text: "Like `const ran = useRef(false)` at the top?", time: "3d ago" },
+      { id: "m2", from: "me", text: "Like `const ran = useRef(false)` at the top?", time: "3d ago" },
       { id: "m3", from: "sneha_404", text: "Exactly. Check the flag before running the POST, then set it to true.", time: "3d ago" },
-      { id: "m4", from: "me",        text: "Clean. Thanks!", time: "3d ago" },
+      { id: "m4", from: "me", text: "Clean. Thanks!", time: "3d ago" },
       { id: "m5", from: "sneha_404", text: "useRef flag is the cleanest solution tbh", time: "3d ago" },
     ],
   },
@@ -267,13 +267,13 @@ function computeMatchScore(myIntents, mySkills, builder) {
 
 function getMatchLabel(score) {
   if (score >= 10) return "STRONG MATCH";
-  if (score >= 6)  return "GOOD FIT";
+  if (score >= 6) return "GOOD FIT";
   return "RELEVANT BUILDER";
 }
 
 function getMatchLabelColor(score) {
   if (score >= 10) return "var(--cat-green)";
-  if (score >= 6)  return "var(--accent)";
+  if (score >= 6) return "var(--accent)";
   return "#6B6B6B";
 }
 
@@ -303,7 +303,7 @@ function getInitials(name = "") {
 }
 
 function Avatar({ seed, name, size = "sm" }) {
-  const dim  = size === "lg" ? "w-10 h-10" : size === "md" ? "w-8 h-8" : "w-7 h-7";
+  const dim = size === "lg" ? "w-10 h-10" : size === "md" ? "w-8 h-8" : "w-7 h-7";
   const text = size === "lg" ? "text-[10px]" : "text-[8px]";
   return (
     <div className={`${dim} rounded-full overflow-hidden border-2 border-cy-ink bg-cy-ink flex items-center justify-center shrink-0`} aria-hidden="true">
@@ -325,9 +325,9 @@ function IntentBadge({ label }) {
 //  BuilderCard
 // ─────────────────────────────────────────────────────────────
 function BuilderCard({ builder, myIntents, mySkills, onMessage, compact = false }) {
-  const score   = computeMatchScore(myIntents, mySkills, builder);
-  const label   = getMatchLabel(score);
-  const color   = getMatchLabelColor(score);
+  const score = computeMatchScore(myIntents, mySkills, builder);
+  const label = getMatchLabel(score);
+  const color = getMatchLabelColor(score);
   const reasons = getMatchReasons(myIntents, mySkills, builder);
 
   return (
@@ -443,14 +443,14 @@ function MessageComposer({ builder, myIntents, mySkills, onClose, onSend }) {
     builder.skills.map((x) => x.toLowerCase()).includes(s.toLowerCase())
   );
   const primaryIntent = myIntents.find((i) => builder.lookingFor.includes(i));
-  const intentLabel   = INTENTS.find((i) => i.id === primaryIntent)?.label?.toLowerCase() ?? "build together";
+  const intentLabel = INTENTS.find((i) => i.id === primaryIntent)?.label?.toLowerCase() ?? "build together";
 
   const suggested = sharedSkills.length > 0
     ? `Hey ${builder.name.split(" ")[0]} — saw you're looking for ${intentLabel}. I'm also working with ${sharedSkills.slice(0, 2).join(" & ")}. Want to connect and ${primaryIntent === "accountability-partner" ? "keep each other on track" : "collaborate"}?`
     : `Hey ${builder.name.split(" ")[0]} — saw your profile on CrewYard. I'm working on something similar and would love to connect.`;
 
   const [draft, setDraft] = useState(suggested);
-  const [sent,  setSent]  = useState(false);
+  const [sent, setSent] = useState(false);
 
   function handleSend(e) {
     e.preventDefault();
@@ -511,19 +511,19 @@ function MessageComposer({ builder, myIntents, mySkills, onClose, onSend }) {
 // ─────────────────────────────────────────────────────────────
 function FindCrew({ onMessage }) {
   const [selectedIntents, setSelectedIntents] = useState([]);
-  const [searchQuery,     setSearchQuery]     = useState("");
-  const [skillFilter,     setSkillFilter]     = useState([]);
-  const [collegeFilter,   setCollegeFilter]   = useState("");
-  const [showFilters,     setShowFilters]     = useState(false);
-  const [accountGoal,     setAccountGoal]     = useState(null);
-  const [acctCadence,     setAcctCadence]     = useState(null);
-  const [hackEvent,       setHackEvent]       = useState(null);
-  const [hackRoles,       setHackRoles]       = useState([]);
-  const [hackSkills,      setHackSkills]      = useState([]);
-  const [composerTarget,  setComposerTarget]  = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [skillFilter, setSkillFilter] = useState([]);
+  const [collegeFilter, setCollegeFilter] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [accountGoal, setAccountGoal] = useState(null);
+  const [acctCadence, setAcctCadence] = useState(null);
+  const [hackEvent, setHackEvent] = useState(null);
+  const [hackRoles, setHackRoles] = useState([]);
+  const [hackSkills, setHackSkills] = useState([]);
+  const [composerTarget, setComposerTarget] = useState(null);
 
   const wantsAccountability = selectedIntents.includes("accountability-partner");
-  const wantsHackathon      = selectedIntents.includes("hackathon-teammate");
+  const wantsHackathon = selectedIntents.includes("hackathon-teammate");
 
   function toggleIntent(id) {
     setSelectedIntents((prev) =>
@@ -816,9 +816,9 @@ function FindCrew({ onMessage }) {
 //  MESSAGES tab (full preserved Messages experience)
 // ─────────────────────────────────────────────────────────────
 function CrewMessages() {
-  const [threads,  setThreads]  = useState(INITIAL_THREADS);
+  const [threads, setThreads] = useState(INITIAL_THREADS);
   const [activeId, setActiveId] = useState(INITIAL_THREADS[0].id);
-  const [draft,    setDraft]    = useState("");
+  const [draft, setDraft] = useState("");
   const { profile } = useAuth();
   const messagesEndRef = useRef(null);
 
@@ -1035,9 +1035,9 @@ export default function Crew() {
 
       {/* Tab content */}
       <div className="transition-all duration-200 ease-out">
-        {activeTab === "FIND CREW"  && <FindCrew    onMessage={(b) => { /* composer handled inside */ }} />}
-        {activeTab === "MESSAGES"   && <CrewMessages />}
-        {activeTab === "MY CREW"    && <MyCrew onMessage={handleMessageFromMyCrew} />}
+        {activeTab === "FIND CREW" && <FindCrew onMessage={(b) => { /* composer handled inside */ }} />}
+        {activeTab === "MESSAGES" && <CrewMessages />}
+        {activeTab === "MY CREW" && <MyCrew onMessage={handleMessageFromMyCrew} />}
       </div>
     </div>
   );

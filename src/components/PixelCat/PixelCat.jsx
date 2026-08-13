@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useCat } from '../../context/CatContext';
 import CatAssistant from './CatAssistant';
-import { IDLE_SPRITE, BLINK_SPRITE, WAG_SPRITE, LOOKING_LEFT_SPRITE, PICKED_UP_SPRITE, DROPPED_SPRITE, PALETTE } from './catSprites';
+import { IDLE_SPRITE, BLINK_SPRITE, WAG_SPRITE, LOOKING_LEFT_SPRITE, PICKED_UP_SPRITE, DROPPED_SPRITE, EATING_SPRITE, PALETTE } from './catSprites';
 
 const CatSVG = ({ sprite }) => {
   return (
@@ -42,14 +42,25 @@ export default function PixelCat() {
   const [bubbleText, setBubbleText] = useState(BUBBLE_TEXTS[0]);
 
   // Dragging State
-  const [position, setPosition] = useState({ x: window.innerWidth - 100, y: window.innerHeight - 100 });
+  const [position, setPosition] = useState({ x: -1000, y: -1000 }); // offscreen until mounted
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const hasMoved = useRef(false);
+  const homeBounds = useRef({ width: 200 });
 
   // Initial mount positioning
   useEffect(() => {
-    setPosition({ x: window.innerWidth - 100, y: window.innerHeight - 150 });
+    const home = document.getElementById('cat-home-bounds');
+    if (home) {
+      const rect = home.getBoundingClientRect();
+      setPosition({ 
+        x: rect.right - 56 - 12, // 56=cat width, 12=padding right
+        y: rect.bottom - 84 - 10  // 84=cat height, 10=padding bottom
+      });
+      homeBounds.current = { width: rect.width - 24 }; // padding
+    } else {
+      setPosition({ x: window.innerWidth - 100, y: window.innerHeight - 150 });
+    }
   }, []);
 
   // Handle reactions injected by pages
@@ -69,6 +80,25 @@ export default function PixelCat() {
     } else if (activeReaction === 'search-started') {
       setCatState('LOOKING');
       setSprite(LOOKING_LEFT_SPRITE);
+    } else if (activeReaction === 'eat') {
+      // Short jumps of excitement
+      setCatState('EXCITED');
+      setSprite(WAG_SPRITE);
+      setBubbleText("🐟!!");
+      
+      // Wait for 1s of excitement before eating
+      actionTimer.current = setTimeout(() => {
+        setCatState('EATING');
+        setSprite(EATING_SPRITE);
+        setBubbleText("😋 num num");
+        
+        setTimeout(() => {
+          setCatState('IDLE');
+          setSprite(IDLE_SPRITE);
+          setBubbleText("Yum! *burp*");
+        }, 4000);
+      }, 1000);
+      return;
     }
 
     actionTimer.current = setTimeout(() => {
@@ -116,7 +146,14 @@ export default function PixelCat() {
 
         // Use functional state update to avoid depending on xPos
         setXPos(prevX => {
-          const newTarget = Math.floor(Math.random() * 150);
+          const maxWalk = Math.max(50, homeBounds.current.width - 56);
+          // Take a small step (between -40 and +40)
+          let step = (Math.random() * 80) - 40;
+          let newTarget = prevX + step;
+          
+          if (newTarget < 0) newTarget = 0;
+          if (newTarget > maxWalk) newTarget = maxWalk;
+
           setFacingLeft(newTarget > prevX);
           return newTarget;
         });
@@ -231,7 +268,7 @@ export default function PixelCat() {
       <div
         onMouseDown={handlePointerDown}
         onClick={handleClick}
-        className={`fixed z-50 select-none transition-all ease-in-out ${isDragging ? 'cursor-grabbing duration-0' : 'cursor-pointer duration-500 hover:-translate-y-2'} ${catState === 'WALKING' && !isDragging ? 'animate-bounce-short' : ''}`}
+        className={`fixed z-50 select-none transition-transform ease-in-out ${isDragging ? 'cursor-grabbing duration-0' : 'cursor-pointer duration-500'}`}
         title="CrewYard Assistant"
         style={{
           left: 0,
@@ -239,11 +276,12 @@ export default function PixelCat() {
           transform: `translate(${position.x - xPos}px, ${position.y}px)`,
         }}
       >
-        <div
-          className="relative transition-transform duration-300"
-          style={{ transform: facingLeft ? 'scaleX(1)' : 'scaleX(-1)' }}
-        >
-          <CatSVG sprite={sprite} />
+        <div className={`transition-transform duration-300 ${!isDragging ? 'hover:-translate-y-2' : ''} ${(catState === 'WALKING' || catState === 'EXCITED') && !isDragging ? 'animate-bounce-short' : ''}`}>
+          <div
+            className="relative transition-transform duration-300"
+            style={{ transform: facingLeft ? 'scaleX(1)' : 'scaleX(-1)' }}
+          >
+            <CatSVG sprite={sprite} />
 
           {/* Status bubbles (flip back so text isn't backward) */}
           <div style={{ transform: facingLeft ? 'scaleX(1)' : 'scaleX(-1)' }}>
@@ -252,17 +290,18 @@ export default function PixelCat() {
                 Zzz
               </div>
             )}
-            {catState === 'IDLE' && !showChat && (
-              <div className="absolute -top-2 right-2 font-mono text-[10px] bg-cy-bg border-2 border-cy-ink px-1.5 py-0.5 shadow-[2px_2px_0_0_var(--text)] opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+            {(catState === 'IDLE' || catState === 'EATING' || catState === 'EXCITED') && !showChat && (
+              <div className={`absolute -top-2 right-2 font-mono text-[10px] bg-cy-bg border-2 border-cy-ink px-1.5 py-0.5 shadow-[2px_2px_0_0_var(--text)] whitespace-nowrap z-50 ${catState !== 'IDLE' ? 'opacity-100' : 'opacity-0 hover:opacity-100 transition-opacity'}`}>
                 {bubbleText}
               </div>
             )}
-            {(catState === 'CURIOUS' || catState === 'EXCITED') && !showChat && (
+            {catState === 'CURIOUS' && !showChat && (
               <div className="absolute -top-2 right-2 font-mono text-[12px] text-cy-orange font-bold animate-bounce">
                 !
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
 

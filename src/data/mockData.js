@@ -51,9 +51,9 @@ export const mockUsers = [
   },
   {
     id: "u2",
-    username: "priya_builds",
-    name: "Priya Nair",
-    college: "KIIT Bhubaneswar",
+    username: "priyanshi_u",
+    name: "Priyanshi Upadhyay",
+    college: "NMIMS MPSTME Shirpur",
     year: 4,
     major: "Computer Science",
     githubVerified: true,
@@ -69,16 +69,16 @@ export const mockUsers = [
     skills: ["TypeScript", "Next.js", "Node.js", "PostgreSQL"],
     lookingFor: ["Designers"],
     lookingForDetails: "Looking for a UI designer for my next side project.",
-    githubUsername: "priyanair",
+    githubUsername: "priyanshiupadhyay",
     building: null,
     projects: [],
     reputationHistory: []
   },
   {
     id: "u3",
-    username: "rohan_ml",
-    name: "Rohan Gupta",
-    college: "PES University",
+    username: "ayush_ml",
+    name: "Ayush Singh",
+    college: "NMIMS MPSTME Shirpur",
     year: 2,
     major: "Electrical Engineering",
     githubVerified: false,
@@ -94,16 +94,16 @@ export const mockUsers = [
     skills: ["Python", "PyTorch", "scikit-learn"],
     lookingFor: ["Accountability Partner", "Open Source"],
     lookingForDetails: "Looking for a buddy to prep for GSoC.",
-    githubUsername: "rohanml",
+    githubUsername: "ayushsingh",
     building: null,
     projects: [],
     reputationHistory: []
   },
   {
     id: "u4",
-    username: "divya_fs",
-    name: "Divya Krishnan",
-    college: "VIT Vellore",
+    username: "aditya_fs",
+    name: "Aditya Thukral",
+    college: "NMIMS MPSTME Shirpur",
     year: 3,
     major: "Information Technology",
     githubVerified: true,
@@ -119,14 +119,14 @@ export const mockUsers = [
     skills: ["React", "Supabase", "Tailwind CSS"],
     lookingFor: [],
     lookingForDetails: "",
-    githubUsername: "divyafs",
+    githubUsername: "adityathukral",
     building: {
       name: "Campus Lost & Found",
       description: "Lost & Found board for VIT",
       stack: ["NEXT.JS", "SUPABASE", "SHADCN/UI"],
       status: "MAINTAINING",
       lastUpdated: "2025-08-07T18:00:00Z",
-      repoUrl: "https://github.com/divya_fs/campus-lost",
+      repoUrl: "https://github.com/aditya_fs/campus-lost",
       demoUrl: "https://campuslost.vercel.app"
     },
     projects: [
@@ -135,7 +135,7 @@ export const mockUsers = [
         name: "Campus Lost & Found",
         description: "Built in a weekend, 200+ active users at VIT.",
         stack: ["NEXT.JS", "SUPABASE", "SHADCN/UI"],
-        repoUrl: "https://github.com/divya_fs/campus-lost",
+        repoUrl: "https://github.com/aditya_fs/campus-lost",
         demoUrl: "https://campuslost.vercel.app"
       }
     ],
@@ -143,9 +143,9 @@ export const mockUsers = [
   },
   {
     id: "u5",
-    username: "karan_hacks",
-    name: "Karan Mehta",
-    college: "UPES Dehradun",
+    username: "bhanu_codes",
+    name: "Bhanu Bhaskar",
+    college: "DTU Delhi",
     year: 4,
     major: "Computer Science",
     githubVerified: true,
@@ -161,7 +161,7 @@ export const mockUsers = [
     skills: ["Go", "Python", "Docker", "PostgreSQL"],
     lookingFor: ["Frontend Dev", "ML Engineer"],
     lookingForDetails: "Need devs for SIH 2025 Smart Agriculture.",
-    githubUsername: "karanhacks",
+    githubUsername: "bhanubhaskar",
     building: null,
     projects: [
       {
@@ -169,7 +169,7 @@ export const mockUsers = [
         name: "MockMate",
         description: "AI mock interview CLI for placement prep.",
         stack: ["PYTHON", "TYPER", "OPENAI API"],
-        repoUrl: "https://github.com/karan_hacks/mockmate",
+        repoUrl: "https://github.com/bhanu_codes/mockmate",
         demoUrl: ""
       }
     ],
@@ -177,9 +177,9 @@ export const mockUsers = [
   },
   {
     id: "u6",
-    username: "sneha_404",
-    name: "Sneha Reddy",
-    college: "Chandigarh University",
+    username: "piyush_404",
+    name: "Piyush Kumar",
+    college: "IIT Roorkee",
     year: 2,
     major: "Computer Science",
     githubVerified: false,
@@ -195,16 +195,16 @@ export const mockUsers = [
     skills: ["Java", "HTML", "CSS", "JavaScript"],
     lookingFor: [],
     lookingForDetails: "",
-    githubUsername: "sneha404",
+    githubUsername: "piyushkumar",
     building: null,
     projects: [],
     reputationHistory: []
   },
   {
     id: "u7",
-    username: "arjun_dev",
-    name: "Arjun Sharma",
-    college: "Jaypee Institute",
+    username: "mayuresh_dev",
+    name: "Mayuresh Jadhav",
+    college: "VJTI Mumbai",
     year: 3,
     major: "Computer Science",
     githubVerified: true,
@@ -220,7 +220,58 @@ export const mockUsers = [
     skills: ["TypeScript", "Next.js", "Rust"],
     lookingFor: [],
     lookingForDetails: "",
-    githubUsername: "arjun_dev",
+    githubUsername: "mayuresh_dev",
+    building: null,
+    projects: [],
+    reputationHistory: []
+  }
+,
+  {
+    id: "u8",
+    username: "ansh_shriv",
+    name: "Ansh Shrivastava",
+    college: "IIIT Hyderabad",
+    year: 3,
+    major: "Computer Science",
+    githubVerified: true,
+    reputation: 920,
+    commitsThisWeek: 45,
+    commitsChangePercent: 15,
+    topLanguage: "Rust",
+    topLanguagePercent: 82,
+    joinedDate: "2024-11-20",
+    avatarUrl: "/avatars/avatar_08.jpg",
+    bio: "Systems programmer. Trying to rewrite everything in Rust.",
+    availability: "BUSY",
+    skills: ["Rust", "C++", "Linux", "WebAssembly"],
+    lookingFor: [],
+    lookingForDetails: "",
+    githubUsername: "anshshrivastava",
+    building: null,
+    projects: [],
+    reputationHistory: []
+  },
+  {
+    id: "u9",
+    username: "sahil_k",
+    name: "Sahil Kulkani",
+    college: "COEP Pune",
+    year: 4,
+    major: "Information Technology",
+    githubVerified: true,
+    reputation: 1105,
+    commitsThisWeek: 22,
+    commitsChangePercent: -10,
+    topLanguage: "TypeScript",
+    topLanguagePercent: 75,
+    joinedDate: "2024-05-12",
+    avatarUrl: "/avatars/avatar_09.jpg",
+    bio: "Fullstack dev. Heavy on the frontend, light on the sleep.",
+    availability: "OPEN TO BUILD",
+    skills: ["React", "TypeScript", "Tailwind", "Figma"],
+    lookingFor: ["Backend Dev"],
+    lookingForDetails: "Need a solid backend dev to build out APIs for my SaaS idea.",
+    githubUsername: "sahilkul",
     building: null,
     projects: [],
     reputationHistory: []
@@ -301,7 +352,7 @@ Weekend breakdown:
 Hardest part: real-time "claimed" status without websockets. Solved with Supabase
 Realtime — 3 lines of code, worked first try.
 
-Link: campuslost.vercel.app (VIT login required) | GitHub: github.com/divya_fs/campus-lost`,
+Link: campuslost.vercel.app (VIT login required) | GitHub: github.com/aditya_fs/campus-lost`,
     tags: ["next.js", "supabase", "shipped", "build-log", "campus-tool"],
     authorId: "u4",
     createdAt: "2025-08-07T18:00:00Z",
@@ -374,7 +425,7 @@ DSA + HR rounds using the OpenAI API.
 Just open-sourced it. 80 stars in 48 hours on GitHub 🎉
 Would love feedback + contributors — especially for adding voice input support.
 
-GitHub: github.com/karan_hacks/mockmate`,
+GitHub: github.com/bhanu_codes/mockmate`,
     tags: ["python", "openai", "cli", "placement-prep", "open-source", "build-log"],
     authorId: "u5",
     createdAt: "2025-08-05T20:00:00Z",
@@ -520,6 +571,56 @@ I've managed to optimize the YOLOv8 inference, reducing latency by 40%, but I'm 
     likeCount: 34,
     saved: false,
   }
+,
+  {
+    id: "a13",
+    type: "build_log",
+    title: "Shipped a fast Rust-based markdown parser for my blog",
+    details: `Got tired of how slow my JS-based MDX parser was getting with hundreds of posts, so I spent the weekend writing a custom parser in Rust and exposing it via WebAssembly to my Next.js frontend.
+    
+The performance gain is insane. Build times dropped by 40%. The hardest part was getting the Wasm bindings working nicely with Webpack. I've open-sourced the core parser crate.`,
+    tags: ["rust", "webassembly", "next.js", "performance", "build-log"],
+    authorId: "u8",
+    createdAt: "2025-08-11T16:20:00Z",
+    commitsThisMonth: 110,
+    commentCount: 18,
+    likeCount: 89,
+    saved: true,
+  },
+  {
+    id: "a14",
+    type: "help",
+    title: "Tailwind JIT compiling extremely slowly in Turborepo setup",
+    details: `Hey folks, I have a Turborepo monorepo with 3 Next.js apps and a shared UI package using Tailwind CSS. 
+    
+Lately, whenever I save a file in the UI package, Tailwind takes like 4-5 seconds to recompile the classes across the apps. It completely ruins the dev experience. I've tried specifying the exact content paths in tailwind.config.js but it didn't help much. Has anyone faced this in large monorepos?`,
+    tags: ["tailwind", "turborepo", "next.js", "css", "help"],
+    authorId: "u9",
+    createdAt: "2025-08-12T09:45:00Z",
+    commitsThisMonth: 34,
+    commentCount: 7,
+    likeCount: 21,
+    saved: false,
+  },
+  {
+    id: "a15",
+    type: "teammate",
+    title: "Looking for an AI engineer for a localized legal document summarizer (Hackathon)",
+    details: `We are participating in a local legal-tech hackathon next week. The idea is to parse dense Indian legal documents (PDFs, scans) and summarize them into simple regional languages using LLMs.
+    
+We have:
+- 1 Frontend (Me)
+- 1 Backend/Cloud guy
+
+We need someone who knows their way around OCR (Tesseract/AWS Textract) and LLM prompt engineering/chaining (LangChain or direct APIs). Hit me up!`,
+    tags: ["ai", "llm", "hackathon", "teammate", "legal-tech"],
+    authorId: "u9",
+    createdAt: "2025-08-13T11:10:00Z",
+    commitsThisMonth: 12,
+    commentCount: 4,
+    likeCount: 15,
+    saved: false,
+  }
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -557,29 +658,29 @@ export const mockGroups = [
     discussions: [
       {
         id: "d1",
-        author: { name: "Karan Mehta", college: "UPES Dehradun", avatarUrl: "/avatars/avatar_05.jpg" },
+        author: { name: "Bhanu Bhaskar", college: "DTU Delhi", avatarUrl: "/avatars/avatar_05.jpg" },
         body: "Anyone working on problem statement AA1437? We're 5 members but need an ML person.",
         time: "2025-08-10T14:00:00Z",
         replyCount: 7,
       },
       {
         id: "d2",
-        author: { name: "Priya Nair", college: "KIIT Bhubaneswar", avatarUrl: "/avatars/avatar_02.jpg" },
+        author: { name: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_02.jpg" },
         body: "Has anyone successfully used AWS Educate credits for model training? Ours keeps hitting quota limits.",
         time: "2025-08-09T11:30:00Z",
         replyCount: 4,
       },
       {
         id: "d3",
-        author: { name: "Arjun Sharma", college: "Jaypee Institute", avatarUrl: "/avatars/avatar_07.jpg" },
+        author: { name: "Mayuresh Jadhav", college: "VJTI Mumbai", avatarUrl: "/avatars/avatar_07.jpg" },
         body: "Sharing my SIH 2024 experience — happy to review anyone's approach document before submission.",
         time: "2025-08-08T09:15:00Z",
         replyCount: 11,
       },
     ],
     recentBuilds: [
-      { builder: "Karan Mehta", college: "UPES Dehradun", what: "Drone image preprocessing pipeline (YOLOv8s)", date: "2025-08-10T00:00:00Z" },
-      { builder: "Priya Nair", college: "KIIT Bhubaneswar", what: "Real-time collaborative whiteboard for team sync", date: "2025-08-08T00:00:00Z" },
+      { builder: "Bhanu Bhaskar", college: "DTU Delhi", what: "Drone image preprocessing pipeline (YOLOv8s)", date: "2025-08-10T00:00:00Z" },
+      { builder: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", what: "Real-time collaborative whiteboard for team sync", date: "2025-08-08T00:00:00Z" },
     ],
     resources: [
       { id: "r1", title: "SIH 2025 Problem Statements PDF", description: "All official problem statements for SIH 2025", addedBy: "u5", date: "2025-08-01T00:00:00Z" },
@@ -609,29 +710,29 @@ export const mockGroups = [
     discussions: [
       {
         id: "d4",
-        author: { name: "Arjun Sharma", college: "Jaypee Institute", avatarUrl: "/avatars/avatar_07.jpg" },
+        author: { name: "Mayuresh Jadhav", college: "VJTI Mumbai", avatarUrl: "/avatars/avatar_07.jpg" },
         body: "Anyone here working on Kubernetes operators? Thinking of targeting CNCF.",
         time: "2025-08-10T10:42:00Z",
         replyCount: 3,
       },
       {
         id: "d5",
-        author: { name: "Priya Nair", college: "KIIT Bhubaneswar", avatarUrl: "/avatars/avatar_02.jpg" },
+        author: { name: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_02.jpg" },
         body: "Has anyone submitted to CNCF LFX before? Any tips on the application?",
         time: "2025-08-10T09:18:00Z",
         replyCount: 5,
       },
       {
         id: "d6",
-        author: { name: "Rohan Gupta", college: "PES University", avatarUrl: "/avatars/avatar_03.jpg" },
+        author: { name: "Ayush Singh", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_03.jpg" },
         body: "I got my first OSS PR merged into MLflow. Small fix but feels huge 🎉",
         time: "2025-08-09T18:00:00Z",
         replyCount: 8,
       },
     ],
     recentBuilds: [
-      { builder: "Rohan Gupta", college: "PES University", what: "First PR merged to MLflow — fixed a logging edge case", date: "2025-08-09T00:00:00Z" },
-      { builder: "Karan Mehta", college: "UPES Dehradun", what: "Opened AI mock interview CLI for OSS contributions", date: "2025-08-05T00:00:00Z" },
+      { builder: "Ayush Singh", college: "NMIMS MPSTME Shirpur", what: "First PR merged to MLflow — fixed a logging edge case", date: "2025-08-09T00:00:00Z" },
+      { builder: "Bhanu Bhaskar", college: "DTU Delhi", what: "Opened AI mock interview CLI for OSS contributions", date: "2025-08-05T00:00:00Z" },
     ],
     resources: [
       { id: "r4", title: "GSoC 2026 Timeline", description: "Official Google Summer of Code 2026 key dates and deadlines", addedBy: "u3", date: "2025-07-20T00:00:00Z" },
@@ -662,22 +763,22 @@ export const mockGroups = [
     discussions: [
       {
         id: "d7",
-        author: { name: "Divya Krishnan", college: "VIT Vellore", avatarUrl: "/avatars/avatar_04.jpg" },
+        author: { name: "Aditya Thukral", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_04.jpg" },
         body: "Anyone else getting weird hydration errors with Supabase SSR in Next.js 14?",
         time: "2025-08-10T13:00:00Z",
         replyCount: 6,
       },
       {
         id: "d8",
-        author: { name: "Sneha Reddy", college: "Chandigarh University", avatarUrl: "/avatars/avatar_06.jpg" },
+        author: { name: "Piyush Kumar", college: "IIT Roorkee", avatarUrl: "/avatars/avatar_06.jpg" },
         body: "What's your go-to for email in Next.js? Resend or Nodemailer?",
         time: "2025-08-09T17:00:00Z",
         replyCount: 9,
       },
     ],
     recentBuilds: [
-      { builder: "Divya Krishnan", college: "VIT Vellore", what: "Campus Lost & Found — 200+ users at VIT", date: "2025-08-07T00:00:00Z" },
-      { builder: "Priya Nair", college: "KIIT Bhubaneswar", what: "Real-time collaborative whiteboard using Socket.io", date: "2025-08-01T00:00:00Z" },
+      { builder: "Aditya Thukral", college: "NMIMS MPSTME Shirpur", what: "Campus Lost & Found — 200+ users at VIT", date: "2025-08-07T00:00:00Z" },
+      { builder: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", what: "Real-time collaborative whiteboard using Socket.io", date: "2025-08-01T00:00:00Z" },
     ],
     resources: [
       { id: "r8", title: "Next.js 14 App Router Cheatsheet", description: "Common patterns for RSC, server actions, and routing", addedBy: "u4", date: "2025-07-15T00:00:00Z" },
@@ -713,7 +814,7 @@ export const mockGroups = [
       },
       {
         id: "d10",
-        author: { name: "Rohan Gupta", college: "PES University", avatarUrl: "/avatars/avatar_03.jpg" },
+        author: { name: "Ayush Singh", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_03.jpg" },
         body: "Is Kaggle still worth it for skill building or is it just competition farming now?",
         time: "2025-08-08T15:00:00Z",
         replyCount: 12,
@@ -721,7 +822,7 @@ export const mockGroups = [
     ],
     recentBuilds: [
       { builder: "Prakhar Jaiswal", college: "NMIMS MPSTME Shirpur", what: "FORGE — Multi-agent AI resume & career platform", date: "2025-08-10T00:00:00Z" },
-      { builder: "Karan Mehta", college: "UPES Dehradun", what: "AI mock interview CLI — 80 GitHub stars in 48hrs", date: "2025-08-05T00:00:00Z" },
+      { builder: "Bhanu Bhaskar", college: "DTU Delhi", what: "AI mock interview CLI — 80 GitHub stars in 48hrs", date: "2025-08-05T00:00:00Z" },
     ],
     resources: [
       { id: "r10", title: "Fast.ai Practical DL Course", description: "Best free course for practical deep learning — no PhD required", addedBy: "u3", date: "2025-07-10T00:00:00Z" },
@@ -750,14 +851,14 @@ export const mockGroups = [
     discussions: [
       {
         id: "d11",
-        author: { name: "Priya Nair", college: "KIIT Bhubaneswar", avatarUrl: "/avatars/avatar_02.jpg" },
+        author: { name: "Priyanshi Upadhyay", college: "NMIMS MPSTME Shirpur", avatarUrl: "/avatars/avatar_02.jpg" },
         body: "Anyone using Lemon Squeezy for payments? How does it compare to Stripe for students?",
         time: "2025-08-10T08:00:00Z",
         replyCount: 5,
       },
     ],
     recentBuilds: [
-      { builder: "Divya Krishnan", college: "VIT Vellore", what: "Campus Lost & Found hit 200 active users", date: "2025-08-07T00:00:00Z" },
+      { builder: "Aditya Thukral", college: "NMIMS MPSTME Shirpur", what: "Campus Lost & Found hit 200 active users", date: "2025-08-07T00:00:00Z" },
     ],
     resources: [
       { id: "r12", title: "Indie Hackers Starter Reading List", description: "10 posts every first-time founder should read", addedBy: "u5", date: "2025-07-18T00:00:00Z" },
@@ -765,5 +866,27 @@ export const mockGroups = [
     ],
     askIds: ["a3", "a8", "a9"],
   },
+,
+  {
+    id: "g6",
+    name: "Rust India User Group",
+    category: "languages",
+    description: "For Indian developers learning and building with Rust. From embedded systems to high-performance web servers.",
+    memberCount: 412,
+    openAsks: 8,
+    activeBuilders: 15,
+    tags: ["rust", "systems", "wasm"],
+    activeThisWeek: true,
+    memberIds: ["u7", "u8"],
+    pinnedAnnouncement: {
+      title: "Rust 1.80 Release Highlights",
+      body: "Let's discuss the new features in Rust 1.80. Specifically the new LazyLock API. We will have a quick 30m call this Friday.",
+      postedBy: "u8",
+      date: "2025-07-28T10:00:00Z",
+    },
+    discussions: [],
+    recentBuilds: [],
+    resources: [],
+    askIds: ["a13"],
+  }
 ];
-

@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import AppNav from "./AppNav";
@@ -22,6 +22,8 @@ import PixelCat from "./PixelCat/PixelCat";
 export default function AuthenticatedLayout() {
   const { user, loading, needsProfileSetup } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const location = useLocation();
+  const isFullBleed = location.pathname === "/board";
 
   if (loading) {
     return (
@@ -51,7 +53,7 @@ export default function AuthenticatedLayout() {
         {/* Main content: flex-1 + overflow-y-auto = only this column scrolls */}
         <main
           id="main-content"
-          className="flex-1 overflow-y-auto p-6 md:p-8 bg-cy-bg h-full"
+          className={`flex-1 bg-cy-bg h-full ${isFullBleed ? "p-0 overflow-hidden" : "p-6 md:p-8 overflow-y-auto"}`}
         >
           <Outlet />
         </main>

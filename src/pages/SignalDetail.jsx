@@ -7,7 +7,7 @@ import { formatRelativeTime } from '../utils/time';
 export default function SignalDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const signal = mockSignals.find(s => s.id === id);
 
   if (!signal) {
@@ -28,13 +28,13 @@ export default function SignalDetail() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] p-6 lg:p-12 max-w-4xl mx-auto">
-      
+
       {/* Top Nav */}
       <div className="flex items-center justify-between mb-12">
         <button onClick={() => navigate('/signals')} className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text)] hover:text-[var(--accent)] transition-colors">
           <ArrowLeft size={14} /> BACK TO SIGNALS
         </button>
-        
+
         <button className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.1em] uppercase border-2 border-[var(--text)] px-3 py-1.5 hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors">
           <Bookmark size={12} /> SAVE
         </button>
@@ -53,11 +53,11 @@ export default function SignalDetail() {
             BY {signal.author || signal.source}
           </span>
         </div>
-        
+
         <h1 className="font-display font-black text-4xl md:text-5xl lg:text-6xl text-[var(--text)] leading-none tracking-tight mb-6">
           {signal.title}
         </h1>
-        
+
         <p className="font-sans text-xl md:text-2xl text-[var(--text)] leading-relaxed opacity-90 max-w-3xl">
           {signal.summary}
         </p>
@@ -86,10 +86,10 @@ export default function SignalDetail() {
             </span>
           ))}
         </div>
-        
-        <a 
-          href={signal.sourceUrl} 
-          target="_blank" 
+
+        <a
+          href={signal.sourceUrl}
+          target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 font-mono text-[12px] font-bold tracking-[0.1em] uppercase bg-[var(--accent)] text-white px-6 py-3 hover:opacity-90 transition-opacity whitespace-nowrap"
         >
@@ -105,8 +105,8 @@ export default function SignalDetail() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedSignals.map(rs => (
-              <div 
-                key={rs.id} 
+              <div
+                key={rs.id}
                 onClick={() => navigate(`/signals/${rs.id}`)}
                 className="group border border-[var(--text)] p-5 cursor-pointer hover:bg-[var(--surface-2)] transition-colors"
               >
