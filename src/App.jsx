@@ -13,6 +13,8 @@ import CampusPods from "./pages/CampusPods";
 import Crew from "./pages/Crew";
 import Signals from "./pages/Signals";
 import SignalDetail from "./pages/SignalDetail";
+import MyAsks from "./pages/MyAsks";
+import Saved from "./pages/Saved";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
             <Route path="/crew"        element={<Crew />} />
             <Route path="/signals"     element={<Signals />} />
             <Route path="/signals/:id" element={<SignalDetail />} />
+            <Route path="/my-asks"     element={<MyAsks />} />
+            <Route path="/saved"       element={<Saved />} />
           </Route>
         </Routes>
       </BrowserRouter>

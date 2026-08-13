@@ -180,6 +180,78 @@ export async function updateProfile(updates) {
 // ─────────────────────────────────────────────────────────────
 
 /**
+ * Returns asks posted by the currently signed-in user.
+ *
+ * @returns {Promise<Ask[]>}
+ */
+export async function getMyAsks() {
+  if (isDemoMode) {
+    return _demoAsks.filter((a) => a.authorId === "u1");
+  }
+
+  const { data: { user }, error: authErr } = await supabase.auth.getUser();
+  if (authErr || !user) return [];
+
+  const { data, error } = await supabase
+    .from("asks")
+    .select(`
+      *,
+      profiles ( id, username, name, college, avatar_url, github_verified, commits_this_week ),
+      commentCount:comments(count),
+      likeCount:likes(count)
+    `)
+    .eq("author_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? []).map((row) => {
+    const commentCount = row.commentCount?.[0]?.count ?? 0;
+    const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+    return mapAsk({ ...row, commentCount, likeCount });
+  });
+}
+
+/**
+ * Returns asks saved by the currently signed-in user.
+ *
+ * @returns {Promise<Ask[]>}
+ */
+export async function getSavedAsks() {
+  if (isDemoMode) {
+    return _demoAsks.filter((a) => a.saved === true);
+  }
+
+  const { data: { user }, error: authErr } = await supabase.auth.getUser();
+  if (authErr || !user) return [];
+
+  const { data, error } = await supabase
+    .from("saves")
+    .select(`
+      ask_id,
+      asks (
+        *,
+        profiles ( id, username, name, college, avatar_url, github_verified, commits_this_week ),
+        commentCount:comments(count),
+        likeCount:likes(count)
+      )
+    `)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return (data ?? [])
+    .map((row) => row.asks)
+    .filter(Boolean)
+    .map((row) => {
+      const commentCount = row.commentCount?.[0]?.count ?? 0;
+      const likeCount    = row.likeCount?.[0]?.count    ?? 0;
+      return mapAsk({ ...row, commentCount, likeCount, saved: true });
+    });
+}
+
+/**
  * Returns all asks, optionally filtered by type.
  * Includes authorName, college, avatar_url from profiles,
  * plus aggregated commentCount and likeCount.
