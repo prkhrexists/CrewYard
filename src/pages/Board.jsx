@@ -8,45 +8,45 @@ import { useCat } from "../context/CatContext";
 //  Constants
 // ─────────────────────────────────────────────────────────────
 const TYPE_FILTERS = [
-  { label: "All",       value: null,        color: "#111111",   activeText: "#fff" },
-  { label: "Help",      value: "help",      color: "#E8542A",   activeText: "#fff" },
-  { label: "Teammate",  value: "teammate",  color: "#2D5FE0",   activeText: "#fff" },
-  { label: "Build Log", value: "build_log", color: "#1E8A5A",   activeText: "#fff" },
+  { label: "All", value: null, color: "#111111", activeText: "#fff" },
+  { label: "Help", value: "help", color: "#E8542A", activeText: "#fff" },
+  { label: "Teammate", value: "teammate", color: "#2D5FE0", activeText: "#fff" },
+  { label: "Build Log", value: "build_log", color: "#1E8A5A", activeText: "#fff" },
 ];
 
 const TYPE_META = {
-  help:      { label: "HELP",      color: "#E8542A",  textColor: "#fff" },
-  teammate:  { label: "TEAMMATE",  color: "#2D5FE0",  textColor: "#fff" },
-  build_log: { label: "BUILD LOG", color: "#1E8A5A",  textColor: "#fff" },
+  help: { label: "HELP", color: "#E8542A", textColor: "#fff" },
+  teammate: { label: "TEAMMATE", color: "#2D5FE0", textColor: "#fff" },
+  build_log: { label: "BUILD LOG", color: "#1E8A5A", textColor: "#fff" },
 };
 
 const POPULAR_TOPICS = [
-  "razorpay","next.js","react","node.js","machine-learning",
-  "solution-arch","open-source","system-design","python",
-  "SIH2025","GSoC2026","webhook","postgresql","docker",
-  "aws","opencv","rust","ui/ux"
+  "razorpay", "next.js", "react", "node.js", "machine-learning",
+  "solution-arch", "open-source", "system-design", "python",
+  "SIH2025", "GSoC2026", "webhook", "postgresql", "docker",
+  "aws", "opencv", "rust", "ui/ux"
 ];
 
 const TOP_COLLEGES = [
-  { name: "VIT Vellore",    count: 128, color: "#E8542A" },
-  { name: "IIT Bangalore",  count: 94,  color: "#2D5FE0" },
-  { name: "DTU Delhi",      count: 81,  color: "#1E8A5A" },
-  { name: "VJTI Mumbai",    count: 63,  color: "#E8542A" },
-  { name: "PESU Bangalore", count: 58,  color: "#2D5FE0" },
+  { name: "VIT Vellore", count: 128, color: "#E8542A" },
+  { name: "IIT Bangalore", count: 94, color: "#2D5FE0" },
+  { name: "DTU Delhi", count: 81, color: "#1E8A5A" },
+  { name: "VJTI Mumbai", count: 63, color: "#E8542A" },
+  { name: "PESU Bangalore", count: 58, color: "#2D5FE0" },
 ];
 
 const TRENDING_TOPICS = [
-  { name: "Razorpay",         count: 128, color: "#E8542A" },
-  { name: "SIH 2025",         count: 96,  color: "#E8542A" },
-  { name: "Machine Learning", count: 84,  color: "#E8542A" },
-  { name: "Next.js",          count: 71,  color: "#E8542A" },
-  { name: "Open Source",      count: 58,  color: "#E8542A" },
+  { name: "Razorpay", count: 128, color: "#E8542A" },
+  { name: "SIH 2025", count: 96, color: "#E8542A" },
+  { name: "Machine Learning", count: 84, color: "#E8542A" },
+  { name: "Next.js", count: 71, color: "#E8542A" },
+  { name: "Open Source", count: 58, color: "#E8542A" },
 ];
 
 const PINNED_GROUPS = [
-  { name: "React India",       members: "12.4k", color: "#2D5FE0" },
-  { name: "ML Builders",       members: "9.1k",  color: "#1E8A5A" },
-  { name: "Open Source India", members: "8.3k",  color: "#9B59B6" },
+  { name: "React India", members: "12.4k", color: "#2D5FE0" },
+  { name: "ML Builders", members: "9.1k", color: "#1E8A5A" },
+  { name: "Open Source India", members: "8.3k", color: "#9B59B6" },
 ];
 
 const MOCK_COMMENTS = {
@@ -110,7 +110,7 @@ function ThumbUpIcon({ size = 14 }) {
 function BookmarkIcon({ filled = false, size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 2h14a1 1 0 0 1 1 1v19l-8-5-8 5V3a1 1 0 0 1 1-1z"/>
+      <path d="M3 2h14a1 1 0 0 1 1 1v19l-8-5-8 5V3a1 1 0 0 1 1-1z" />
     </svg>
   );
 }
@@ -118,7 +118,7 @@ function BookmarkIcon({ filled = false, size = 14 }) {
 function DotsIcon({ size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 4" fill="currentColor">
-      <circle cx="2" cy="2" r="1.5"/><circle cx="10" cy="2" r="1.5"/><circle cx="18" cy="2" r="1.5"/>
+      <circle cx="2" cy="2" r="1.5" /><circle cx="10" cy="2" r="1.5" /><circle cx="18" cy="2" r="1.5" />
     </svg>
   );
 }
@@ -126,7 +126,7 @@ function DotsIcon({ size = 14 }) {
 function FilterIcon({ size = 14 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 5h14M6 10h8M9 15h2"/>
+      <path d="M3 5h14M6 10h8M9 15h2" />
     </svg>
   );
 }
@@ -134,7 +134,7 @@ function FilterIcon({ size = 14 }) {
 function ArrowUpIcon({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 19V5M5 12l7-7 7 7"/>
+      <path d="M12 19V5M5 12l7-7 7 7" />
     </svg>
   );
 }
@@ -142,7 +142,7 @@ function ArrowUpIcon({ size = 16 }) {
 function ArrowDownIcon({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 5v14M19 12l-7 7-7-7"/>
+      <path d="M12 5v14M19 12l-7 7-7-7" />
     </svg>
   );
 }
@@ -163,15 +163,15 @@ function Avatar({ src, name, size = 6 }) {
 //  BoardCard — matches the reference screenshot exactly
 // ─────────────────────────────────────────────────────────────
 function BoardCard({ ask, isSelected, isCompact, onClick }) {
-  const meta   = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
+  const meta = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
   const author = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
 
-  const [localSaved, setLocalSaved]   = useState(ask.saved ?? false);
-  const [localLikes, setLocalLikes]   = useState(ask.likeCount ?? 0);
-  const [liked,      setLiked]        = useState(false);
-  const [saving,     setSaving]       = useState(false);
-  const [liking,     setLiking]       = useState(false);
+  const [localSaved, setLocalSaved] = useState(ask.saved ?? false);
+  const [localLikes, setLocalLikes] = useState(ask.likeCount ?? 0);
+  const [liked, setLiked] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   async function handleSave(e) {
     e.stopPropagation();
@@ -209,11 +209,10 @@ function BoardCard({ ask, isSelected, isCompact, onClick }) {
         onClick={onClick}
         role="button" tabIndex={0}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onClick?.(); }}
-        className={`cursor-pointer border-l-4 border-y border-r transition-all duration-150 p-3 ${
-          isSelected
+        className={`cursor-pointer border-l-4 border-y border-r transition-all duration-150 p-3 ${isSelected
             ? "bg-cy-orange/5 border-l-[5px] border-y-cy-orange/30 border-r-cy-orange/30"
             : "border-cy-ink/15 hover:bg-cy-ink/[0.02]"
-        }`}
+          }`}
         style={{ borderLeftColor: meta.color }}
       >
         <span className="font-mono text-[8px] font-bold uppercase text-white px-1.5 py-0.5 inline-block mb-1.5" style={{ backgroundColor: meta.color }}>{meta.label}</span>
@@ -228,11 +227,10 @@ function BoardCard({ ask, isSelected, isCompact, onClick }) {
       onClick={onClick}
       role="button" tabIndex={0}
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onClick?.(); }}
-      className={`group cursor-pointer border-l-[5px] transition-all duration-200 relative ${
-        isSelected
+      className={`group cursor-pointer border-l-[5px] transition-all duration-200 relative ${isSelected
           ? "border-l-[6px] bg-cy-orange/[0.04]"
           : "border-cy-ink/10 hover:border-cy-ink/20"
-      }`}
+        }`}
       style={{
         borderLeftColor: meta.color,
         borderTop: "1px solid var(--border-subtle)",
@@ -338,25 +336,25 @@ function BoardCard({ ask, isSelected, isCompact, onClick }) {
 //  DetailPanel — fully wired to backend
 // ─────────────────────────────────────────────────────────────
 function DetailPanel({ ask, onClose, onAskUpdate }) {
-  const meta    = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
-  const author  = ask.author;
+  const meta = TYPE_META[ask.type] ?? { label: ask.type?.toUpperCase(), color: "#111", textColor: "#fff" };
+  const author = ask.author;
   const timeAgo = ask.createdAt ? formatRelative(ask.createdAt) : "";
 
   const { profile } = useAuth();
   const textareaRef = useRef(null);
 
   // ── Vote / Like state ─────────────────────────────────────
-  const [upvotes, setUpvotes]   = useState(ask.likeCount ?? 0);
-  const [voted, setVoted]       = useState(null); // 'up' | 'down' | null
-  const [liking, setLiking]     = useState(false);
+  const [upvotes, setUpvotes] = useState(ask.likeCount ?? 0);
+  const [voted, setVoted] = useState(null); // 'up' | 'down' | null
+  const [liking, setLiking] = useState(false);
 
   // ── Save state ────────────────────────────────────────────
-  const [saved, setSaved]       = useState(ask.saved ?? false);
-  const [saving, setSaving]     = useState(false);
+  const [saved, setSaved] = useState(ask.saved ?? false);
+  const [saving, setSaving] = useState(false);
 
   // ── Comment state ─────────────────────────────────────────
-  const [comment, setComment]   = useState("");
-  const [posting, setPosting]   = useState(false);
+  const [comment, setComment] = useState("");
+  const [posting, setPosting] = useState(false);
   const [commentLikes, setCommentLikes] = useState({}); // commentId → { count, liked }
   const initialComments = useMemo(() => {
     const base = MOCK_COMMENTS[ask.id] ?? [];
@@ -528,11 +526,10 @@ function DetailPanel({ ask, onClose, onAskUpdate }) {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className={`font-mono text-[10px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border transition-all disabled:opacity-60 ${
-                      saved
+                    className={`font-mono text-[10px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border transition-all disabled:opacity-60 ${saved
                         ? "border-cy-orange bg-cy-orange text-white"
                         : "border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)]"
-                    }`}
+                      }`}
                   >
                     {saved ? "✓ SAVED" : "SAVE"}
                   </button>
@@ -669,9 +666,9 @@ function DiscoveryRail() {
       <RailSection title="Activity this week">
         <dl className="space-y-2">
           {[
-            { icon: "📊", label: "Asks posted",   value: 64  },
+            { icon: "📊", label: "Asks posted", value: 64 },
             { icon: "💬", label: "Answers given", value: 142 },
-            { icon: "👥", label: "New builders",  value: 87  },
+            { icon: "👥", label: "New builders", value: 87 },
           ].map(({ icon, label, value }) => (
             <div key={label} className="flex items-center justify-between">
               <dt className="flex items-center gap-1.5 font-sans text-[12px] text-cy-muted">
@@ -753,14 +750,14 @@ function DiscoveryRail() {
 export default function Board() {
   const { setContext } = useCat();
 
-  const [allAsks,     setAllAsks]     = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [activeType,  setActiveType]  = useState(null);
-  const [activeTag,   setActiveTag]   = useState(null);
-  const [sortBy,      setSortBy]      = useState("latest");
-  const [showSort,    setShowSort]    = useState(false);
+  const [allAsks, setAllAsks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeType, setActiveType] = useState(null);
+  const [activeTag, setActiveTag] = useState(null);
+  const [sortBy, setSortBy] = useState("latest");
+  const [showSort, setShowSort] = useState(false);
   const [selectedAsk, setSelectedAsk] = useState(null);
-  
+
   // Filter states
   const [activeCollege, setActiveCollege] = useState(null);
   const [showCollegeFilter, setShowCollegeFilter] = useState(false);
@@ -803,18 +800,18 @@ export default function Board() {
 
   const filteredAsks = useMemo(() => {
     let result = allAsks.filter((ask) => {
-      const typeMatch    = activeType === null || ask.type === activeType;
-      const tagMatch     = activeTag === null  || ask.tags?.includes(activeTag);
+      const typeMatch = activeType === null || ask.type === activeType;
+      const tagMatch = activeTag === null || ask.tags?.includes(activeTag);
       const collegeMatch = activeCollege === null || ask.author?.college === activeCollege;
       return typeMatch && tagMatch && collegeMatch;
     });
-    if (sortBy === "most-helpful")   result = [...result].sort((a, b) => (b.likeCount ?? 0)   - (a.likeCount ?? 0));
+    if (sortBy === "most-helpful") result = [...result].sort((a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0));
     if (sortBy === "most-discussed") result = [...result].sort((a, b) => (b.commentCount ?? 0) - (a.commentCount ?? 0));
     return result;
   }, [allAsks, activeType, activeTag, activeCollege, sortBy]);
 
   const hasFilters = activeType !== null || activeTag !== null;
-  const isDetail   = selectedAsk !== null;
+  const isDetail = selectedAsk !== null;
   const topicChips = allTags.length > 0 ? allTags.slice(0, 18) : POPULAR_TOPICS;
 
   const SORT_LABELS = { latest: "Latest", "most-helpful": "Most Helpful", "most-discussed": "Most Discussed" };
@@ -823,7 +820,7 @@ export default function Board() {
     <div className="flex h-full w-full overflow-hidden bg-cy-bg">
 
       {/* ── Feed column ─────────────────────────────────────────── */}
-      <div className={`flex flex-col h-full overflow-hidden bg-cy-bg transition-all duration-300 ease-out shrink-0 ${isDetail ? "w-[280px] lg:w-[300px] border-r border-cy-ink/15" : "flex-1"}`}>
+      <div className={`flex-col h-full overflow-hidden bg-cy-bg transition-all duration-300 ease-out shrink-0 ${isDetail ? "hidden md:flex md:w-[280px] lg:w-[300px] border-r border-cy-ink/15" : "flex flex-1"}`}>
 
         {/* Board header */}
         {!isDetail && (
@@ -858,10 +855,10 @@ export default function Board() {
         )}
 
         {/* Type tabs row */}
-        <div className={`px-6 md:px-8 border-b border-cy-ink/10 sticky ${isDetail ? "top-[68px]" : "top-0"} z-10 bg-cy-bg`}>
-          <div className="flex items-center justify-between">
+        <div className={`px-4 md:px-8 border-b border-cy-ink/10 sticky ${isDetail ? "top-[68px]" : "top-0"} z-10 bg-cy-bg`}>
+          <div className="flex items-center justify-between overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Tab buttons */}
-            <div className="flex items-center gap-1" role="group">
+            <div className="flex items-center gap-1 shrink-0" role="group">
               {TYPE_FILTERS.map(({ label, value, color }) => {
                 const isActive = activeType === value;
                 return (
@@ -917,9 +914,8 @@ export default function Board() {
             {/* Filter dropdowns row */}
             <div className="flex items-center gap-2 flex-wrap mb-2">
               <button
-                className={`flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${
-                  hasFilters ? "border-cy-orange text-cy-orange" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
-                }`}
+                className={`flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${hasFilters ? "border-cy-orange text-cy-orange" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
+                  }`}
                 onClick={() => { setActiveType(null); setActiveTag(null); setActiveCollege(null); }}
                 title={hasFilters ? "Clear all filters" : "Filters"}
               >
@@ -930,9 +926,8 @@ export default function Board() {
               <div className="relative" ref={collegeRef}>
                 <button
                   onClick={() => setShowCollegeFilter(s => !s)}
-                  className={`font-mono text-[10px] uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${
-                    activeCollege ? "border-cy-ink text-cy-ink bg-cy-ink/5 font-bold" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
-                  }`}
+                  className={`font-mono text-[10px] uppercase tracking-[0.06em] border px-2.5 py-1 transition-colors ${activeCollege ? "border-cy-ink text-cy-ink bg-cy-ink/5 font-bold" : "border-cy-ink/20 text-cy-muted hover:border-cy-ink hover:text-cy-ink"
+                    }`}
                 >
                   {activeCollege ? `College: ${activeCollege}` : "College ↓"}
                 </button>
@@ -942,9 +937,8 @@ export default function Board() {
                       <p className="font-mono text-[10px] text-cy-muted px-4 py-3">No colleges found</p>
                     ) : allColleges.map((col) => (
                       <button key={col} onClick={() => { setActiveCollege(prev => prev === col ? null : col); setShowCollegeFilter(false); }}
-                        className={`w-full text-left font-mono text-[10px] px-4 py-2 hover:bg-cy-ink/5 transition-colors border-0 truncate ${
-                          activeCollege === col ? "text-cy-orange font-bold" : "text-cy-ink"
-                        }`}
+                        className={`w-full text-left font-mono text-[10px] px-4 py-2 hover:bg-cy-ink/5 transition-colors border-0 truncate ${activeCollege === col ? "text-cy-orange font-bold" : "text-cy-ink"
+                          }`}
                       >{col}</button>
                     ))}
                   </div>
@@ -980,11 +974,10 @@ export default function Board() {
                     key={tag}
                     onClick={() => setActiveTag((prev) => prev === tag ? null : tag)}
                     aria-pressed={isActive}
-                    className={`font-mono text-[9px] uppercase tracking-[0.04em] px-2 py-0.5 border transition-all duration-100 ${
-                      isActive
+                    className={`font-mono text-[9px] uppercase tracking-[0.04em] px-2 py-0.5 border transition-all duration-100 ${isActive
                         ? "bg-cy-ink text-[var(--bg)] border-cy-ink"
                         : "border-cy-ink/25 text-cy-muted hover:border-cy-ink/60 hover:text-cy-ink"
-                    }`}
+                      }`}
                   >
                     {tag}
                   </button>
@@ -1041,11 +1034,10 @@ export default function Board() {
 
       {/* ── Detail Panel ──────────────────────────────────────── */}
       <div
-        className={`h-full bg-cy-bg flex-1 overflow-hidden transition-all duration-300 ease-out ${
-          isDetail
+        className={`h-full bg-cy-bg flex-1 overflow-hidden transition-all duration-300 ease-out ${isDetail
             ? "opacity-100 translate-x-0 pointer-events-auto"
-            : "w-0 max-w-0 opacity-0 translate-x-6 pointer-events-none"
-        }`}
+            : "hidden md:block w-0 max-w-0 opacity-0 translate-x-6 pointer-events-none"
+          }`}
         style={{ minWidth: isDetail ? 0 : 0 }}
       >
         {selectedAsk && (
