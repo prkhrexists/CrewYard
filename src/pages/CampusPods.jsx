@@ -88,6 +88,171 @@ const LIVE_CHALLENGES = [
   },
 ];
 
+// ─────────────────────────────────────────────────────────────
+//  Challenge Questions (hardcoded per type)
+// ─────────────────────────────────────────────────────────────
+const CHALLENGE_QUESTIONS = {
+  dsa: [
+    {
+      id: "dsa1",
+      title: "Two Sum",
+      difficulty: "EASY",
+      points: 100,
+      description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution.",
+      examples: [
+        { input: "nums = [2,7,11,15], target = 9", output: "[0,1]", explanation: "Because nums[0] + nums[1] == 9" },
+        { input: "nums = [3,2,4], target = 6", output: "[1,2]" },
+      ],
+      constraints: ["2 ≤ nums.length ≤ 10⁴", "-10⁹ ≤ nums[i] ≤ 10⁹", "Only one valid answer exists."],
+      starterCode: `function twoSum(nums, target) {\n  // Your code here\n}`,
+    },
+    {
+      id: "dsa2",
+      title: "Longest Substring Without Repeating Characters",
+      difficulty: "MEDIUM",
+      points: 200,
+      description: "Given a string s, find the length of the longest substring without repeating characters.",
+      examples: [
+        { input: `s = "abcabcbb"`, output: "3", explanation: 'The answer is "abc", with the length of 3.' },
+        { input: `s = "bbbbb"`, output: "1" },
+      ],
+      constraints: ["0 ≤ s.length ≤ 5×10⁴", "s consists of English letters, digits, symbols, and spaces."],
+      starterCode: `function lengthOfLongestSubstring(s) {\n  // Your code here\n}`,
+    },
+    {
+      id: "dsa3",
+      title: "Merge K Sorted Lists",
+      difficulty: "HARD",
+      points: 400,
+      description: "You are given an array of k linked-lists, each sorted in ascending order. Merge all the linked-lists into one sorted linked-list and return it.",
+      examples: [
+        { input: "lists = [[1,4,5],[1,3,4],[2,6]]", output: "[1,1,2,3,4,4,5,6]" },
+      ],
+      constraints: ["k == lists.length", "0 ≤ k ≤ 10⁴", "0 ≤ lists[i].length ≤ 500"],
+      starterCode: `function mergeKLists(lists) {\n  // Your code here\n}`,
+    },
+  ],
+  web: [
+    {
+      id: "web1",
+      title: "Build a Live Search Component",
+      difficulty: "EASY",
+      points: 100,
+      description: "Create a React component that takes an array of strings as a prop and renders a live-search input. As the user types, filter and display matching results in a dropdown. Debounce the input by 300ms.",
+      examples: [
+        { input: "data = ['Apple', 'Banana', 'Avocado', 'Blueberry']; query = 'av'", output: "Renders: ['Avocado']" },
+      ],
+      constraints: ["Must use React hooks only", "No external search libraries", "Debounce ≥ 300ms"],
+      starterCode: `function LiveSearch({ data }) {\n  // Your code here\n}`,
+    },
+    {
+      id: "web2",
+      title: "REST API Rate Limiter Middleware",
+      difficulty: "MEDIUM",
+      points: 200,
+      description: "Write an Express.js middleware that limits each IP to 100 requests per 15 minutes. Respond with 429 Too Many Requests and a Retry-After header when the limit is exceeded. Use an in-memory store.",
+      examples: [
+        { input: "101st request from same IP within 15 min", output: "HTTP 429 + Retry-After: 900" },
+      ],
+      constraints: ["In-memory only (no Redis)", "Must include Retry-After header", "Sliding window algorithm"],
+      starterCode: `function rateLimiter(req, res, next) {\n  // Your code here\n}`,
+    },
+    {
+      id: "web3",
+      title: "Design a Distributed Job Queue",
+      difficulty: "HARD",
+      points: 400,
+      description: "Design and implement a simple job queue system that supports: enqueue(job), dequeue(), retries on failure (max 3), and a workers pool. Submit a design doc plus working Node.js code.",
+      examples: [
+        { input: "enqueue({ type: 'email', to: 'a@b.com' })", output: "Job processed by next free worker; retried up to 3× on failure" },
+      ],
+      constraints: ["No third-party queue libraries", "Workers must be concurrent", "Failure must be logged"],
+      starterCode: `class JobQueue {\n  constructor(workerCount) {}\n  enqueue(job) {}\n  dequeue() {}\n}`,
+    },
+  ],
+  aiml: [
+    {
+      id: "aiml1",
+      title: "Implement Linear Regression from Scratch",
+      difficulty: "EASY",
+      points: 100,
+      description: "Implement linear regression using gradient descent in Python (NumPy only). Your model should be able to fit a dataset, compute MSE loss, and predict new values.",
+      examples: [
+        { input: "X = [1,2,3,4], y = [2,4,6,8]", output: "slope ≈ 2.0, intercept ≈ 0.0" },
+      ],
+      constraints: ["NumPy only (no sklearn)", "Learning rate = 0.01", "Epochs ≥ 1000"],
+      starterCode: `import numpy as np\n\nclass LinearRegression:\n    def fit(self, X, y):\n        pass\n    def predict(self, X):\n        pass`,
+    },
+    {
+      id: "aiml2",
+      title: "Build a Text Sentiment Classifier",
+      difficulty: "MEDIUM",
+      points: 200,
+      description: "Train a binary sentiment classifier (positive/negative) using a bag-of-words model + logistic regression on the IMDb dataset. Report accuracy on the test set.",
+      examples: [
+        { input: '"This movie was absolutely brilliant!"', output: "Positive (0.94 confidence)" },
+        { input: '"Terrible film, waste of time"', output: "Negative (0.87 confidence)" },
+      ],
+      constraints: ["Accuracy ≥ 85% on test set", "Max vocab size: 10,000 tokens", "No pre-trained embeddings"],
+      starterCode: `from sklearn.linear_model import LogisticRegression\n\ndef train_classifier(X_train, y_train):\n    pass`,
+    },
+    {
+      id: "aiml3",
+      title: "Implement a Transformer Attention Head",
+      difficulty: "HARD",
+      points: 400,
+      description: "Implement a single-head scaled dot-product attention mechanism in PyTorch. Inputs: Q, K, V matrices. Output the attention-weighted values and the attention weights.",
+      examples: [
+        { input: "Q, K, V of shape (batch=2, seq=4, d_k=8)", output: "Output shape: (2, 4, 8), weights shape: (2, 4, 4)" },
+      ],
+      constraints: ["PyTorch only", "Must apply softmax correctly", "Handle optional masking"],
+      starterCode: `import torch\nimport torch.nn.functional as F\n\ndef scaled_dot_product_attention(Q, K, V, mask=None):\n    pass`,
+    },
+  ],
+  bughunt: [
+    {
+      id: "bug1",
+      title: "Find the Off-by-One Bug",
+      difficulty: "EASY",
+      points: 100,
+      description: "The following function is supposed to return the sum of all elements in an array but has an off-by-one bug. Identify and fix it. Explain your reasoning.",
+      examples: [
+        { input: "arr = [1, 2, 3, 4, 5]", output: "Expected: 15, Buggy output: 10" },
+      ],
+      constraints: ["Paste the fixed code + 1-sentence explanation"],
+      starterCode: `function sumArray(arr) {\n  let sum = 0;\n  for (let i = 0; i < arr.length - 1; i++) {\n    sum += arr[i];\n  }\n  return sum;\n}`,
+    },
+    {
+      id: "bug2",
+      title: "Race Condition in Async Code",
+      difficulty: "MEDIUM",
+      points: 200,
+      description: "The code below has a race condition. Multiple concurrent requests update a shared counter. Identify the race condition and propose a fix without using a database or Redis.",
+      examples: [
+        { input: "100 concurrent POST /increment requests", output: "Counter should be 100 but is often less" },
+      ],
+      constraints: ["Fix must work in Node.js single-thread", "No mutexes or external libs"],
+      starterCode: `let counter = 0;\napp.post('/increment', async (req, res) => {\n  const val = await readCounter(); // async\n  await writeCounter(val + 1);    // async\n  res.json({ counter: val + 1 });\n});`,
+    },
+    {
+      id: "bug3",
+      title: "Memory Leak in React Component",
+      difficulty: "HARD",
+      points: 400,
+      description: "The React component below has a memory leak. It sets state on an unmounted component. Identify the bug, explain why it causes a leak, and provide the fixed code.",
+      examples: [
+        { input: "Navigate away while fetch is in-flight", output: "Warning: Can't perform a React state update on an unmounted component" },
+      ],
+      constraints: ["Fix without adding external libraries", "Must handle abort properly"],
+      starterCode: `function DataLoader() {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    fetch('/api/data').then(r => r.json()).then(setData);\n  }, []);\n  return <div>{JSON.stringify(data)}</div>;\n}`,
+    },
+  ],
+};
+
+// Fallback questions for types without specific questions
+CHALLENGE_QUESTIONS.oss = CHALLENGE_QUESTIONS.dsa;
+CHALLENGE_QUESTIONS.custom = CHALLENGE_QUESTIONS.web;
+
 const RECENT_WINS = [
   { opponent: "VIT Chennai",    type: "DSA DUEL",    date: "15 Jul 2026", pts: 320 },
   { opponent: "PES University", type: "Bug Hunt",    date: "10 Jul 2026", pts: 280 },
@@ -438,6 +603,295 @@ function ChallengeOpponentPanel({ onClose }) {
 }
 
 // ─────────────────────────────────────────────────────────────
+//  ChallengeArena – floating full-screen overlay
+// ─────────────────────────────────────────────────────────────
+const DIFF_COLOR = { EASY: "var(--cat-green)", MEDIUM: "var(--cy-orange,#F97316)", HARD: "#EF4444" };
+
+function useArenaTimer(initialSeconds, running) {
+  const [secsLeft, setSecsLeft] = useState(initialSeconds);
+  useEffect(() => {
+    if (!running) return;
+    if (secsLeft <= 0) return;
+    const id = setInterval(() => setSecsLeft((s) => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(id);
+  }, [running, secsLeft]);
+  const pct = (secsLeft / initialSeconds) * 100;
+  const h = Math.floor(secsLeft / 3600);
+  const m = Math.floor((secsLeft % 3600) / 60);
+  const s = secsLeft % 60;
+  const label = h > 0
+    ? `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`
+    : `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return { secsLeft, pct, label };
+}
+
+function ChallengeArena({ challenge, onClose }) {
+  const questions = CHALLENGE_QUESTIONS[challenge.type] || CHALLENGE_QUESTIONS.dsa;
+  const totalSecs = (challenge.endsIn.hours * 3600) + (challenge.endsIn.mins * 60) + (challenge.endsIn.days > 0 ? 3600 : 0);
+  // Use a shorter demo timer: 60 min for dsa, otherwise 30 min
+  const demoSecs = challenge.type === "dsa" ? 3600 : 1800;
+
+  const [qIndex, setQIndex]       = useState(0);
+  const [answers, setAnswers]     = useState({});
+  const [submitted, setSubmitted] = useState({});
+  const [finished, setFinished]   = useState(false);
+  const [timerRunning, setTimer]  = useState(true);
+  const { secsLeft, pct, label }  = useArenaTimer(demoSecs, timerRunning && !finished);
+
+  const currentQ = questions[qIndex];
+  const allSubmitted = questions.every((q) => submitted[q.id]);
+  const score = questions.reduce((acc, q) => submitted[q.id] ? acc + q.points : acc, 0);
+  const maxScore = questions.reduce((acc, q) => acc + q.points, 0);
+
+  const timerColor = secsLeft < 300 ? "#EF4444" : secsLeft < 600 ? "var(--cy-orange,#F97316)" : "var(--cat-green)";
+
+  function handleSubmitQ(qId) {
+    if (!answers[qId]?.trim()) return;
+    setSubmitted((s) => ({ ...s, [qId]: true }));
+    // Auto advance
+    if (qIndex < questions.length - 1) setTimeout(() => setQIndex((i) => i + 1), 500);
+  }
+
+  function handleFinish() {
+    setFinished(true);
+    setTimer(false);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.7)", backdropFilter: "blur(4px)" }}
+    >
+      {/* Arena panel */}
+      <div
+        className="relative flex flex-col w-full max-w-5xl h-[95vh] mt-4 border-2 border-cy-ink bg-cy-bg shadow-[8px_8px_0px_0px_var(--shadow)] overflow-hidden"
+      >
+        {/* ── Header bar ── */}
+        <div className="flex items-center justify-between border-b-2 border-cy-ink px-5 py-3 shrink-0 gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span
+              className="font-mono text-[13px] font-bold w-8 h-8 flex items-center justify-center border-2 shrink-0"
+              style={{ borderColor: challenge.color, color: challenge.color }}
+            >
+              {challenge.icon}
+            </span>
+            <div>
+              <p className="font-mono text-[11px] font-bold tracking-[0.12em] uppercase" style={{ color: challenge.color }}>
+                {challenge.label}
+              </p>
+              <p className="font-sans text-[12px] text-cy-muted">
+                {MY_POD.shortName} <span className="text-cy-orange font-bold">VS</span> {challenge.opponent}
+              </p>
+            </div>
+          </div>
+
+          {/* Timer */}
+          <div className="flex flex-col items-center gap-1">
+            <div className="w-48 h-1.5 bg-cy-ink/20 rounded-full overflow-hidden">
+              <div
+                className="h-full transition-all duration-1000"
+                style={{ width: `${pct}%`, backgroundColor: timerColor }}
+              />
+            </div>
+            <span className="font-mono text-[18px] font-bold tracking-[0.1em]" style={{ color: timerColor }}>
+              {finished ? "TIME'S UP" : label}
+            </span>
+            <span className="font-mono text-[8px] tracking-[0.08em] uppercase text-cy-muted">
+              {finished ? "Challenge ended" : "Remaining"}
+            </span>
+          </div>
+
+          {/* Score */}
+          <div className="text-right">
+            <p className="font-mono text-[18px] font-bold text-cy-orange">{score} <span className="text-[11px] text-cy-muted">/ {maxScore}</span></p>
+            <p className="font-mono text-[8px] tracking-[0.08em] uppercase text-cy-muted">YOUR SCORE</p>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="font-mono text-[11px] font-bold px-3 py-2 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all shrink-0"
+          >
+            ✕ EXIT
+          </button>
+        </div>
+
+        {finished ? (
+          /* ── Results screen ── */
+          <div className="flex-1 flex flex-col items-center justify-center gap-6 p-10">
+            <div className="text-center">
+              <p className="font-display font-black text-5xl text-cy-orange">{score}</p>
+              <p className="font-mono text-[12px] tracking-[0.1em] uppercase text-cy-muted">out of {maxScore} points</p>
+            </div>
+            <div className="w-full max-w-md flex flex-col gap-2">
+              {questions.map((q) => (
+                <div key={q.id} className="flex items-center justify-between border border-cy-ink px-4 py-3">
+                  <div>
+                    <p className="font-sans font-bold text-[13px] text-cy-ink">{q.title}</p>
+                    <span className="font-mono text-[8px] tracking-[0.1em]" style={{ color: DIFF_COLOR[q.difficulty] }}>{q.difficulty}</span>
+                  </div>
+                  <span className={`font-mono text-[11px] font-bold ${submitted[q.id] ? "text-[var(--cat-green)]" : "text-cy-muted"}`}>
+                    {submitted[q.id] ? `+${q.points} pts ✓` : "Not submitted"}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="font-sans text-sm text-cy-muted text-center max-w-sm">
+              Your answers have been submitted. Results will be compared with <strong>{challenge.opponent}</strong> after judge review.
+            </p>
+            <button
+              onClick={onClose}
+              className="font-mono text-[11px] font-bold tracking-[0.1em] uppercase px-6 py-3 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-all"
+            >
+              BACK TO POD
+            </button>
+          </div>
+        ) : (
+          /* ── Main arena ── */
+          <div className="flex flex-1 min-h-0">
+            {/* Left: question list */}
+            <div className="w-52 shrink-0 border-r-2 border-cy-ink flex flex-col">
+              <div className="px-3 py-2.5 border-b border-cy-ink/20">
+                <p className="font-mono text-[9px] font-bold tracking-[0.12em] uppercase text-cy-muted">PROBLEMS</p>
+              </div>
+              <ul className="flex flex-col flex-1 overflow-y-auto">
+                {questions.map((q, i) => {
+                  const isActive = i === qIndex;
+                  const isDone   = submitted[q.id];
+                  return (
+                    <li
+                      key={q.id}
+                      onClick={() => setQIndex(i)}
+                      className={[
+                        "px-3 py-3 border-b border-cy-ink/15 cursor-pointer transition-colors",
+                        isActive ? "bg-cy-orange/8 border-l-4 border-l-cy-orange" : "hover:bg-cy-ink/[0.03]",
+                      ].join(" ")}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`font-mono text-[9px] font-bold w-5 h-5 flex items-center justify-center border shrink-0 ${
+                          isDone ? "bg-[var(--cat-green)] border-[var(--cat-green)] text-white" : isActive ? "border-cy-orange text-cy-orange" : "border-cy-ink text-cy-muted"
+                        }`}>{i + 1}</span>
+                        <div className="min-w-0">
+                          <p className={`font-sans text-[11px] font-bold leading-snug truncate ${isActive ? "text-cy-orange" : "text-cy-ink"}`}>
+                            {q.title}
+                          </p>
+                          <p className="font-mono text-[8px]" style={{ color: DIFF_COLOR[q.difficulty] }}>
+                            {q.difficulty} · {q.points} pts
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="p-3 border-t-2 border-cy-ink">
+                <button
+                  onClick={handleFinish}
+                  className="w-full font-mono text-[9px] font-bold tracking-[0.1em] uppercase py-2.5 border-2 border-cy-orange text-cy-orange hover:bg-cy-orange hover:text-white transition-all"
+                >
+                  SUBMIT ALL &amp; FINISH
+                </button>
+              </div>
+            </div>
+
+            {/* Right: problem + editor */}
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+              {/* Problem statement */}
+              <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4 min-h-0" style={{ maxHeight: "55%" }}>
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div>
+                    <h3 className="font-display font-black text-[20px] text-cy-ink leading-tight">{currentQ.title}</h3>
+                    <span
+                      className="inline-block font-mono text-[8px] tracking-[0.12em] uppercase border px-2 py-0.5 mt-1"
+                      style={{ color: DIFF_COLOR[currentQ.difficulty], borderColor: DIFF_COLOR[currentQ.difficulty] }}
+                    >
+                      {currentQ.difficulty}
+                    </span>
+                    <span className="ml-2 font-mono text-[8px] tracking-[0.1em] uppercase text-cy-orange border border-cy-orange px-2 py-0.5">
+                      {currentQ.points} PTS
+                    </span>
+                  </div>
+                </div>
+
+                <p className="font-sans text-[13px] text-cy-ink leading-relaxed">{currentQ.description}</p>
+
+                {currentQ.examples?.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <p className="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-cy-muted">EXAMPLES</p>
+                    {currentQ.examples.map((ex, ei) => (
+                      <div key={ei} className="border border-cy-ink/40 px-4 py-3 font-mono text-[11px] flex flex-col gap-1" style={{ backgroundColor: "var(--cy-ink,#111)/3" }}>
+                        <div><span className="text-cy-muted">Input:  </span><span className="text-cy-ink">{ex.input}</span></div>
+                        <div><span className="text-cy-muted">Output: </span><span className="text-[var(--cat-green)]">{ex.output}</span></div>
+                        {ex.explanation && <div><span className="text-cy-muted">Note:   </span><span className="text-cy-ink">{ex.explanation}</span></div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {currentQ.constraints?.length > 0 && (
+                  <div>
+                    <p className="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-cy-muted mb-1">CONSTRAINTS</p>
+                    <ul className="flex flex-col gap-0.5">
+                      {currentQ.constraints.map((c, ci) => (
+                        <li key={ci} className="font-mono text-[11px] text-cy-ink flex items-center gap-2">
+                          <span className="text-cy-orange">›</span> {c}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Code / answer editor */}
+              <div className="border-t-2 border-cy-ink flex flex-col" style={{ flex: "0 0 45%" }}>
+                <div className="flex items-center justify-between px-4 py-2 border-b border-cy-ink/20">
+                  <p className="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-cy-muted">YOUR SOLUTION</p>
+                  {submitted[currentQ.id] && (
+                    <span className="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-[var(--cat-green)] border border-[var(--cat-green)] px-2 py-0.5">SUBMITTED ✓</span>
+                  )}
+                </div>
+                <textarea
+                  className="flex-1 w-full font-mono text-[12px] bg-cy-bg text-cy-ink px-4 py-3 resize-none focus:outline-none leading-relaxed"
+                  style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace", tabSize: 2 }}
+                  placeholder={currentQ.starterCode}
+                  value={answers[currentQ.id] || ""}
+                  onChange={(e) => setAnswers((a) => ({ ...a, [currentQ.id]: e.target.value }))}
+                  readOnly={submitted[currentQ.id]}
+                />
+                <div className="flex items-center justify-between px-4 py-2.5 border-t border-cy-ink/20 gap-3 flex-wrap">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setQIndex((i) => Math.max(0, i - 1))}
+                      disabled={qIndex === 0}
+                      className="font-mono text-[9px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all disabled:opacity-30"
+                    >
+                      ← PREV
+                    </button>
+                    <button
+                      onClick={() => setQIndex((i) => Math.min(questions.length - 1, i + 1))}
+                      disabled={qIndex === questions.length - 1}
+                      className="font-mono text-[9px] font-bold tracking-[0.08em] uppercase px-3 py-1.5 border-2 border-cy-ink text-cy-ink hover:bg-cy-ink hover:text-[var(--bg)] transition-all disabled:opacity-30"
+                    >
+                      NEXT →
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => handleSubmitQ(currentQ.id)}
+                    disabled={submitted[currentQ.id] || !answers[currentQ.id]?.trim()}
+                    className="font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-5 py-2 border-2 border-cy-ink bg-cy-ink text-[var(--bg)] hover:bg-transparent hover:text-cy-ink transition-all shadow-[2px_2px_0px_0px_var(--shadow)] hover:shadow-none hover:translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {submitted[currentQ.id] ? "SUBMITTED ✓" : "SUBMIT SOLUTION"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
 //  PodStatBadge
 // ─────────────────────────────────────────────────────────────
 function PodStatBadge({ label, value, accent = false }) {
@@ -463,6 +917,12 @@ export default function CampusPods() {
   const [showOpponentPicker, setShowOpponent]   = useState(false);
   const [searchDiscover,   setSearchDiscover]   = useState("");
   const [activeTab,        setActiveTab]        = useState("CHALLENGES"); // inside CHALLENGES section
+  const [arenaChallenge,   setArenaChallenge]   = useState(null); // currently open challenge arena
+
+  function openArena(chId) {
+    const ch = LIVE_CHALLENGES.find((c) => c.id === chId);
+    if (ch) setArenaChallenge(ch);
+  }
 
   useEffect(() => {
     setContext({ page: 'campuspods' });
@@ -606,7 +1066,7 @@ export default function CampusPods() {
                 </div>
                 <div className="flex flex-col gap-4">
                   {LIVE_CHALLENGES.map((ch) => (
-                    <ChallengeCard key={ch.id} ch={ch} />
+                    <ChallengeCard key={ch.id} ch={ch} onAccept={openArena} />
                   ))}
                   <p className="font-mono text-[9px] text-cy-muted tracking-[0.06em]">+ MORE CHALLENGES COMING SOON</p>
                 </div>
@@ -679,7 +1139,7 @@ export default function CampusPods() {
 
               {activeTab === "CHALLENGES" ? (
                 <div className="flex flex-col gap-4">
-                  {LIVE_CHALLENGES.map((ch) => <ChallengeCard key={ch.id} ch={ch} />)}
+                  {LIVE_CHALLENGES.map((ch) => <ChallengeCard key={ch.id} ch={ch} onAccept={openArena} />)}
                   <button
                     onClick={() => setShowOpponent(true)}
                     className="self-start font-mono text-[10px] font-bold tracking-[0.1em] uppercase px-5 py-2.5 border-2 border-cy-orange text-cy-orange hover:bg-cy-orange hover:text-white transition-all"
@@ -797,6 +1257,11 @@ export default function CampusPods() {
         </div>
 
       </div>
+
+      {/* ── Challenge Arena overlay ── */}
+      {arenaChallenge && (
+        <ChallengeArena challenge={arenaChallenge} onClose={() => setArenaChallenge(null)} />
+      )}
     </div>
   );
 }
